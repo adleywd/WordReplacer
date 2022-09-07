@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32728.150
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReplacer", "WordReplacer\WordReplacer.csproj", "{5DCDABDB-0954-4A56-90C1-E6C6825A5F6B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DCDABDB-0954-4A56-90C1-E6C6825A5F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DCDABDB-0954-4A56-90C1-E6C6825A5F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DCDABDB-0954-4A56-90C1-E6C6825A5F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DCDABDB-0954-4A56-90C1-E6C6825A5F6B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E43599F9-603B-4906-8818-1AF40982C102}
+	EndGlobalSection
+EndGlobal

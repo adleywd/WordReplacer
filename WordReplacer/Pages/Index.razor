@@ -1,0 +1,105 @@
+﻿@page "/"
+@using WordReplacer.Models
+@using WordReplacer.Dto
+@using WordReplacer.Enums
+@inject IDocumentService DocumentService
+
+<PageTitle>Certificate Replacer</PageTitle>
+<h2>
+    <b>Certificate Replacer</b>
+</h2>
+<hr/>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-12 d-inline d-inline-block">
+            <MatTextField @bind-Value="_docParamsDto.Label" HelperText="Label name to easy identify the input" Label="Label name" />
+            <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())" />
+            <br />
+            <MatButton Raised="true" OnClick="AddValues">Add value</MatButton>
+        </div>
+    </div>
+
+    <EditForm Model="_doc" OnValidSubmit="HandleSubmit" class="col-12 mt-3">
+        <DataAnnotationsValidator/>
+        @if (_doc.DocumentValues.Count > 0)
+        {
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                    <h4>
+                        <b>Older Values</b>
+                    </h4>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                    <h4>
+                        <b>Newer Values</b>
+                    </h4>
+                </div>
+            </div>
+        }
+        @foreach (var docValue in _doc.DocumentValues)
+        {
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                    <MatTextField @bind-Value="docValue.Key.Text" 
+                                  HelperText="@docValue.Key.HelperText" 
+                                  Label="@docValue.Key.Label"
+                                  FullWidth="true"/>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                    <MatTextField @bind-Value="docValue.Value.Text" 
+                                  HelperText="@docValue.Value.HelperText" 
+                                  Label="@docValue.Value.Label" 
+                                  FullWidth="true"/>
+                </div>
+            </div>
+        }
+    </EditForm>
+</div>
+
+@code
+{
+    private readonly Document _doc = new();
+    private DocumentParamsDto _docParamsDto = new();
+
+    private void AddValues()
+    {
+        var oldValue = new DocumentValue()
+        {
+            Label = $"Old {_docParamsDto.Label}",
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = true,
+            Text = "",
+            HelperText = "It worked? :o",
+            Type = InputType.TextField
+        };
+        var newValue = new DocumentValue()
+        {
+            Label = $"New {_docParamsDto.Label}",
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = false,
+            Text = "",
+            HelperText = "Unbelievable!",
+            Type = InputType.TextField
+        };
+
+        _doc.DocumentValues.Add(oldValue, newValue);
+    }
+
+    private void HandleSubmit()
+    {
+    }
+
+    private void InvokeChangeState()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+}
