@@ -17,6 +17,7 @@ namespace WordReplacer
             builder.Services.AddMatBlazor();
 
             builder.Services.AddTransient<IDocumentService, DocumentService>();
+
             await builder.Build().RunAsync();
         }
     }

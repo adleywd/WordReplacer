@@ -2,7 +2,9 @@
 @using WordReplacer.Models
 @using WordReplacer.Dto
 @using WordReplacer.Enums
+@using WordReplacer.Utilities
 @inject IDocumentService DocumentService
+@inject IJSRuntime JSRuntime;
 
 <PageTitle>Certificate Replacer</PageTitle>
 <h2>
@@ -12,11 +14,21 @@
 <div class="container-fluid">
 
     <div class="row">
-        <div class="col-12 d-inline d-inline-block">
-            <MatTextField @bind-Value="_docParamsDto.Label" HelperText="Label name to easy identify the input" Label="Label name" />
-            <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())" />
-            <br />
+        <div class="col-12">
+            <MatTextField @bind-Value="_docParamsDto.Label" HelperText="Label name to easy identify the input" Label="Label name"/>
+            <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())"/>
+            <br/>
             <MatButton Raised="true" OnClick="AddValues">Add value</MatButton>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <MatFileUpload OnChange="@FilesReady" Label="Drop a single file here or Browse"></MatFileUpload>
+            @foreach (var file in _fileList)
+            {
+                <div>@file</div>
+            }
         </div>
     </div>
 
@@ -41,27 +53,42 @@
         {
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
-                    <MatTextField @bind-Value="docValue.Key.Text" 
-                                  HelperText="@docValue.Key.HelperText" 
+                    <MatTextField @bind-Value="docValue.Key.Text"
+                                  HelperText="@docValue.Key.HelperText"
                                   Label="@docValue.Key.Label"
                                   FullWidth="true"/>
                 </div>
 
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
-                    <MatTextField @bind-Value="docValue.Value.Text" 
-                                  HelperText="@docValue.Value.HelperText" 
-                                  Label="@docValue.Value.Label" 
+                    <MatTextField @bind-Value="docValue.Value.Text"
+                                  HelperText="@docValue.Value.HelperText"
+                                  Label="@docValue.Value.Label"
                                   FullWidth="true"/>
                 </div>
             </div>
         }
+        @if (_doc.DocumentValues.Count > 0)
+        {
+            <MatButton Raised="true">Replace</MatButton>
+        }
+
     </EditForm>
 </div>
 
 @code
 {
     private readonly Document _doc = new();
-    private DocumentParamsDto _docParamsDto = new();
+    private readonly DocumentParamsDto _docParamsDto = new();
+    private readonly List<string> _fileList = new();
+
+    private void FilesReady(IMatFileUploadEntry[] files)
+    {
+        foreach (var file in files)
+        {
+            _doc.File = file;
+            _fileList.Add($"Name: {file.Name} - Size: {file.Size}");
+        }
+    }
 
     private void AddValues()
     {
@@ -71,7 +98,7 @@
             HtmlId = Guid.NewGuid().ToString(),
             IsOldValue = true,
             Text = "",
-            HelperText = "It worked? :o",
+            HelperText = "This is the old value",
             Type = InputType.TextField
         };
         var newValue = new DocumentValue()
@@ -80,15 +107,20 @@
             HtmlId = Guid.NewGuid().ToString(),
             IsOldValue = false,
             Text = "",
-            HelperText = "Unbelievable!",
+            HelperText = "This is will be the new value",
             Type = InputType.TextField
         };
 
         _doc.DocumentValues.Add(oldValue, newValue);
     }
 
-    private void HandleSubmit()
+    private async Task HandleSubmit()
     {
+        var wordStream = await DocumentService.Replace(_doc);
+        using var streamRef = new DotNetStreamReference(stream: wordStream);
+        
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", "teste.docx", wordStream.ConvertToBase64());
+
     }
 
     private void InvokeChangeState()

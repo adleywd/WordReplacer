@@ -1,34 +1,59 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections;
+using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
+using WordReplacer.Models;
 
 namespace WordReplacer.Utilities;
 
 public static class Helper
 {
-    public static void Replace()
-    {
-        var folder = "C:\\testfiles\\";
-        var saveLocation = @"C:\\testfiles\\output";
-        var filename = Path.Join(folder, "testDoc3.docx");
-        var outputfile = Path.Join(saveLocation, "testeOOXML.docx");
-        
-        using var originalDoc = WordprocessingDocument.Open(filename, false);
-        
-        // Clone the opened WordprocessingDocument.
-        using var newDoc = (WordprocessingDocument)originalDoc.Clone(outputfile, true);
 
-        string docText = null;
-        using (var sr = new StreamReader(newDoc.MainDocumentPart.GetStream()))
+    public static Stream Replace(Document document)
+    {
+        try
+        {
+            if (document.FileInMemoryStream is not null)
+            {
+                using (WordprocessingDocument wordDoc =
+                       WordprocessingDocument.Open(document.FileInMemoryStream, true))
+                {
+                    DoReplace(wordDoc);
+                    wordDoc.Close();
+                }
+
+                return document.FileInMemoryStream;
+
+            }
+            else
+            {
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
+    public static void DoReplace(WordprocessingDocument wordDoc)
+    {
+        string docText;
+        using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
         {
             docText = sr.ReadToEnd();
         }
 
         var regexText = new Regex("Student’s Name");
-        docText = regexText.Replace(docText, "TestePerson1");
+        docText = regexText.Replace(docText, "Batatola");
 
-        using (var sw = new StreamWriter(newDoc.MainDocumentPart.GetStream(FileMode.Create)))
+        var wordStream = wordDoc.MainDocumentPart.GetStream(FileMode.Create);
+        using (var sw = new StreamWriter(wordStream))
         {
             sw.Write(docText);
         }
+
     }
+
 }
