@@ -19,7 +19,7 @@ public static class Helper
                 using (WordprocessingDocument wordDoc =
                        WordprocessingDocument.Open(document.FileInMemoryStream, true))
                 {
-                    DoReplace(wordDoc);
+                    DoReplaceText(wordDoc, document.DocumentValues);
                     wordDoc.Close();
                 }
 
@@ -37,7 +37,7 @@ public static class Helper
         }
     }
 
-    public static void DoReplace(WordprocessingDocument wordDoc)
+    public static void DoReplaceText(WordprocessingDocument wordDoc, Dictionary<DocumentValue, DocumentValue> values)
     {
         string docText;
         using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
@@ -45,8 +45,14 @@ public static class Helper
             docText = sr.ReadToEnd();
         }
 
-        var regexText = new Regex("Student’s Name");
-        docText = regexText.Replace(docText, "Batatola");
+        // Move to specif class, not a "helper"
+        // Check a better way to replace it, spaces do not work
+        // This way breaks with < >, or : (because alters the xml)
+        foreach (var value in values)
+        {
+            var regexText = new Regex(value.Key.Text);
+            docText = regexText.Replace(docText, value.Value.Text);
+        }
 
         var wordStream = wordDoc.MainDocumentPart.GetStream(FileMode.Create);
         using (var sw = new StreamWriter(wordStream))

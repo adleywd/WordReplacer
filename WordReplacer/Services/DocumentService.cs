@@ -6,12 +6,25 @@ namespace WordReplacer.Services
 {
     public class DocumentService : IDocumentService
     {
-        public async Task<Stream> Replace(Document document)
+        public async Task<Stream?> Replace(Document document)
         {
-            using var stream = new MemoryStream();
-            await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
-            document.FileInMemoryStream = stream;
-            return Helper.Replace(document);
+            try
+            {
+                using var stream = new MemoryStream();
+                if (document.File is not null)
+                {
+                    await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
+                    document.FileInMemoryStream = stream;
+                    return Helper.Replace(document);
+                }
+            }
+            
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+            return null;
         }
     }
 }

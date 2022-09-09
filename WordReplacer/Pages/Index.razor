@@ -6,45 +6,55 @@
 @inject IDocumentService DocumentService
 @inject IJSRuntime JSRuntime;
 
-<PageTitle>Certificate Replacer</PageTitle>
+<PageTitle>Word Replacer</PageTitle>
 <h2>
-    <b>Certificate Replacer</b>
+    <b>Word Replacer</b>
 </h2>
 <hr/>
 <div class="container-fluid">
-
+   
     <div class="row">
-        <div class="col-12">
-            <MatTextField @bind-Value="_docParamsDto.Label" HelperText="Label name to easy identify the input" Label="Label name"/>
-            <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())"/>
-            <br/>
-            <MatButton Raised="true" OnClick="AddValues">Add value</MatButton>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <MatFileUpload OnChange="@FilesReady" Label="Drop a single file here or Browse"></MatFileUpload>
+        <div class="col-12 mt-3">
+            <MatFileUpload OnChange="@FilesReady" Label="Drop a file or Browse here"></MatFileUpload>
             @foreach (var file in _fileList)
             {
-                <div>@file</div>
+                <div class="alert alert-info">@file</div>
             }
         </div>
     </div>
-
-    <EditForm Model="_doc" OnValidSubmit="HandleSubmit" class="col-12 mt-3">
+    
+    <EditForm Model="_docParamsDto" OnValidSubmit="AddValues">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                <MatTextField @bind-Value="_docParamsDto.Text"
+                              HelperText="The text that will be replaced"
+                              Label="Value to be replaced"
+                              FullWidth="true"/>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                <label>The field you want for your new input</label>
+                <br/>
+                <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())"/>
+            </div>
+        </div>
+        <div class="row">
+            <MatButton Raised="true" Disabled="_docParamsDto.IsTextEmpty">Add value</MatButton>
+        </div>
+    </EditForm>
+    
+    <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12 mt-3">
         <DataAnnotationsValidator/>
         @if (_doc.DocumentValues.Count > 0)
         {
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                     <h4>
-                        <b>Older Values</b>
+                        <b>Replace this</b>
                     </h4>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                     <h4>
-                        <b>Newer Values</b>
+                        <b>For</b>
                     </h4>
                 </div>
             </div>
@@ -52,24 +62,33 @@
         @foreach (var docValue in _doc.DocumentValues)
         {
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                     <MatTextField @bind-Value="docValue.Key.Text"
                                   HelperText="@docValue.Key.HelperText"
-                                  Label="@docValue.Key.Label"
                                   FullWidth="true"/>
                 </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                     <MatTextField @bind-Value="docValue.Value.Text"
                                   HelperText="@docValue.Value.HelperText"
                                   Label="@docValue.Value.Label"
                                   FullWidth="true"/>
                 </div>
+                <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
+                    <MatButton Outlined="true"
+                               Icon="delete"
+                               OnClickStopPropagation="true"
+                               Type="button"
+                               OnClick="() => RemoveItemsFromDict(docValue.Key)">
+                        Remove
+                    </MatButton>
+                </div>
             </div>
+            <hr/>
         }
         @if (_doc.DocumentValues.Count > 0)
         {
-            <MatButton Raised="true">Replace</MatButton>
+            <MatButton Disabled="@_doc.IsFileEmpty" Raised="true">Replace and Download</MatButton>
         }
 
     </EditForm>
@@ -79,14 +98,23 @@
 {
     private readonly Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
-    private readonly List<string> _fileList = new();
+    private List<string> _fileList = new();
+
 
     private void FilesReady(IMatFileUploadEntry[] files)
     {
         foreach (var file in files)
         {
+            // if (file.Name.Split(".").Last() is not ("docx" or "doc"))
+            if(file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                // TODO: Display toast
+                _doc.File = null;
+                _fileList = new List<string>();
+                return;
+            }
             _doc.File = file;
-            _fileList.Add($"Name: {file.Name} - Size: {file.Size}");
+            _fileList.Add($"Selected file: {file.Name}");
         }
     }
 
@@ -94,33 +122,42 @@
     {
         var oldValue = new DocumentValue()
         {
-            Label = $"Old {_docParamsDto.Label}",
+            Label = _docParamsDto.Text,
             HtmlId = Guid.NewGuid().ToString(),
             IsOldValue = true,
-            Text = "",
+            Text = _docParamsDto.Text,
             HelperText = "This is the old value",
             Type = InputType.TextField
         };
         var newValue = new DocumentValue()
         {
-            Label = $"New {_docParamsDto.Label}",
+            Label = $"New value for {_docParamsDto.Text}",
             HtmlId = Guid.NewGuid().ToString(),
             IsOldValue = false,
             Text = "",
             HelperText = "This is will be the new value",
             Type = InputType.TextField
         };
-
         _doc.DocumentValues.Add(oldValue, newValue);
+        // _docParamsDto.Text = string.Empty; // Cleat text
     }
 
-    private async Task HandleSubmit()
+    private async Task HandleSubmitAsync()
     {
-        var wordStream = await DocumentService.Replace(_doc);
-        using var streamRef = new DotNetStreamReference(stream: wordStream);
-        
-        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", "teste.docx", wordStream.ConvertToBase64());
+        Stream? wordStream = await DocumentService.Replace(_doc);
+        if (wordStream is not null)
+        {
+            using var streamRef = new DotNetStreamReference(stream: wordStream);
+            await JSRuntime.InvokeVoidAsync("downloadFileFromStream", "teste.docx", wordStream.ConvertToBase64());
+        }
+        else
+        {
+        }
+    }
 
+    private void RemoveItemsFromDict(DocumentValue documentValue)
+    {
+        _doc.DocumentValues.Remove(documentValue);
     }
 
     private void InvokeChangeState()

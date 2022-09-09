@@ -4,5 +4,6 @@ public enum InputType
 {
     TextField,
     TextArea,
-    CheckBox
+    DatePicker,
+    DateTimePicker
 }

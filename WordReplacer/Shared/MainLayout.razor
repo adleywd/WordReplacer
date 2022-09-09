@@ -1,49 +1,51 @@
 ﻿@inherits LayoutComponentBase
 
-<MatAnchorUtils></MatAnchorUtils>
-<MatAppBar Style="z-index: 100;">
-    <MatAppBarRow>
-        <MatAppBarSection>
-            <MatIconButton Icon="menu" OnClick="@((e) => MenuButtonClicked())"></MatIconButton>
-            <MatHidden BreakPoint="@MatBreakpoint.XS" Direction="@MatHiddenDirection.Down">
-                <MatAppBarTitle>WordReplacer</MatAppBarTitle>
-            </MatHidden>
-        </MatAppBarSection>
-        <MatAppBarSection Align="@MatAppBarSectionAlign.End">
-            <MatIconButton Link="https://github.com/adleywd" Target="_blank">
-                    <i class="fab fa-github" aria-hidden="true"></i>
+<MatThemeProvider Theme="@primaryTheme">
+    <MatAnchorUtils></MatAnchorUtils>
+    <MatAppBar Style="z-index: 100;">
+        <MatAppBarRow>
+            <MatAppBarSection>
+                <MatIconButton Icon="menu" OnClick="@((e) => MenuButtonClicked())"></MatIconButton>
+                <MatHidden BreakPoint="@MatBreakpoint.XS" Direction="@MatHiddenDirection.Down">
+                    <MatAppBarTitle>WordReplacer</MatAppBarTitle>
+                </MatHidden>
+            </MatAppBarSection>
+            <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                <MatIconButton Link="https://github.com/adleywd" Target="_blank">
+                    <i class="fa fa-github" aria-hidden="true"></i>
                 </MatIconButton>
-        </MatAppBarSection>
-    </MatAppBarRow>
-</MatAppBar>
+            </MatAppBarSection>
+        </MatAppBarRow>
+    </MatAppBar>
 
 
-<MatDrawerContainer Style="width: 100vw; height: 100vh;" Class="mat">
+    <MatDrawerContainer Style="width: 100vw; height: 100vh;" Class="mat">
 
-    <MatHidden Breakpoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Up" HiddenChanged="@ModelDrawerHiddenChanged">
-        <ChildContent>
-            <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Modal">
-                <MatAppBarAdjust></MatAppBarAdjust>
-                <NavMenu />
-            </MatDrawer>
-        </ChildContent>
-        <ElseContent>
-            <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Dismissible">
-                <MatAppBarAdjust></MatAppBarAdjust>
-                <NavMenu />
-            </MatDrawer>
-        </ElseContent>
-    </MatHidden>
+        <MatHidden Breakpoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Up" HiddenChanged="@ModelDrawerHiddenChanged">
+            <ChildContent>
+                <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Modal">
+                    <MatAppBarAdjust></MatAppBarAdjust>
+                    <NavMenu/>
+                </MatDrawer>
+            </ChildContent>
+            <ElseContent>
+                <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Dismissible">
+                    <MatAppBarAdjust></MatAppBarAdjust>
+                    <NavMenu/>
+                </MatDrawer>
+            </ElseContent>
+        </MatHidden>
 
 
-    <MatDrawerContent Class="mdc-theme--background">
-        <MatAppBarAdjust></MatAppBarAdjust>
-        <div class="body-wrapper ps-3 pe-3 pt-2 pb-2">
-            @Body
-        </div>
-    </MatDrawerContent>
+        <MatDrawerContent Class="mdc-theme--background">
+            <MatAppBarAdjust></MatAppBarAdjust>
+            <div class="body-wrapper ps-3 pe-3 pt-2 pb-2">
+                @Body
+            </div>
+        </MatDrawerContent>
 
-</MatDrawerContainer>
+    </MatDrawerContainer>
+</MatThemeProvider>
 
 @code
 {
@@ -62,4 +64,10 @@
         _navMenuOpened = !_navMenuOpened;
         this.StateHasChanged();
     }
+    
+    MatTheme primaryTheme = new ()
+    {
+        Primary = MatThemeColors.DeepPurple._700.Value,
+        Secondary = MatThemeColors.DeepPurple._300.Value
+    };
 }

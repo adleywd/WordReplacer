@@ -4,6 +4,6 @@ namespace WordReplacer.Services
 {
     public interface IDocumentService
     {
-        public Task<Stream> Replace(Document document);
+        public Task<Stream?> Replace(Document document);
     }
 }
