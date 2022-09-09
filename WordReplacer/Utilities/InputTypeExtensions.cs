@@ -1,0 +1,16 @@
+﻿using WordReplacer.Enums;
+
+namespace WordReplacer.Utilities;
+
+public static class InputTypeExtensions
+{
+    public static bool IsTextArea(this InputType inputType)
+    {
+        return inputType == InputType.TextArea;
+    }
+    
+    public static bool IsTextField(this InputType inputType)
+    {
+        return inputType == InputType.TextField;
+    }
+}

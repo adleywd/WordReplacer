@@ -11,4 +11,5 @@ public class DocumentValue
     public string HelperText { get; set; } = string.Empty;
     public string Text { get; set; } = string.Empty;
     public InputType Type { get; set; }
+    public bool RepeatReplaceForEachLine { get; set; }
 }
