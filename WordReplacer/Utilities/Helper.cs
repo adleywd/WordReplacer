@@ -10,56 +10,15 @@ namespace WordReplacer.Utilities;
 public static class Helper
 {
 
-    public static Stream Replace(Document document)
+    public static string ReplaceTextWithRegex(string? regexPattern, string? input, string? replacement)
     {
-        try
-        {
-            if (document.FileInMemoryStream is not null)
-            {
-                using (WordprocessingDocument wordDoc =
-                       WordprocessingDocument.Open(document.FileInMemoryStream, true))
-                {
-                    DoReplaceText(wordDoc, document.DocumentValues);
-                    wordDoc.Close();
-                }
-
-                return document.FileInMemoryStream;
-
-            }
-            else
-            {
-                return null;
-            }
-        }
-        catch (Exception ex)
-        {
-            return null;
-        }
-    }
-
-    public static void DoReplaceText(WordprocessingDocument wordDoc, Dictionary<DocumentValue, DocumentValue> values)
-    {
-        string docText;
-        using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
-        {
-            docText = sr.ReadToEnd();
-        }
-
-        // Move to specif class, not a "helper"
         // Check a better way to replace it, spaces do not work
         // This way breaks with < >, or : (because alters the xml)
-        foreach (var value in values)
+        if (regexPattern is null || input is null || replacement is null)
         {
-            var regexText = new Regex(value.Key.Text);
-            docText = regexText.Replace(docText, value.Value.Text);
+            return string.Empty;
         }
-
-        var wordStream = wordDoc.MainDocumentPart.GetStream(FileMode.Create);
-        using (var sw = new StreamWriter(wordStream))
-        {
-            sw.Write(docText);
-        }
-
+        var regexText = new Regex(regexPattern);
+        return regexText.Replace(input, replacement);
     }
-
 }
