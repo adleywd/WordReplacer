@@ -97,7 +97,7 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <MatSlideToggle @bind-Value="@docValue.Value.RepeatReplaceForEachLine"/>
-                                    <span class="ms-1">Repeat the value for each line</span>
+                                    <span class="ms-1">Create file for each line in replace area</span>
                                 </div>
                             </div>
                         }
@@ -195,7 +195,8 @@
             Text = "",
             HelperText = "This is will be the new value",
             Type = _docParamsDto.Type,
-            IsAccordionOpen = true
+            IsAccordionOpen = true,
+            RepeatReplaceForEachLine = _docParamsDto.Type == InputType.List
         };
         _doc.DocumentValues.Add(oldValue, newValue);
         _docParamsDto.Text = string.Empty; // Cleat text field
@@ -205,19 +206,20 @@
     {
         try
         {
-            Stream? wordStream = await DocumentService.Replace(_doc);
+            Stream? wordStream = await DocumentService.ProcessFilesAsync(_doc);
             if (wordStream is not null)
             {
                 using var streamRef = new DotNetStreamReference(stream: wordStream);
-                await JsRuntime.InvokeVoidAsync("downloadFileFromStream", _doc.File.Name, wordStream.ConvertToBase64());
+                // await JsRuntime.InvokeVoidAsync("downloadFileFromStream", _doc.File.Name, wordStream.ConvertToBase64());
             }
             else
             {
                 DisplayErrorSnackBar("Something went wrong");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             DisplayErrorSnackBar("Something went wrong");
         }
     }
