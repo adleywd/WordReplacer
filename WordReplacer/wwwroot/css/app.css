@@ -68,3 +68,7 @@ a, .btn-link {
     padding: 24px;
     margin: 0 auto;
 }
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled){
+    
+}

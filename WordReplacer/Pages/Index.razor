@@ -13,7 +13,7 @@
     <MatPaper Elevation="6" Class="p-3">
         <div class="row">
             <div class="col-12 mt-3">
-                <MatFileUpload OnChange="@FilesReady" Label="Drop a file or Browse here"></MatFileUpload>
+                <MatFileUpload OnChange="@FilesReady" Label="Drop a file or Browse here"/>
                 @foreach (var file in _fileList)
                 {
                     <div class="alert alert-info">@file</div>
@@ -25,6 +25,7 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
                     <MatTextField @bind-Value="_docParamsDto.Text"
+                                  OnInput="@(e => _docParamsDto.Text = e.Value?.ToString())"
                                   HelperText="The text that will be replaced"
                                   Label="Value to be replaced"
                                   FullWidth="true"/>
@@ -37,30 +38,61 @@
             </div>
             <div class="row">
                 <div class="col-12 mb-2 justify-content-center text-center">
-                    <MatButton Style="width: 98%" Raised="true" Disabled="_docParamsDto.IsTextEmpty">Add value</MatButton>
+                    <MatButton Icon="add"
+                               Style="width: 98%"
+                               Raised="true"
+                               Disabled="_docParamsDto.IsTextEmpty">
+                        Add value
+                    </MatButton>
                 </div>
             </div>
         </EditForm>
     </MatPaper>
     <hr/>
+    @if (_doc.DocumentValues.Count > 0)
+    {
+        <div class="row">
+            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                <h3>Old values</h3>
+            </div>
+            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                <h3>New values</h3>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info justify-content-center">
+            <p class="text-center justify-content-center">Select a file and add some values to being the replace</p>
+        </div>
+    }
     <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12 mt-3">
         <DataAnnotationsValidator/>
 
         <MatAccordion Multi="true">
             @foreach (var docValue in _doc.DocumentValues)
             {
-                <MatExpansionPanel>
-                    <MatExpansionPanelSummary>
-                        <MatExpansionPanelHeader>
-                            <div class="d-inline-block">
-                                Replace <b class="text-decoration-underline">@docValue.Key.Text</b>
-                                for <b class="text-decoration-underline">@docValue.Value.Text</b>
+                <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text}")" 
+                            Wrap="true"
+                            Position="MatTooltipPosition.Top"
+                            TargetId="@docValue.Key.HtmlId">
+                </MatTooltip>
+                <MatExpansionPanel @bind-Expanded="docValue.Key.IsAccordionOpen">
+                    <MatExpansionPanelSummary Style="height: auto;" Id="@docValue.Key.HtmlId">
+                        <div class="row" style=" width: 100%;">
+                            <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
+                                <b class="text-decoration-underline">@docValue.Key.Text</b>
                             </div>
-                        </MatExpansionPanelHeader>
+                            <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
+                                <span>
+                                <b class="text-decoration-underline">@docValue.Value.Text</b>
+                                </span>
+                            </div>
+                        </div>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
 
-                        @if (docValue.Value.Type == InputType.TextArea)
+                        @if (docValue.Value.Type == InputType.List)
                         {
                             <div class="row">
                                 <div class="col-lg-12">
@@ -72,17 +104,21 @@
                         <div class="row">
                             <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                                 <MatTextField @bind-Value="docValue.Key.Text"
+                                              Label="@docValue.Key.Label"
+                                              OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
                                               HelperText="@docValue.Key.HelperText"
                                               FullWidth="true"/>
                             </div>
-                            @if (docValue.Value.Type is InputType.TextField or InputType.TextArea)
+                            @if (docValue.Value.Type is InputType.Text or InputType.List)
                             {
                                 <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                                     <MatTextField @bind-Value="docValue.Value.Text"
+                                                  OnInput="@(e => docValue.Value.Text = e.Value?.ToString())"
                                                   HelperText="@docValue.Value.HelperText"
                                                   Label="@docValue.Value.Label"
                                                   TextArea="@docValue.Value.Type.IsTextArea()"
-                                                  FullWidth="true"/>
+                                                  FullWidth="true"
+                                                  Style="background: white;"/>
                                 </div>
                             }
                             <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
@@ -102,26 +138,34 @@
         <hr/>
         @if (_doc.DocumentValues.Count > 0)
         {
-            <MatButton Disabled="@_doc.IsFileEmpty" Raised="true">Replace and Download</MatButton>
+            <MatButton Icon="done_all" Disabled="@_doc.IsFileEmpty" Raised="true">Replace and Download</MatButton>
         }
 
     </EditForm>
+    <MatSnackbar @bind-IsOpen="@_snackBarIsOpen">
+        <MatSnackbarContent>@_errorDisplayText</MatSnackbarContent>
+        <MatSnackbarActions>
+            <MatButton Raised="true" OnClick="@(() => _snackBarIsOpen = false)">Close</MatButton>
+        </MatSnackbarActions>
+    </MatSnackbar>
 </div>
-
+    
 @code
 {
     private readonly Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
     private List<string> _fileList = new();
+    private bool _snackBarIsOpen;
+    private string _errorDisplayText = string.Empty;
 
     private void FilesReady(IMatFileUploadEntry[] files)
     {
         foreach (var file in files)
         {
-    // if (file.Name.Split(".").Last() is not ("docx" or "doc"))
+            // if (file.Name.Split(".").Last() is not ("docx" or "doc"))
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-    // TODO: Display toast
+                DisplayErrorSnackBar("Only word documents (.docx) are allowed.");
                 _doc.File = null;
                 _fileList = new List<string>();
                 return;
@@ -135,12 +179,13 @@
     {
         var oldValue = new DocumentValue()
         {
-            Label = _docParamsDto.Text,
+            Label = "Old Value",
             HtmlId = Guid.NewGuid().ToString(),
             IsOldValue = true,
             Text = _docParamsDto.Text,
             HelperText = "This is the old value",
-            Type = InputType.TextField
+            Type = InputType.Text,
+            IsAccordionOpen = true
         };
         var newValue = new DocumentValue()
         {
@@ -149,31 +194,47 @@
             IsOldValue = false,
             Text = "",
             HelperText = "This is will be the new value",
-            Type = _docParamsDto.Type
+            Type = _docParamsDto.Type,
+            IsAccordionOpen = true
         };
         _doc.DocumentValues.Add(oldValue, newValue);
-    // _docParamsDto.Text = string.Empty; // Cleat text
+        _docParamsDto.Text = string.Empty; // Cleat text field
     }
 
     private async Task HandleSubmitAsync()
     {
-        Stream? wordStream = await DocumentService.Replace(_doc);
-        if (wordStream is not null)
+        try
         {
-            using var streamRef = new DotNetStreamReference(stream: wordStream);
-            await JsRuntime.InvokeVoidAsync("downloadFileFromStream", "teste.docx", wordStream.ConvertToBase64());
+            Stream? wordStream = await DocumentService.Replace(_doc);
+            if (wordStream is not null)
+            {
+                using var streamRef = new DotNetStreamReference(stream: wordStream);
+                await JsRuntime.InvokeVoidAsync("downloadFileFromStream", _doc.File.Name, wordStream.ConvertToBase64());
+            }
+            else
+            {
+                DisplayErrorSnackBar("Something went wrong");
+            }
         }
-        else
+        catch (Exception)
         {
+            DisplayErrorSnackBar("Something went wrong");
         }
     }
 
+    private void DisplayErrorSnackBar(string errorMessage)
+    {
+        _snackBarIsOpen = true;
+        _errorDisplayText = errorMessage;
+        ReloadUI();
+    }
+    
     private void RemoveItemsFromDict(DocumentValue documentValue)
     {
         _doc.DocumentValues.Remove(documentValue);
     }
 
-    private void InvokeChangeState()
+    private void ReloadUI()
     {
         InvokeAsync(StateHasChanged);
     }

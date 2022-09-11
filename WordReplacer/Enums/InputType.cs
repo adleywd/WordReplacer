@@ -4,8 +4,8 @@ namespace WordReplacer.Enums;
 
 public enum InputType
 {
-    TextField,
-    TextArea,
+    Text,
+    List,
     // DatePickerText,
     // DatePickerNumeric,
 }

@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using WordReplacer.Enums;
 using WordReplacer.Models;
 using WordReplacer.Utilities;
 
@@ -17,14 +18,15 @@ namespace WordReplacer.Services
                     document.FileInMemoryStream = stream;
                     return Helper.Replace(document);
                 }
+
+                return null;
             }
             
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                throw;
             }
-            
-            return null;
         }
     }
 }

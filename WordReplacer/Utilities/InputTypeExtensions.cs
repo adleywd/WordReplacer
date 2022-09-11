@@ -6,11 +6,11 @@ public static class InputTypeExtensions
 {
     public static bool IsTextArea(this InputType inputType)
     {
-        return inputType == InputType.TextArea;
+        return inputType == InputType.List;
     }
     
     public static bool IsTextField(this InputType inputType)
     {
-        return inputType == InputType.TextField;
+        return inputType == InputType.Text;
     }
 }
