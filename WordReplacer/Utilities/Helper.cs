@@ -21,4 +21,14 @@ public static class Helper
         var regexText = new Regex(regexPattern);
         return regexText.Replace(input, replacement);
     }
+    
+    public static Dictionary<string,string> RemoveFromDictIfExists(this Dictionary<string,string> dict, string key)
+    {
+        if (dict.ContainsKey(key))
+        {
+            dict.Remove(key);
+        }
+
+        return dict;
+    }
 }

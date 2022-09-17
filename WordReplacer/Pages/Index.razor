@@ -14,10 +14,13 @@
         <div class="row">
             <div class="col-12 mt-3">
                 <MatFileUpload OnChange="@FilesReady" Label="Drop a file or Browse here"/>
-                @foreach (var file in _fileList)
+                @* @foreach (var file in _fileList) *@
+                @* { *@
+                @if (_doc.File is not null)
                 {
-                    <div class="alert alert-info">@file</div>
+                    <div class="alert alert-info">@_doc.File.Name</div>
                 }
+                @* } *@
             </div>
         </div>
         <hr/>

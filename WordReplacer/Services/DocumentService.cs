@@ -14,10 +14,85 @@ namespace WordReplacer.Services
             _jsRuntime = jsRuntime;
         }
 
+        //{
+        //    "Aluno":["Aluno1","Aluno2"],
+        //    "Escola":["Escola1", "Escola2"]
+        //    "Data" : [10.10.10]
+        //}
+        
+        /// <summary>
+        /// Get all combinations for a List of Nodes that contains Key and List of string Values
+        /// </summary>
+        /// <param name="branches"></param>
+        /// <param name="currentNodeIdx"></param>
+        /// <param name="result">The result output</param>
+        /// <param name="currentDict"></param>
+        public void GetCombinations(List<Node> branches, int currentNodeIdx, List<Dictionary<string, string>> result, Dictionary<string, string> currentDict)
+        {
+            Node currentNode = branches[currentNodeIdx];
+            var isLastNode = currentNodeIdx == branches.Count - 1;
+        
+            foreach (var value in currentNode.Values)
+            {
+                // Since the same dictionary is used in the loops, sometimes the key will be already filled with older value.
+                // To avoid the error of duplicated value inside a dictionary, the current key is removed.
+                currentDict = currentDict.RemoveFromDictIfExists(currentNode.Key);
+            
+                var isLastValue = value == currentNode.Values.Last();
+            
+                // If LAST NODE but NOT LAST VALUE
+                if (isLastNode && !isLastValue)
+                {
+                    currentDict.Add(currentNode.Key, value);
+                    result.Add(new Dictionary<string, string>(currentDict));
+                }
+
+                // If is NOT the LAST NODE but it is the LAST VALUE
+                if (!isLastNode && isLastValue)
+                {
+                    currentDict.Add(currentNode.Key, value);
+                    GetCombinations(branches, currentNodeIdx + 1, result, currentDict );
+                }
+                // If is the LAST VALUE and LAST VALUE
+                if (isLastNode && isLastValue)
+                {
+                    currentDict.Add(currentNode.Key, value);
+                    result.Add(new Dictionary<string, string>(currentDict));
+                }
+                // if NOT LAST NODE and NOT LAST VALUE
+                if (!isLastNode && !isLastValue)
+                {
+                    currentDict.Add(currentNode.Key, value);
+                    GetCombinations(branches, currentNodeIdx + 1, result, currentDict );
+                }
+            }
+        }
+
         public async Task<Stream?> ProcessFilesAsync(Document document)
         {
             var documentValuesWithRepeatValuesList =
                 document.DocumentValues.Where(d => d.Value.RepeatReplaceForEachLine);
+
+            // I NEED A List of Dicts<oldValue, newValue>
+            var result = new List<Dictionary<string, string>>();
+            
+            var keyValueListDict = document.DocumentValues.ToDictionary(
+                k => k.Key.Text,
+                k =>
+                {
+                    if (k.Value.RepeatReplaceForEachLine)
+                    {
+                        return k.Value.Text
+                            .Split("\n")
+                            .Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                    }
+
+                    return new List<string>()
+                    {
+                        k.Value.Text ?? string.Empty
+                    };
+                });
+
 
             if (documentValuesWithRepeatValuesList.ToList().Count > 0)
             {
@@ -46,15 +121,15 @@ namespace WordReplacer.Services
                     }
 
 
-                    foreach (var repeatingValuesKey in repeatValues.Keys)
+                    foreach (var listValuesKey in repeatValues.Keys)
                     {
                         foreach (KeyValuePair<string, string> value in values)
                         {
-                            if (value.Key.Contains(repeatingValuesKey))
+                            if (value.Key.Contains(listValuesKey))
                             {
                                 var dict = new Dictionary<string, string>();
                                 dict = values;
-                                foreach (var repeatValue in repeatValues[repeatingValuesKey])
+                                foreach (var repeatValue in repeatValues[listValuesKey])
                                 {
                                     dict[value.Key] = repeatValue;
                                     using var stream = new MemoryStream();
