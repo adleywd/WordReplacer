@@ -29,6 +29,7 @@ namespace WordReplacer.Services
         /// <param name="currentDict"></param>
         public void GetCombinations(List<Node> branches, int currentNodeIdx, List<Dictionary<string, string>> result, Dictionary<string, string> currentDict)
         {
+            // var currentDict = new Dictionary<string, string>(branchDictResult);
             Node currentNode = branches[currentNodeIdx];
             var isLastNode = currentNodeIdx == branches.Count - 1;
         
