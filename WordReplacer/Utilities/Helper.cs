@@ -11,6 +11,12 @@ namespace WordReplacer.Utilities;
 
 public static class Helper
 {
+    /// <summary>
+    /// It replaces all the text that matches the regex pattern with the replacement text.
+    /// </summary>
+    /// <param name="regexPattern">The regex pattern to use to find the text to replace.</param>
+    /// <param name="input">The string to search for matches.</param>
+    /// <param name="replacement">The text to replace the matches with.</param>
     public static string ReplaceTextWithRegex(string? regexPattern, string? input, string? replacement)
     {
         // Check a better way to replace it, spaces do not work
@@ -24,6 +30,11 @@ public static class Helper
         return regexText.Replace(input, replacement);
     }
 
+    /// <summary>
+    /// If the key exists in the dictionary, remove it.
+    /// </summary>
+    /// <param name="dict">The dictionary to remove the key from.</param>
+    /// <param name="key">The key to remove from the dictionary.</param>
     public static IDictionary<string, string> RemoveFromDictIfExists(this IDictionary<string, string> dict, string key)
     {
         if (dict.ContainsKey(key))
@@ -34,25 +45,12 @@ public static class Helper
         return dict;
     }
 
+   
+
     /// <summary>
-    /// Transform a Dictionary to
+    /// It takes a dictionary of DocumentValues and returns a list of Nodes.
     /// </summary>
-    /// <param name="dict"></param>
-    /// <returns></returns>
-    public static List<Node> ToNode(Dictionary<string, List<string>> dict)
-    {
-        return dict.Select(
-                       keyValuePair => new Node(
-                           keyValuePair.Key,
-                           keyValuePair.Value))
-                   .ToList();
-    }
-    
-    /// <summary>
-    /// TBA
-    /// </summary>
-    /// <param name="dict"></param>
-    /// <returns></returns>
+    /// <param name="dict">The dictionary to convert to a node.</param>
     public static List<Node> DictionaryToNode(Dictionary<DocumentValue, DocumentValue> dict)
     {
         var result = dict.Select(
@@ -65,4 +63,6 @@ public static class Helper
                    .ToList();
         return result;
     }
+    
+        
 }
