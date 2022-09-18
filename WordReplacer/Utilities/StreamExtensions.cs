@@ -1,7 +1,12 @@
 ﻿namespace WordReplacer.Utilities
 {
+    /* A static class that extends the Stream class. */
     public static class StreamExtensions
     {
+        /// <summary>
+        /// Converts a stream to a base64 string
+        /// </summary>
+        /// <param name="Stream">The stream to convert to base64.</param>
         public static string ConvertToBase64(this Stream stream)
         {
             if (stream is MemoryStream memoryStream)
