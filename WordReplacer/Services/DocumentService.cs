@@ -22,7 +22,7 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
-        public async Task<List<Task>> ProcessFilesAsync(Document document)
+        public async Task<List<Task>> ReplaceAndDownloadAsync(Document document)
         {
             var tasks = new List<Task>();
 

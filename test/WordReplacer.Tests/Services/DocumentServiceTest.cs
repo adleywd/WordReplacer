@@ -1,7 +1,4 @@
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using DocumentFormat.OpenXml.Spreadsheet;
 using WordReplacer.Models;
 using WordReplacer.Utilities;
 
@@ -13,24 +10,25 @@ public class DocumentServiceTest
     private void GetCombinations_WithValidNodeList_ShouldReturnListWithAllPossibleCombinationsInDict()
     {
         // Arrange
-        var expectedListResult = new List<Dictionary<string, string>>();
-
-        expectedListResult.Add(new Dictionary<string, string>
+        var expectedListResult = new List<IDictionary<string, string>>
         {
-            { "Student", "A1" }, { "School", "E1" }, { "Date", "D1" }
-        });
-        expectedListResult.Add(new Dictionary<string, string>
-        {
-            { "Student", "A1" }, { "School", "E1" }, { "Date", "D2" }
-        });
-        expectedListResult.Add(new Dictionary<string, string>
-        {
-            { "Student", "A2" }, { "School", "E1" }, { "Date", "D1" }
-        });
-        expectedListResult.Add(new Dictionary<string, string>
-        {
-            { "Student", "A2" }, { "School", "E1" }, { "Date", "D2" }
-        });
+            new Dictionary<string, string>
+            {
+                { "Student", "A1" }, { "School", "E1" }, { "Date", "D1" }
+            },
+            new Dictionary<string, string>
+            {
+                { "Student", "A1" }, { "School", "E1" }, { "Date", "D2" }
+            },
+            new Dictionary<string, string>
+            {
+                { "Student", "A2" }, { "School", "E1" }, { "Date", "D1" }
+            },
+            new Dictionary<string, string>
+            {
+                { "Student", "A2" }, { "School", "E1" }, { "Date", "D2" }
+            }
+        };
 
         List<Node> nodes = new()
         {
@@ -48,5 +46,22 @@ public class DocumentServiceTest
         var serializedResult = JsonSerializer.Serialize(result);
         var serializedExpectedResult = JsonSerializer.Serialize(expectedListResult);
         serializedResult.ShouldBe(serializedExpectedResult);
+        // CompareListDictionaries(result, expectedListResult).ShouldBeTrue();
     }
+
+    // private static bool CompareListDictionaries(IList<IDictionary<string, string>> list1, IList<IDictionary<string, string>> list2)
+    // {
+    //     var dict1Keys = list1.Select(d => d.Keys).ToList();
+    //     var dict2Keys = list2.Select(d => d.Keys).ToList();
+    //     var dict1Values = list1.Select(d => d.Values.Select(v => v)).ToList();
+    //     var dict2Values = list2.Select(d => d.Values.Select(v => v)).ToList();
+    //     
+    //
+    //     var areKeysEqual = dict1Keys.SequenceEqual(dict2Keys);
+    //     var areValuesEqual = dict1Values.SequenceEqual(dict2Values);
+    //
+    //     return areKeysEqual && areValuesEqual;
+    //
+    // }
+    
 }

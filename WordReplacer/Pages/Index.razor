@@ -173,7 +173,6 @@
     {
         foreach (var file in files)
         {
-            // if (file.Name.Split(".").Last() is not ("docx" or "doc"))
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
                 DisplayErrorSnackBar("Only Word documents (.docx) are allowed.");
@@ -220,9 +219,13 @@
         _btnReplaceIcon = "hourglass_empty";
         try
         {
-            List<Task> taskListResult = await DocumentService.ProcessFilesAsync(_doc);
+            List<Task> taskListResult = await DocumentService.ReplaceAndDownloadAsync(_doc);
             await Task
             .WhenAll(taskListResult)
+            // .WhenAll(taskListResult.Select(async task =>
+            // {
+            //     await task.ConfigureAwait(false);
+            // }))
             .ContinueWith(t =>
             {
                 SetDefaultValuesForBtnReplace();
