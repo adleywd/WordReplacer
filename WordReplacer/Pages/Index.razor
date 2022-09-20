@@ -13,14 +13,11 @@
     <MatPaper Elevation="6" Class="p-3">
         <div class="row">
             <div class="col-12 mt-3">
-                <MatFileUpload OnChange="@FilesReady" Label="Drop a file or Browse here" />
-                @* @foreach (var file in _fileList) *@
-                @* { *@
+                <MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here" />
                 @if (_doc.File is not null)
                 {
                     <div class="alert alert-info">@_doc.File.Name</div>
                 }
-                @* } *@
             </div>
         </div>
         <hr />
