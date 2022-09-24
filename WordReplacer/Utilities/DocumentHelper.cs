@@ -50,7 +50,7 @@ public static class DocumentHelper
     /// <param name="replaceWords">The replace words.</param>
     private static void ReplaceWordBodyText(WordprocessingDocument doc, Dictionary<string, string> replaceWords)
     {
-        Body? body = doc.MainDocumentPart?.Document.Body;
+        var body = doc.MainDocumentPart?.Document.Body;
 
         if (body is null)
         {
@@ -71,15 +71,24 @@ public static class DocumentHelper
 
     private static void ReplaceWordHeaderText(WordprocessingDocument doc, Dictionary<string, string> replaceWords)
     {
-        foreach (var headerPart in doc.MainDocumentPart.HeaderParts)
+        IEnumerable<HeaderPart>? headers = doc.MainDocumentPart?.HeaderParts;
+        if (headers is null)
         {
-            foreach (var text in headerPart.RootElement.Descendants<Text>())
+            return;
+        }
+
+        foreach (var headerPart in headers)
+        {
+            if (headerPart.RootElement is not null)
             {
-                foreach (var words in replaceWords)
+                foreach (var text in headerPart.RootElement.Descendants<Text>())
                 {
-                    if (text.Text.Contains(words.Key))
+                    foreach (var words in replaceWords)
                     {
-                        text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
+                        if (text.Text.Contains(words.Key))
+                        {
+                            text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
+                        }
                     }
                 }
             }
@@ -88,15 +97,25 @@ public static class DocumentHelper
 
     private static void ReplaceWordFooterText(WordprocessingDocument doc, Dictionary<string, string> replaceWords)
     {
-        foreach (var headerPart in doc.MainDocumentPart.FooterParts)
+        IEnumerable<FooterPart>? footer = doc.MainDocumentPart?.FooterParts;
+
+        if (footer is null)
         {
-            foreach (var text in headerPart.RootElement.Descendants<Text>())
+            return;
+        }
+
+        foreach (var headerPart in footer)
+        {
+            if (headerPart.RootElement is not null)
             {
-                foreach (var words in replaceWords)
+                foreach (var text in headerPart.RootElement.Descendants<Text>())
                 {
-                    if (text.Text.Contains(words.Key))
+                    foreach (var words in replaceWords)
                     {
-                        text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
+                        if (text.Text.Contains(words.Key))
+                        {
+                            text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
+                        }
                     }
                 }
             }

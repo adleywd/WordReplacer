@@ -1,4 +1,3 @@
-using DocumentFormat.OpenXml.Packaging;
 using Microsoft.JSInterop;
 using WordReplacer.Models;
 using WordReplacer.Utilities;
@@ -27,11 +26,7 @@ namespace WordReplacer.Services
             var tasks = new List<Task>();
 
             // Check if there is any value as a List to create multiple files
-            if (document.DocumentValues
-                        .Where(d =>
-                            d.Value.ShouldReplaceForEachLine)
-                        .ToList()
-                        .Count > 0)
+            if (document.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine))
             {
                 List<Node> nodeList = Helper.DictionaryToNode(document.DocumentValues);
 
@@ -45,10 +40,14 @@ namespace WordReplacer.Services
                         async () =>
                         {
                             using var stream = new MemoryStream();
-                            await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
-                            Stream? docReplaced = DocumentHelper.Replace((Dictionary<string, string>)result, stream);
-                            var fileName = string.Join("_", result.Values);
-                            await DownloadFileAsync($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                            if (document.File is not null)
+                            {
+                                await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
+                                Stream? docReplaced =
+                                    DocumentHelper.Replace((Dictionary<string, string>)result, stream);
+                                var fileName = string.Join("_", result.Values);
+                                await DownloadFileAsync($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                            }
                         }));
                 }
             }
@@ -59,14 +58,16 @@ namespace WordReplacer.Services
                     async () =>
                     {
                         using var stream = new MemoryStream();
-                        await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
-                        //document.FileInMemoryStream = stream;
-                        Stream? docReplaced = DocumentHelper.Replace(
-                            document.DocumentValues.ToDictionary(
-                                d => d.Key.Text!, 
-                                d => d.Value.Text!)
-                            , stream);
-                        await DownloadFileAsync(document.File.Name, docReplaced).ConfigureAwait(false);
+                        if (document.File is not null)
+                        {
+                            await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
+                            Stream? docReplaced = DocumentHelper.Replace(
+                                document.DocumentValues.ToDictionary(
+                                    d => d.Key.Text!,
+                                    d => d.Value.Text!)
+                                , stream);
+                            await DownloadFileAsync(document.File.Name, docReplaced).ConfigureAwait(false);
+                        }
                     }));
             }
 
@@ -74,7 +75,7 @@ namespace WordReplacer.Services
         }
 
         /// <summary>
-        /// It downloads a file using JS Invokation.
+        /// It downloads a file using JS Invocation.
         /// </summary>
         /// <param name="filename">The name of the file to download.</param>
         /// <param name="docReplaced">The stream of the document that was replaced.</param>

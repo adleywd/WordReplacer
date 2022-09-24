@@ -1,8 +1,8 @@
 ﻿@page "/"
+@using WordReplacer.Utilities
 @using WordReplacer.Models
 @using WordReplacer.Dto
 @using WordReplacer.Enums
-@using WordReplacer.Utilities
 @inject IDocumentService DocumentService
 @inject IJSRuntime JsRuntime;
 
@@ -179,7 +179,7 @@
 
     private void FilesReady(IMatFileUploadEntry[] files)
     {
-        foreach (var file in files)
+        foreach (IMatFileUploadEntry file in files)
         {
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
