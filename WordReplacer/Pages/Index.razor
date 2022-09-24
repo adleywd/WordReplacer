@@ -72,11 +72,22 @@
         <MatAccordion Multi="true">
             @foreach (var docValue in _doc.DocumentValues)
             {
-                <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text}")"
-                        Wrap="true"
-                        Position="MatTooltipPosition.Top"
-                        TargetId="@docValue.Key.HtmlId">
-                </MatTooltip>
+                @if (docValue.Value.ShouldReplaceForEachLine)
+                {
+                    <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text!.Replace("\n", " & ")}")"
+                                Wrap="true"
+                                Position="MatTooltipPosition.Top"
+                                TargetId="@docValue.Key.HtmlId">
+                    </MatTooltip>
+                }
+                else
+                {
+                    <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text}")"
+                            Wrap="true"
+                            Position="MatTooltipPosition.Top"
+                            TargetId="@docValue.Key.HtmlId">
+                    </MatTooltip>
+                }
                 <MatExpansionPanel @bind-Expanded="docValue.Key.IsAccordionOpen">
                     <MatExpansionPanelSummary Style="height: auto;" Id="@docValue.Key.HtmlId">
                         <div class="row" style=" width: 100%;">
@@ -97,7 +108,7 @@
                             <div class="row">
                                 <div class="col-lg-5 col-md-5 col-sm-1"></div>
                                 <div class="col-lg-5 col-md-5 col-sm-12">
-                                    <MatSlideToggle @bind-Value="@docValue.Value.RepeatReplaceForEachLine"/>
+                                    <MatSlideToggle @bind-Value="@docValue.Value.ShouldReplaceForEachLine"/>
                                     <span class="ms-1">Create file for each line in replace area</span>
                                 </div>
                             </div>
@@ -203,7 +214,7 @@
                 HelperText = "This is will be the new value",
                 Type = _docParamsDto.Type,
                 IsAccordionOpen = true,
-                RepeatReplaceForEachLine = _docParamsDto.Type == InputType.List
+                ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
             };
         _doc.DocumentValues.Add(oldValue, newValue);
         _docParamsDto.Text = string.Empty; // Cleat text field

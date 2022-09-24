@@ -29,7 +29,7 @@ namespace WordReplacer.Services
             // Check if there is any value as a List to create multiple files
             if (document.DocumentValues
                         .Where(d =>
-                            d.Value.RepeatReplaceForEachLine)
+                            d.Value.ShouldReplaceForEachLine)
                         .ToList()
                         .Count > 0)
             {
@@ -60,8 +60,12 @@ namespace WordReplacer.Services
                     {
                         using var stream = new MemoryStream();
                         await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
-                        document.FileInMemoryStream = stream;
-                        Stream? docReplaced = DocumentHelper.Replace(document);
+                        //document.FileInMemoryStream = stream;
+                        Stream? docReplaced = DocumentHelper.Replace(
+                            document.DocumentValues.ToDictionary(
+                                d => d.Key.Text!, 
+                                d => d.Value.Text!)
+                            , stream);
                         await DownloadFileAsync(document.File.Name, docReplaced).ConfigureAwait(false);
                     }));
             }

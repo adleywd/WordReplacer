@@ -14,20 +14,54 @@ public static class Helper
     /// <summary>
     /// It replaces all the text that matches the regex pattern with the replacement text.
     /// </summary>
+    /// <param name="text">The string to search for matches.</param>
     /// <param name="regexPattern">The regex pattern to use to find the text to replace.</param>
-    /// <param name="input">The string to search for matches.</param>
     /// <param name="replacement">The text to replace the matches with.</param>
-    public static string ReplaceTextWithRegex(string? regexPattern, string? input, string? replacement)
+    public static string ReplaceTextWithRegex(this string text, string? regexPattern, string? replacement)
     {
         // Check a better way to replace it, spaces do not work
         // This way breaks with < >, or : (because alters the xml)
-        if (regexPattern is null || input is null || replacement is null)
+        if (regexPattern is null || replacement is null)
         {
             return string.Empty;
         }
 
         var regexText = new Regex(regexPattern);
-        return regexText.Replace(input, replacement);
+        return regexText.Replace(text, replacement);
+    }
+
+    /// <summary>
+    /// It replaces all the text that matches the regex pattern with the replacement text.
+    /// </summary>
+    /// <param name="text">The text to be searched and replaced.</param>
+    /// <param name="regexPattern">The regex pattern to use to find the text to replace.</param>
+    /// <param name="replacement">The text to replace the matched text with.</param>
+    /// <param name="onlyReplacingWholeWord">If true, then the regex pattern will be modified to only match whole words.</param>
+    public static string ReplaceTextWithRegex(
+        this string text, 
+        string? regexPattern, 
+        string? replacement,
+        bool onlyReplacingWholeWord,
+        bool ignoreCaseSensitive)
+    {
+        // Check a better way to replace it, spaces do not work
+        // This way breaks with < >, or : (because alters the xml)
+        if (regexPattern is null || replacement is null)
+        {
+            return string.Empty;
+        }
+
+        if (onlyReplacingWholeWord)
+        {
+            regexPattern = $"\\b{regexPattern}\\b";
+        }
+
+        return ignoreCaseSensitive ? 
+            Regex.Replace(text, regexPattern, replacement, RegexOptions.IgnoreCase) 
+            : Regex.Replace(text, regexPattern, replacement);
+        
+        // var regexText = new Regex(regexPattern);
+        // return regexText.Replace(text, replacement );
     }
 
     /// <summary>
@@ -45,7 +79,6 @@ public static class Helper
         return dict;
     }
 
-   
 
     /// <summary>
     /// It takes a dictionary of DocumentValues and returns a list of Nodes.
@@ -54,15 +87,13 @@ public static class Helper
     public static List<Node> DictionaryToNode(Dictionary<DocumentValue, DocumentValue> dict)
     {
         var result = dict.Select(
-                       d => new Node(
-                           d.Key.Text,
-                           d.Value.Text.Split("\n")
-                            .Where(s => !string.IsNullOrWhiteSpace(s))
-                            .ToList())
-                       )
-                   .ToList();
+                             d => new Node(
+                                 d.Key.Text,
+                                 d.Value.Text.Split("\n")
+                                  .Where(s => !string.IsNullOrWhiteSpace(s))
+                                  .ToList())
+                         )
+                         .ToList();
         return result;
     }
-    
-        
 }
