@@ -8,10 +8,11 @@ namespace WordReplacer.Services
     public interface IDocumentService
     {
          
+        
         /// <summary>
-        /// It takes a document, and returns a list of tasks that will process the document
+        /// Replace the document with the provided document and download the updated document
         /// </summary>
-        /// <param name="Document">The document to process.</param>
-        public Task<List<Task>>  ProcessFilesAsync(Document document);
+        /// <param name="Document">The document to have the text replaced.</param>
+        public Task<List<Task>>  ReplaceAndDownloadAsync(Document document);
     }
 }

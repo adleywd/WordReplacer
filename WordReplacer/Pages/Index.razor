@@ -13,14 +13,11 @@
     <MatPaper Elevation="6" Class="p-3">
         <div class="row">
             <div class="col-12 mt-3">
-                <MatFileUpload OnChange="@FilesReady" Label="Drop a file or Browse here" />
-                @* @foreach (var file in _fileList) *@
-                @* { *@
+                <MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here" />
                 @if (_doc.File is not null)
                 {
                     <div class="alert alert-info">@_doc.File.Name</div>
                 }
-                @* } *@
             </div>
         </div>
         <hr />
@@ -173,7 +170,6 @@
     {
         foreach (var file in files)
         {
-            // if (file.Name.Split(".").Last() is not ("docx" or "doc"))
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
                 DisplayErrorSnackBar("Only Word documents (.docx) are allowed.");
@@ -220,9 +216,13 @@
         _btnReplaceIcon = "hourglass_empty";
         try
         {
-            List<Task> taskListResult = await DocumentService.ProcessFilesAsync(_doc);
+            List<Task> taskListResult = await DocumentService.ReplaceAndDownloadAsync(_doc);
             await Task
             .WhenAll(taskListResult)
+            // .WhenAll(taskListResult.Select(async task =>
+            // {
+            //     await task.ConfigureAwait(false);
+            // }))
             .ContinueWith(t =>
             {
                 SetDefaultValuesForBtnReplace();
