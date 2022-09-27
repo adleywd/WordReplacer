@@ -24,9 +24,10 @@ public static class DocumentHelper
             {
                 using (var wordDoc = WordprocessingDocument.Open(streamFile, true))
                 {
-                    ReplaceWordBodyText(wordDoc, values);
-                    ReplaceWordHeaderText(wordDoc, values);
-                    ReplaceWordFooterText(wordDoc, values);
+                    // ReplaceWordBodyText(wordDoc, values);
+                    // ReplaceWordHeaderText(wordDoc, values);
+                    // ReplaceWordFooterText(wordDoc, values);
+                    ReplaceTextWithRegex(wordDoc, values);
                     wordDoc.Close();
                 }
 
@@ -43,6 +44,38 @@ public static class DocumentHelper
         }
     }
 
+    /// <summary>
+    /// It replaces the text in the word document with the values in the dictionary.
+    /// </summary>
+    /// <param name="WordprocessingDocument">This is the document that we're going to be working with.</param>
+    /// <param name="values">A dictionary of key/value pairs. The key is the text to be replaced, and the value is the
+    /// replacement text.</param>
+    private static void ReplaceTextWithRegex(WordprocessingDocument wordDoc,
+        Dictionary<string, string> values)
+    {
+        if (wordDoc.MainDocumentPart is null)
+        {
+            return;
+        }
+
+        string docText;
+        using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+        {
+            docText = sr.ReadToEnd();
+        }
+
+        foreach (KeyValuePair<string, string> value in values)
+        {
+            docText = Helper.ReplaceTextWithRegex(value.Key, docText, value.Value);
+        }
+
+        Stream wordStream = wordDoc.MainDocumentPart.GetStream(FileMode.Create);
+        using (var sw = new StreamWriter(wordStream))
+        {
+            sw.Write(docText);
+        }
+    }
+    
     /// <summary>
     /// Replaces the body text from Word file.
     /// </summary>
@@ -134,7 +167,7 @@ public static class DocumentHelper
     public static void GetCombinations(
         IList<Node> nodes,
         int currentNodeIdx,
-        ICollection<IDictionary<string, string>> resultList,
+        ICollection<Dictionary<string, string>> resultList,
         IDictionary<string, string> currentDict)
     {
         Node currentNode = nodes[currentNodeIdx];
@@ -176,6 +209,37 @@ public static class DocumentHelper
                 currentDict.Add(currentNode.Key, value);
                 GetCombinations(nodes, currentNodeIdx + 1, resultList, currentDict);
             }
+        }
+    }
+    /// <summary>
+    /// It replaces the text in the word document with the values in the dictionary.
+    /// </summary>
+    /// <param name="WordprocessingDocument">This is the document that we're going to be working with.</param>
+    /// <param name="values">A dictionary of key/value pairs. The key is the text to be replaced, and the value is the
+    /// replacement text.</param>
+    private static void DoReplaceText(WordprocessingDocument wordDoc,
+        Dictionary<string, string> values)
+    {
+        if (wordDoc.MainDocumentPart is null)
+        {
+            return;
+        }
+
+        string docText;
+        using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+        {
+            docText = sr.ReadToEnd();
+        }
+
+        foreach (KeyValuePair<string, string> value in values)
+        {
+            docText = Helper.ReplaceTextWithRegex(value.Key, docText, value.Value);
+        }
+
+        Stream wordStream = wordDoc.MainDocumentPart.GetStream(FileMode.Create);
+        using (var sw = new StreamWriter(wordStream))
+        {
+            sw.Write(docText);
         }
     }
 }

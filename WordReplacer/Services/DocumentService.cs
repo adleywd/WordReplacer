@@ -1,3 +1,4 @@
+using MatBlazor;
 using Microsoft.JSInterop;
 using WordReplacer.Models;
 using WordReplacer.Utilities;
@@ -21,6 +22,28 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
+        public List<Dictionary<string, string>> GetAllCombinations(Dictionary<DocumentValue, DocumentValue> values)
+        {
+            List<Node> nodeList = Helper.DictionaryToNode(values);
+            var combinationsResult = new List<Dictionary<string, string>>();
+            DocumentHelper.GetCombinations(nodeList, 0, combinationsResult, new Dictionary<string, string>());
+            return combinationsResult;
+        }
+
+        /// <inheritdoc />
+        public async Task<MemoryStream> GetMemoryStream(IMatFileUploadEntry? file)
+        {
+            if (file is null)
+            {
+                throw new ArgumentException("Cannot get a memory stream from a null/empty file");
+            }
+
+            var stream = new MemoryStream();
+            await file.WriteToStreamAsync(stream).ConfigureAwait(false);
+            return stream;
+        }
+
+        /// <inheritdoc />
         public async Task<List<Task>> ReplaceAndDownloadAsync(Document document)
         {
             var tasks = new List<Task>();
@@ -30,7 +53,7 @@ namespace WordReplacer.Services
             {
                 List<Node> nodeList = Helper.DictionaryToNode(document.DocumentValues);
 
-                var combinationsResult = new List<IDictionary<string, string>>();
+                var combinationsResult = new List<Dictionary<string, string>>();
 
                 DocumentHelper.GetCombinations(nodeList, 0, combinationsResult, new Dictionary<string, string>());
 
@@ -74,12 +97,8 @@ namespace WordReplacer.Services
             return tasks;
         }
 
-        /// <summary>
-        /// It downloads a file using JS Invocation.
-        /// </summary>
-        /// <param name="filename">The name of the file to download.</param>
-        /// <param name="docReplaced">The stream of the document that was replaced.</param>
-        private async Task DownloadFileAsync(string filename, Stream? docReplaced)
+        /// <inheritdoc />
+        public async Task DownloadFileAsync(string filename, Stream? docReplaced)
         {
             if (docReplaced is null)
             {
