@@ -4,23 +4,22 @@
 @using WordReplacer.Dto
 @using WordReplacer.Enums
 @inject IDocumentService DocumentService
-@inject IJSRuntime JsRuntime;
 
 <PageTitle>Word Replacer</PageTitle>
-<hr />
+<hr/>
 <div class="container-fluid">
 
     <MatPaper Elevation="6" Class="p-3">
         <div class="row">
             <div class="col-12 mt-3">
-                <MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here" />
+                <MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here"/>
                 @if (_doc.File is not null)
                 {
-                    <div class="alert alert-info">@_doc.File.Name</div>
+                    <div class="mt-1">Selected File: <span class="text-info"> @_doc.File.Name</span></div>
                 }
             </div>
         </div>
-        <hr />
+        <hr/>
         <EditForm Model="_docParamsDto" OnValidSubmit="AddValues">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
@@ -28,12 +27,12 @@
                                   OnInput="@(e => _docParamsDto.Text = e.Value?.ToString())"
                                   HelperText="The text that will be replaced"
                                   Label="Value to be replaced"
-                                  FullWidth="true" />
+                                  FullWidth="true"/>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
                     <label>The field you want for your new input</label>
-                    <br />
-                    <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())" />
+                    <br/>
+                    <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())"/>
                 </div>
             </div>
             <div class="row">
@@ -48,7 +47,7 @@
             </div>
         </EditForm>
     </MatPaper>
-    <hr />
+    <hr/>
     @if (_doc.DocumentValues.Count > 0)
     {
         <div class="row">
@@ -67,7 +66,7 @@
         </div>
     }
     <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12 mt-3">
-        <DataAnnotationsValidator />
+        <DataAnnotationsValidator/>
 
         <MatAccordion Multi="true">
             @foreach (var docValue in _doc.DocumentValues)
@@ -83,9 +82,9 @@
                 else
                 {
                     <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text}")"
-                            Wrap="true"
-                            Position="MatTooltipPosition.Top"
-                            TargetId="@docValue.Key.HtmlId">
+                                Wrap="true"
+                                Position="MatTooltipPosition.Top"
+                                TargetId="@docValue.Key.HtmlId">
                     </MatTooltip>
                 }
                 <MatExpansionPanel @bind-Expanded="docValue.Key.IsAccordionOpen">
@@ -116,29 +115,29 @@
                         <div class="row">
                             <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                                 <MatTextField @bind-Value="docValue.Key.Text"
-                                          Label="@docValue.Key.Label"
-                                          OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
-                                          HelperText="@docValue.Key.HelperText"
-                                          FullWidth="true" />
+                                              Label="@docValue.Key.Label"
+                                              OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
+                                              HelperText="@docValue.Key.HelperText"
+                                              FullWidth="true"/>
                             </div>
                             @if (docValue.Value.Type is InputType.Text or InputType.List)
                             {
                                 <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                                     <MatTextField @bind-Value="docValue.Value.Text"
-                                          OnInput="@(e => docValue.Value.Text = e.Value?.ToString())"
-                                          HelperText="@docValue.Value.HelperText"
-                                          Label="@docValue.Value.Label"
-                                          TextArea="@docValue.Value.Type.IsTextArea()"
-                                          FullWidth="true"
-                                          Style="background: white;" />
+                                                  OnInput="@(e => docValue.Value.Text = e.Value?.ToString())"
+                                                  HelperText="@docValue.Value.HelperText"
+                                                  Label="@docValue.Value.Label"
+                                                  TextArea="@docValue.Value.Type.IsTextArea()"
+                                                  FullWidth="true"
+                                                  Style="background: white;"/>
                                 </div>
                             }
                             <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
                                 <MatButton Outlined="true"
-                                       Icon="delete"
-                                       OnClickStopPropagation="true"
-                                       Type="button"
-                                       OnClick="() => RemoveItemsFromDict(docValue.Key)">
+                                           Icon="delete"
+                                           OnClickStopPropagation="true"
+                                           Type="button"
+                                           OnClick="() => RemoveItemsFromDict(docValue.Key)">
                                     Remove
                                 </MatButton>
                             </div>
@@ -147,22 +146,25 @@
                 </MatExpansionPanel>
             }
         </MatAccordion>
-        <hr />
+        <hr/>
         @if (_doc.DocumentValues.Count > 0)
         {
             @if (_progressBar)
             {
-                <MatProgressBar Class="mb-2" Indeterminate="true" Reversed="true"></MatProgressBar>
+                <MatProgressBar Class="mb-2" Indeterminate="false" Progress="_progressBarValue"></MatProgressBar>
             }
             <MatButton Icon="@_btnReplaceIcon" Disabled="@(_doc.IsFileEmpty || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
         }
 
     </EditForm>
-    <MatSnackbar @bind-IsOpen="@_snackBarIsOpen">
-        <MatSnackbarContent>@_errorDisplayText</MatSnackbarContent>
-        <MatSnackbarActions>
-            <MatButton Raised="true" OnClick="@(() => _snackBarIsOpen = false)">Close</MatButton>
-        </MatSnackbarActions>
+    <MatSnackbar @bind-IsOpen="@_snackBarIsOpen" Timeout="@_snackBarTimeout">
+        <MatSnackbarContent>@_snackBarContent</MatSnackbarContent>
+        @if (_snackBarHasCloseButton)
+        {
+            <MatSnackbarActions>
+                <MatButton Raised="true" OnClick="@(() => _snackBarIsOpen = false)">Close</MatButton>
+            </MatSnackbarActions>
+        }
     </MatSnackbar>
 </div>
 
@@ -170,10 +172,12 @@
 {
     private readonly Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
-    private List<string> _fileList = new();
     private bool _snackBarIsOpen;
-    private string _errorDisplayText = string.Empty;
-    private bool _progressBar = false;
+    private string _snackBarContent = string.Empty;
+    private bool _snackBarHasCloseButton;
+    private int _snackBarTimeout = 10000;
+    private bool _progressBar;
+    private double _progressBarValue;
     private string _btnReplaceText = "Replace and Download";
     private string _btnReplaceIcon = "find_replace";
 
@@ -183,70 +187,148 @@
         {
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                DisplayErrorSnackBar("Only Word documents (.docx) are allowed.");
+                DisplaySnackBar("Only Word documents (.docx) are allowed.");
                 _doc.File = null;
-                _fileList = new List<string>();
                 return;
             }
             _doc.File = file;
-            _fileList.Add($"Selected file: {file.Name}");
         }
     }
 
     private void AddValues()
     {
         var oldValue = new DocumentValue()
-            {
-                Label = "Old Value",
-                HtmlId = Guid.NewGuid().ToString(),
-                IsOldValue = true,
-                Text = _docParamsDto.Text,
-                HelperText = "This is the old value",
-                Type = InputType.Text,
-                IsAccordionOpen = true
-            };
+        {
+            Label = "Old Value",
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = true,
+            Text = _docParamsDto.Text,
+            HelperText = "This is the old value",
+            Type = InputType.Text,
+            IsAccordionOpen = true
+        };
         var newValue = new DocumentValue()
-            {
-                Label = $"New value for {_docParamsDto.Text}",
-                HtmlId = Guid.NewGuid().ToString(),
-                IsOldValue = false,
-                Text = "",
-                HelperText = "This is will be the new value",
-                Type = _docParamsDto.Type,
-                IsAccordionOpen = true,
-                ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
-            };
+        {
+            Label = $"New value for {_docParamsDto.Text}",
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = false,
+            Text = "",
+            HelperText = "This is will be the new value",
+            Type = _docParamsDto.Type,
+            IsAccordionOpen = true,
+            ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
+        };
         _doc.DocumentValues.Add(oldValue, newValue);
         _docParamsDto.Text = string.Empty; // Cleat text field
     }
 
     private async Task HandleSubmitAsync()
     {
-        _progressBar = true;
-        _btnReplaceText = "Wait, Replacing... ";
-        _btnReplaceIcon = "hourglass_empty";
         try
         {
-            List<Task> taskListResult = await DocumentService.ReplaceAndDownloadAsync(_doc);
-            await Task
-            .WhenAll(taskListResult)
-            // .WhenAll(taskListResult.Select(async task =>
-            // {
-            //     await task.ConfigureAwait(false);
-            // }))
-            .ContinueWith(t =>
+            PrepareUIToReplaceAndDownload();
+            
+            var combinations = new List<Dictionary<string, string>>();
+            var isThereAnyReplaceForMultipleLine = _doc.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine);
+
+            if (isThereAnyReplaceForMultipleLine)
             {
-                SetDefaultValuesForBtnReplace();
-                _progressBar = false;
-            });
+                // Get all possible combinations
+                combinations = DocumentService.GetAllCombinations(_doc.DocumentValues);
+            }
+            else
+            {
+                // Add the single combination to the combination list
+                combinations.Add(_doc.DocumentValues
+                                     .ToDictionary(
+                                         d => d.Key.Text!,
+                                         d => d.Value.Text!
+                    ));
+            }
+            // Delay the to UI (Javascript) to catch a breath to update UI
+            await DelayDotNetToUpdateUIAsync();
+
+            var originalFileInMemoryStream = new MemoryStream();
+            if (_doc.File is not null)
+            {
+                // Get the MemoryStream
+                originalFileInMemoryStream = await DocumentService.GetMemoryStream(_doc.File);
+                
+                // Delay the to UI (Javascript) to catch a breath to update UI
+                await DelayDotNetToUpdateUIAsync();
+            }
+
+            var progressSizePerFile = 1.0 / combinations.Count;
+            foreach (Dictionary<string, string> combination in combinations)
+            {
+                // Replace
+                Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream);
+                
+                // Get File Name
+                var fileName = isThereAnyReplaceForMultipleLine ? string.Join("_", combination.Values) : _doc.File!.Name;
+                
+                // Download the file
+                await DocumentService.DownloadFile($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                
+                // Dispose current replaced doc
+                await docReplaced.DisposeAsync();
+                
+                // Update progress UI
+                if (combination != combinations.Last())
+                {
+                    _progressBarValue += progressSizePerFile;
+                    ReloadUI();
+                 
+                    // Delay the to UI (Javascript) to catch a breath to update UI
+                    await DelayDotNetToUpdateUIAsync();
+                }
+                // else
+                // {
+                //     progressSizePerFile = 1;
+                //     ReloadUI();
+                // }
+            }
+
+            await DelayDotNetToUpdateUIAsync();
+
+            // Dispose the input word file in memory stream
+            await originalFileInMemoryStream.DisposeAsync();
+            
+            SetDefaultUIAfterDownload();
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
-            DisplayErrorSnackBar("Something went wrong");
-            SetDefaultValuesForBtnReplace();
-            _progressBar = false;
+            DisplaySnackBar("Something went wrong");
+            SetDefaultUIAfterError();
         }
+    }
+
+    // Delay the to UI (Javascript) to catch a breath to update UI
+    private static async Task DelayDotNetToUpdateUIAsync(int timeInMs = 100)
+    {
+        await Task.Delay(timeInMs);
+    }
+    
+    private void PrepareUIToReplaceAndDownload()
+    {
+        _progressBar = true;
+        _btnReplaceText = "Wait, Replacing... ";
+        _btnReplaceIcon = "hourglass_empty";
+        DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, -1);
+    }
+
+    private void SetDefaultUIAfterDownload()
+    {
+        _progressBar = false;
+        _snackBarIsOpen = false;
+        _progressBarValue = 0;
+        SetDefaultValuesForBtnReplace();
+    }
+    
+    private void SetDefaultUIAfterError()
+    {
+        _progressBar = false;
+        SetDefaultValuesForBtnReplace();
     }
 
     private void SetDefaultValuesForBtnReplace()
@@ -254,11 +336,13 @@
         _btnReplaceText = "Replace and Download";
         _btnReplaceIcon = "find_replace";
     }
-    
-    private void DisplayErrorSnackBar(string errorMessage)
+
+    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 10000)
     {
         _snackBarIsOpen = true;
-        _errorDisplayText = errorMessage;
+        _snackBarContent = textMessage;
+        _snackBarHasCloseButton = hasCloseButton;
+        _snackBarTimeout = timeout;
         ReloadUI();
     }
 
