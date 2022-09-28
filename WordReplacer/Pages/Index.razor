@@ -15,7 +15,7 @@
                 <MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here"/>
                 @if (_doc.File is not null)
                 {
-                    <div class="alert alert-info">@_doc.File.Name</div>
+                    <div class="mt-1">Selected File: <span class="text-info">@_doc.File.Name</span></div>
                 }
             </div>
         </div>
@@ -151,17 +151,20 @@
         {
             @if (_progressBar)
             {
-                <MatProgressBar Class="mb-2" Indeterminate="true" Reversed="true"></MatProgressBar>
+                <MatProgressBar Class="mb-2" Indeterminate="false" Progress="_progressBarValue"></MatProgressBar>
             }
             <MatButton Icon="@_btnReplaceIcon" Disabled="@(_doc.IsFileEmpty || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
         }
 
     </EditForm>
-    <MatSnackbar @bind-IsOpen="@_snackBarIsOpen">
-        <MatSnackbarContent>@_errorDisplayText</MatSnackbarContent>
-        <MatSnackbarActions>
-            <MatButton Raised="true" OnClick="@(() => _snackBarIsOpen = false)">Close</MatButton>
-        </MatSnackbarActions>
+    <MatSnackbar @bind-IsOpen="@_snackBarIsOpen" Timeout="@_snackBarTimeout">
+        <MatSnackbarContent>@_snackBarContent</MatSnackbarContent>
+        @if (_snackBarHasCloseButton)
+        {
+            <MatSnackbarActions>
+                <MatButton Raised="true" OnClick="@(() => _snackBarIsOpen = false)">Close</MatButton>
+            </MatSnackbarActions>
+        }
     </MatSnackbar>
 </div>
 
@@ -170,8 +173,11 @@
     private readonly Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
     private bool _snackBarIsOpen;
-    private string _errorDisplayText = string.Empty;
+    private string _snackBarContent = string.Empty;
+    private bool _snackBarHasCloseButton;
+    private int _snackBarTimeout = 10000;
     private bool _progressBar;
+    private double _progressBarValue;
     private string _btnReplaceText = "Replace and Download";
     private string _btnReplaceIcon = "find_replace";
 
@@ -181,7 +187,7 @@
         {
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                DisplayErrorSnackBar("Only Word documents (.docx) are allowed.");
+                DisplaySnackBar("Only Word documents (.docx) are allowed.");
                 _doc.File = null;
                 return;
             }
@@ -220,84 +226,107 @@
     {
         try
         {
-            PrepareUIDownload();
-
+            PrepareUIToReplaceAndDownload();
+            
             var combinations = new List<Dictionary<string, string>>();
-            var originalFileInMemoryStream = new MemoryStream();
             var isThereAnyReplaceForMultipleLine = _doc.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine);
 
-            // if (isThereAnyReplaceForMultipleLine)
-            // {
-    // Get all combinations
+            if (isThereAnyReplaceForMultipleLine)
+            {
+                // Get all possible combinations
                 combinations = DocumentService.GetAllCombinations(_doc.DocumentValues);
-            // }
-    //         else
-    //         {
-    // // Add the single combination to the combination list
-    //             combinations.Add(_doc.DocumentValues
-    //                                  .ToDictionary(
-    //                                      d => d.Key.Text!,
-    //                                      d => d.Value.Text!
-    //                 ));
-    //         }
+            }
+            else
+            {
+                // Add the single combination to the combination list
+                combinations.Add(_doc.DocumentValues
+                                     .ToDictionary(
+                                         d => d.Key.Text!,
+                                         d => d.Value.Text!
+                    ));
+            }
+            // Delay the to UI (Javascript) to catch a breath to update UI;
+            await Task.Delay(300);
 
+            var originalFileInMemoryStream = new MemoryStream();
             if (_doc.File is not null)
             {
-    // Get the MemoryStream
+                // Get the MemoryStream
                 originalFileInMemoryStream = await DocumentService.GetMemoryStream(_doc.File);
+                
+                // Delay the to UI (Javascript) to catch a breath to update UI;
+                await Task.Delay(300);
             }
 
+            var progressSizePerFile = 1.0 / combinations.Count;
             foreach (Dictionary<string, string> combination in combinations)
             {
-    // Replace
-                using (var currentFileInMemoryStream = new MemoryStream())
+                // Replace
+                Stream docReplaced = DocumentHelper.Replace(combination, originalFileInMemoryStream);
+                var fileName = isThereAnyReplaceForMultipleLine ? string.Join("_", combination.Values) : _doc.File!.Name;
+                await DocumentService.DownloadFileAsync($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                await docReplaced.DisposeAsync();
+                if (combination != combinations.Last())
                 {
-                    originalFileInMemoryStream.Position = 0;
-                    await originalFileInMemoryStream.CopyToAsync(currentFileInMemoryStream);
-                    Stream? docReplaced = DocumentHelper.Replace(combination, currentFileInMemoryStream);
-                    var fileName = string.Join("_", combination.Values);
-                    if (!isThereAnyReplaceForMultipleLine)
-                    {
-                        fileName = _doc.File!.Name;
-                    }
-                    await DocumentService.DownloadFileAsync($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                    // Delay the to UI (Javascript) to catch a breath to update UI;
+                    _progressBarValue += progressSizePerFile;
+                    ReloadUI();
+                    await Task.Delay(5000);
+                    ReloadUI();
+                }
+                else
+                {
+                    progressSizePerFile = 1;
+                    ReloadUI();
                 }
             }
-            
+            await Task.Delay(5000);
+
             await originalFileInMemoryStream.DisposeAsync();
-                
+            
             SetDefaultUIAfterDownload();
         }
         catch (Exception ex)
         {
-            DisplayErrorSnackBar("Something went wrong");
-            SetDefaultUIAfterDownload();
+            DisplaySnackBar("Something went wrong");
+            SetDefaultUIAfterError();
         }
     }
-    
-    private void PrepareUIDownload()
+
+    private void PrepareUIToReplaceAndDownload()
     {
         _progressBar = true;
         _btnReplaceText = "Wait, Replacing... ";
         _btnReplaceIcon = "hourglass_empty";
+        DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, 5000);
     }
 
     private void SetDefaultUIAfterDownload()
     {
-        SetDefaultValuesForBtnReplace();
         _progressBar = false;
-    }   
+        _snackBarIsOpen = false;
+        _progressBarValue = 0;
+        SetDefaultValuesForBtnReplace();
+    }
     
+    private void SetDefaultUIAfterError()
+    {
+        _progressBar = false;
+        SetDefaultValuesForBtnReplace();
+    }
+
     private void SetDefaultValuesForBtnReplace()
     {
         _btnReplaceText = "Replace and Download";
         _btnReplaceIcon = "find_replace";
     }
 
-    private void DisplayErrorSnackBar(string errorMessage)
+    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 10000)
     {
         _snackBarIsOpen = true;
-        _errorDisplayText = errorMessage;
+        _snackBarContent = textMessage;
+        _snackBarHasCloseButton = hasCloseButton;
+        _snackBarTimeout = timeout;
         ReloadUI();
     }
 

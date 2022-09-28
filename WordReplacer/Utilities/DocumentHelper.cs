@@ -16,38 +16,33 @@ public static class DocumentHelper
     /// <param name="values">A dictionary of key/value pairs. The key is the name of the variable to replace, and the value
     /// is the value to replace it with.</param>
     /// <param name="streamFile">The file to be replaced.</param>
-    public static Stream? Replace(Dictionary<string, string> values, MemoryStream? streamFile)
+    public static Stream Replace(Dictionary<string, string> values, MemoryStream? streamFile)
     {
-        try
-        {
-            if (streamFile is not null)
+            if (streamFile is null)
             {
-                using (var wordDoc = WordprocessingDocument.Open(streamFile, true))
-                {
-                    // ReplaceWordBodyText(wordDoc, values);
-                    // ReplaceWordHeaderText(wordDoc, values);
-                    // ReplaceWordFooterText(wordDoc, values);
-                    ReplaceTextWithRegex(wordDoc, values);
-                    wordDoc.Close();
-                }
+                throw new ArgumentException("Stream file is null");
+            }
 
-                return streamFile;
-            }
-            else
+            var newFile = new MemoryStream();
+                
+            streamFile.Position = 0;
+            streamFile.CopyTo(newFile);
+                
+            using (var wordDoc = WordprocessingDocument.Open(newFile, true))
             {
-                return null;
+                ReplaceWordBodyText(wordDoc, values);
+                ReplaceWordHeaderText(wordDoc, values);
+                ReplaceWordFooterText(wordDoc, values);
+                // ReplaceTextWithRegex(wordDoc, values);
+                wordDoc.Close();
+                return newFile;
             }
-        }
-        catch (Exception ex)
-        {
-            return null;
-        }
     }
 
     /// <summary>
     /// It replaces the text in the word document with the values in the dictionary.
     /// </summary>
-    /// <param name="WordprocessingDocument">This is the document that we're going to be working with.</param>
+    /// <param name="wordDoc">This is the document that we're going to be working with.</param>
     /// <param name="values">A dictionary of key/value pairs. The key is the text to be replaced, and the value is the
     /// replacement text.</param>
     private static void ReplaceTextWithRegex(WordprocessingDocument wordDoc,
