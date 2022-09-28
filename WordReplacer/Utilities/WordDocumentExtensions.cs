@@ -11,72 +11,11 @@ namespace WordReplacer.Utilities;
 public static class DocumentHelper
 {
     /// <summary>
-    /// It replaces the values in the dictionary.
-    /// </summary>
-    /// <param name="values">A dictionary of key/value pairs. The key is the name of the variable to replace, and the value
-    /// is the value to replace it with.</param>
-    /// <param name="streamFile">The file to be replaced.</param>
-    public static Stream Replace(Dictionary<string, string> values, MemoryStream? streamFile)
-    {
-            if (streamFile is null)
-            {
-                throw new ArgumentException("Stream file is null");
-            }
-
-            var newFile = new MemoryStream();
-                
-            streamFile.Position = 0;
-            streamFile.CopyTo(newFile);
-                
-            using (var wordDoc = WordprocessingDocument.Open(newFile, true))
-            {
-                ReplaceWordBodyText(wordDoc, values);
-                ReplaceWordHeaderText(wordDoc, values);
-                ReplaceWordFooterText(wordDoc, values);
-                // ReplaceTextWithRegex(wordDoc, values);
-                wordDoc.Close();
-                return newFile;
-            }
-    }
-
-    /// <summary>
-    /// It replaces the text in the word document with the values in the dictionary.
-    /// </summary>
-    /// <param name="wordDoc">This is the document that we're going to be working with.</param>
-    /// <param name="values">A dictionary of key/value pairs. The key is the text to be replaced, and the value is the
-    /// replacement text.</param>
-    private static void ReplaceTextWithRegex(WordprocessingDocument wordDoc,
-        Dictionary<string, string> values)
-    {
-        if (wordDoc.MainDocumentPart is null)
-        {
-            return;
-        }
-
-        string docText;
-        using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
-        {
-            docText = sr.ReadToEnd();
-        }
-
-        foreach (KeyValuePair<string, string> value in values)
-        {
-            docText = Helper.ReplaceTextWithRegex(value.Key, docText, value.Value);
-        }
-
-        Stream wordStream = wordDoc.MainDocumentPart.GetStream(FileMode.Create);
-        using (var sw = new StreamWriter(wordStream))
-        {
-            sw.Write(docText);
-        }
-    }
-    
-    /// <summary>
     /// Replaces the body text from Word file.
     /// </summary>
     /// <param name="doc">The document.</param>
     /// <param name="replaceWords">The replace words.</param>
-    private static void ReplaceWordBodyText(WordprocessingDocument doc, Dictionary<string, string> replaceWords)
+    public static void ReplaceWordBodyText(this WordprocessingDocument doc, Dictionary<string, string> replaceWords)
     {
         var body = doc.MainDocumentPart?.Document.Body;
 
@@ -97,7 +36,7 @@ public static class DocumentHelper
         }
     }
 
-    private static void ReplaceWordHeaderText(WordprocessingDocument doc, Dictionary<string, string> replaceWords)
+    public static void ReplaceWordHeaderText(this WordprocessingDocument doc, Dictionary<string, string> replaceWords)
     {
         IEnumerable<HeaderPart>? headers = doc.MainDocumentPart?.HeaderParts;
         if (headers is null)
@@ -123,7 +62,7 @@ public static class DocumentHelper
         }
     }
 
-    private static void ReplaceWordFooterText(WordprocessingDocument doc, Dictionary<string, string> replaceWords)
+    public static void ReplaceWordFooterText(this WordprocessingDocument doc, Dictionary<string, string> replaceWords)
     {
         IEnumerable<FooterPart>? footer = doc.MainDocumentPart?.FooterParts;
 

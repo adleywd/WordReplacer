@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Packaging;
 using MatBlazor;
 using Microsoft.JSInterop;
 using WordReplacer.Models;
@@ -44,61 +45,29 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
-        public async Task<List<Task>> ReplaceAndDownloadAsync(Document document)
+        public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile)
         {
-            var tasks = new List<Task>();
-
-            // Check if there is any value as a List to create multiple files
-            if (document.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine))
+            if (streamFile is null)
             {
-                List<Node> nodeList = Helper.DictionaryToNode(document.DocumentValues);
-
-                var combinationsResult = new List<Dictionary<string, string>>();
-
-                DocumentHelper.GetCombinations(nodeList, 0, combinationsResult, new Dictionary<string, string>());
-
-                foreach (IDictionary<string, string> result in combinationsResult)
-                {
-                    tasks.Add(Task.Run(
-                        async () =>
-                        {
-                            using var stream = new MemoryStream();
-                            if (document.File is not null)
-                            {
-                                await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
-                                Stream? docReplaced =
-                                    DocumentHelper.Replace((Dictionary<string, string>)result, stream);
-                                var fileName = string.Join("_", result.Values);
-                                await DownloadFileAsync($"{fileName}.docx", docReplaced).ConfigureAwait(false);
-                            }
-                        }));
-                }
-            }
-            // If not, just replace the single file and download it.
-            else
-            {
-                tasks.Add(Task.Run(
-                    async () =>
-                    {
-                        using var stream = new MemoryStream();
-                        if (document.File is not null)
-                        {
-                            await document.File.WriteToStreamAsync(stream).ConfigureAwait(false);
-                            Stream? docReplaced = DocumentHelper.Replace(
-                                document.DocumentValues.ToDictionary(
-                                    d => d.Key.Text!,
-                                    d => d.Value.Text!)
-                                , stream);
-                            await DownloadFileAsync(document.File.Name, docReplaced).ConfigureAwait(false);
-                        }
-                    }));
+                throw new ArgumentException("Stream file is null");
             }
 
-            return tasks;
+            var newFile = new MemoryStream();
+                
+            streamFile.Position = 0;
+            streamFile.CopyTo(newFile);
+
+            using var wordDoc = WordprocessingDocument.Open(newFile, true);
+            wordDoc.ReplaceWordBodyText(values);
+            wordDoc.ReplaceWordHeaderText(values);
+            wordDoc.ReplaceWordFooterText(values);
+            wordDoc.Close();
+                
+            return newFile;
         }
 
         /// <inheritdoc />
-        public async Task DownloadFileAsync(string filename, Stream? docReplaced)
+        public async Task DownloadFile(string filename, Stream? docReplaced)
         {
             if (docReplaced is null)
             {

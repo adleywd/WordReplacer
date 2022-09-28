@@ -15,7 +15,7 @@
                 <MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here"/>
                 @if (_doc.File is not null)
                 {
-                    <div class="mt-1">Selected File: <span class="text-info">@_doc.File.Name</span></div>
+                    <div class="mt-1">Selected File: <span class="text-info"> @_doc.File.Name</span></div>
                 }
             </div>
         </div>
@@ -245,8 +245,8 @@
                                          d => d.Value.Text!
                     ));
             }
-            // Delay the to UI (Javascript) to catch a breath to update UI;
-            await Task.Delay(300);
+            // Delay the to UI (Javascript) to catch a breath to update UI
+            await DelayDotNetToUpdateUIAsync();
 
             var originalFileInMemoryStream = new MemoryStream();
             if (_doc.File is not null)
@@ -254,34 +254,44 @@
                 // Get the MemoryStream
                 originalFileInMemoryStream = await DocumentService.GetMemoryStream(_doc.File);
                 
-                // Delay the to UI (Javascript) to catch a breath to update UI;
-                await Task.Delay(300);
+                // Delay the to UI (Javascript) to catch a breath to update UI
+                await DelayDotNetToUpdateUIAsync();
             }
 
             var progressSizePerFile = 1.0 / combinations.Count;
             foreach (Dictionary<string, string> combination in combinations)
             {
                 // Replace
-                Stream docReplaced = DocumentHelper.Replace(combination, originalFileInMemoryStream);
+                Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream);
+                
+                // Get File Name
                 var fileName = isThereAnyReplaceForMultipleLine ? string.Join("_", combination.Values) : _doc.File!.Name;
-                await DocumentService.DownloadFileAsync($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                
+                // Download the file
+                await DocumentService.DownloadFile($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                
+                // Dispose current replaced doc
                 await docReplaced.DisposeAsync();
+                
+                // Update progress UI
                 if (combination != combinations.Last())
                 {
-                    // Delay the to UI (Javascript) to catch a breath to update UI;
                     _progressBarValue += progressSizePerFile;
                     ReloadUI();
-                    await Task.Delay(5000);
-                    ReloadUI();
+                 
+                    // Delay the to UI (Javascript) to catch a breath to update UI
+                    await DelayDotNetToUpdateUIAsync();
                 }
-                else
-                {
-                    progressSizePerFile = 1;
-                    ReloadUI();
-                }
+                // else
+                // {
+                //     progressSizePerFile = 1;
+                //     ReloadUI();
+                // }
             }
-            await Task.Delay(5000);
 
+            await DelayDotNetToUpdateUIAsync();
+
+            // Dispose the input word file in memory stream
             await originalFileInMemoryStream.DisposeAsync();
             
             SetDefaultUIAfterDownload();
@@ -293,12 +303,18 @@
         }
     }
 
+    // Delay the to UI (Javascript) to catch a breath to update UI
+    private static async Task DelayDotNetToUpdateUIAsync(int timeInMs = 100)
+    {
+        await Task.Delay(timeInMs);
+    }
+    
     private void PrepareUIToReplaceAndDownload()
     {
         _progressBar = true;
         _btnReplaceText = "Wait, Replacing... ";
         _btnReplaceIcon = "hourglass_empty";
-        DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, 5000);
+        DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, -1);
     }
 
     private void SetDefaultUIAfterDownload()

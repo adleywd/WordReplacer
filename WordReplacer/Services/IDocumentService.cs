@@ -28,7 +28,15 @@ namespace WordReplacer.Services
         /// </summary>
         /// <param name="filename">The name of the file to download.</param>
         /// <param name="docReplaced">The stream of the document that was replaced.</param>
-        public Task DownloadFileAsync(string filename, Stream? docReplaced);
-        
+        public Task DownloadFile(string filename, Stream? docReplaced);
+
+        /// <summary>
+        /// It replaces the values in a word document as MemoryStream for the values in the dictionary.
+        /// </summary>
+        /// <param name="values">A dictionary of key/value pairs. The key is the old value to be replace, and the value
+        /// is the value to replace it with.</param>
+        /// <param name="streamFile">The file to be replaced.</param>
+        public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile);
+
     }
 }
