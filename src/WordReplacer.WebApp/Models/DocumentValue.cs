@@ -1,6 +1,6 @@
-﻿using WordReplacer.Enums;
+﻿using WordReplacer.WebApp.Enums;
 
-namespace WordReplacer.Models;
+namespace WordReplacer.WebApp.Models;
 
 public class DocumentValue
 {

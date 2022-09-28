@@ -1,4 +1,4 @@
-﻿namespace WordReplacer.Models;
+﻿namespace WordReplacer.WebApp.Models;
 
 public class Node
 {

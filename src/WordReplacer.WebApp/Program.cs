@@ -1,9 +1,9 @@
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using WordReplacer.Services;
+using WordReplacer.WebApp.Services;
 
-namespace WordReplacer
+namespace WordReplacer.WebApp
 {
     public class Program
     {

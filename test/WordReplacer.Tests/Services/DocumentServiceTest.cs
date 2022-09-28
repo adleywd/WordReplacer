@@ -1,6 +1,6 @@
 using System.Text.Json;
-using WordReplacer.Models;
-using WordReplacer.Utilities;
+using WordReplacer.WebApp.Models;
+using WordReplacer.WebApp.Utilities;
 
 namespace WordReplacer.Tests.Services;
 

@@ -1,13 +1,7 @@
-﻿using System.Collections;
-using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Drawing;
-using DocumentFormat.OpenXml.Packaging;
-using WordReplacer.Models;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.RegularExpressions;
+using WordReplacer.WebApp.Models;
 
-namespace WordReplacer.Utilities;
+namespace WordReplacer.WebApp.Utilities;
 
 public static class Helper
 {

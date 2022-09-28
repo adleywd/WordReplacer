@@ -2,10 +2,10 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Vml.Office;
 using DocumentFormat.OpenXml.Wordprocessing;
-using WordReplacer.Models;
-using Document = WordReplacer.Models.Document;
+using WordReplacer.WebApp.Models;
+using Document = WordReplacer.WebApp.Models.Document;
 
-namespace WordReplacer.Utilities;
+namespace WordReplacer.WebApp.Utilities;
 
 /// A class that contains methods that help us to replace the text in a Word document.
 public static class DocumentHelper

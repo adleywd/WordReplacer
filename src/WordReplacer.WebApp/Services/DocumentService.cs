@@ -1,10 +1,10 @@
 using DocumentFormat.OpenXml.Packaging;
 using MatBlazor;
 using Microsoft.JSInterop;
-using WordReplacer.Models;
-using WordReplacer.Utilities;
+using WordReplacer.WebApp.Models;
+using WordReplacer.WebApp.Utilities;
 
-namespace WordReplacer.Services
+namespace WordReplacer.WebApp.Services
 {
     /// <summary>
     /// DocumentService Class Implementation

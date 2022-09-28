@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WordReplacer.Enums;
+namespace WordReplacer.WebApp.Enums;
 
 public enum InputType
 {

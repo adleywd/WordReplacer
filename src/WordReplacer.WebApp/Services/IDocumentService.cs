@@ -1,7 +1,7 @@
 using MatBlazor;
-using WordReplacer.Models;
+using WordReplacer.WebApp.Models;
 
-namespace WordReplacer.Services
+namespace WordReplacer.WebApp.Services
 {
     /// <summary>
     /// Document Service Interface

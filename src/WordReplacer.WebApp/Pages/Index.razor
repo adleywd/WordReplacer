@@ -1,14 +1,13 @@
 ﻿@page "/"
-@using WordReplacer.Utilities
-@using WordReplacer.Models
-@using WordReplacer.Dto
-@using WordReplacer.Enums
+@using WordReplacer.WebApp.Utilities
+@using WordReplacer.WebApp.Models
+@using WordReplacer.WebApp.Dto
+@using WordReplacer.WebApp.Enums
 @inject IDocumentService DocumentService
 
 <PageTitle>Word Replacer</PageTitle>
 <hr/>
 <div class="container-fluid">
-
     <MatPaper Elevation="6" Class="p-3">
         <div class="row">
             <div class="col-12 mt-3">
@@ -245,7 +244,7 @@
                                          d => d.Value.Text!
                     ));
             }
-            // Delay the to UI (Javascript) to catch a breath to update UI
+            
             await DelayDotNetToUpdateUIAsync();
 
             var originalFileInMemoryStream = new MemoryStream();
@@ -254,10 +253,10 @@
                 // Get the MemoryStream
                 originalFileInMemoryStream = await DocumentService.GetMemoryStream(_doc.File);
                 
-                // Delay the to UI (Javascript) to catch a breath to update UI
                 await DelayDotNetToUpdateUIAsync();
             }
 
+            //TODO: Check download all files as zip file https://youtu.be/LTY6cWCULYw
             var progressSizePerFile = 1.0 / combinations.Count;
             foreach (Dictionary<string, string> combination in combinations)
             {
@@ -279,14 +278,8 @@
                     _progressBarValue += progressSizePerFile;
                     ReloadUI();
                  
-                    // Delay the to UI (Javascript) to catch a breath to update UI
                     await DelayDotNetToUpdateUIAsync();
                 }
-                // else
-                // {
-                //     progressSizePerFile = 1;
-                //     ReloadUI();
-                // }
             }
 
             await DelayDotNetToUpdateUIAsync();

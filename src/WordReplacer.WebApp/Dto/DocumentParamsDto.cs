@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
-using WordReplacer.Enums;
+using WordReplacer.WebApp.Enums;
 
-namespace WordReplacer.Dto;
+namespace WordReplacer.WebApp.Dto;
 
 public class DocumentParamsDto
 {
