@@ -1,19 +1,22 @@
-﻿namespace WordReplacer.WebApp.Models;
+﻿namespace WordReplacer.Models;
 
-public class Node
+/// <summary>
+/// The Combinations Node
+/// </summary>
+public class CombinationsNode
 {
     /// <summary>
     /// The node constructor that receive a key and a list of values
     /// </summary>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    public Node(string key, List<string> value)
+    public CombinationsNode(string key, List<string> value)
     {
         Key = key;
         Values = value;
     }
 
-    public Node(){}
+    public CombinationsNode(){}
 
     public string Key { get; set; } = string.Empty;
     public List<string> Values { get; set; } = new ();
