@@ -1,6 +1,6 @@
 ﻿using MatBlazor;
 
-namespace WordReplacer.WebApp.Models;
+namespace WordReplacer.Models;
 
 public class Document
 {

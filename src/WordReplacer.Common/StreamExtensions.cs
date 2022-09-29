@@ -1,4 +1,4 @@
-﻿namespace WordReplacer.WebApp.Utilities
+﻿namespace WordReplacer.Common
 {
     /* A static class that extends the Stream class. */
     public static class StreamExtensions

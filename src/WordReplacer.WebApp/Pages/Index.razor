@@ -1,8 +1,9 @@
 ﻿@page "/"
-@using WordReplacer.WebApp.Utilities
-@using WordReplacer.WebApp.Models
 @using WordReplacer.WebApp.Dto
-@using WordReplacer.WebApp.Enums
+@using WordReplacer.Enums
+@using WordReplacer.Models
+@using Microsoft.AspNetCore.Components
+@using WordReplacer.Common
 @inject IDocumentService DocumentService
 
 <PageTitle>Word Replacer</PageTitle>
@@ -146,7 +147,7 @@
             }
         </MatAccordion>
         <hr/>
-        @if (_doc.DocumentValues.Count > 0)
+        @if (_doc.DocumentValues.Count > 0) 
         {
             @if (_progressBar)
             {
@@ -171,12 +172,18 @@
 {
     private readonly Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
+    
+    // Snackbar configs
     private bool _snackBarIsOpen;
     private string _snackBarContent = string.Empty;
     private bool _snackBarHasCloseButton;
     private int _snackBarTimeout = 10000;
+    
+    // Progress bar configs
     private bool _progressBar;
     private double _progressBarValue;
+    
+    // Submit btn configs
     private string _btnReplaceText = "Replace and Download";
     private string _btnReplaceIcon = "find_replace";
 

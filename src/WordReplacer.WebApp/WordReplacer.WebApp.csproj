@@ -22,4 +22,11 @@
     <Folder Include="wwwroot\css\font-awesome" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WordReplacer.Enums\WordReplacer.Enums.csproj" />
+    <ProjectReference Include="..\WordReplacer.Models\WordReplacer.Models.csproj" />
+    <ProjectReference Include="..\WordReplacer.Pages\WordReplacer.Pages.csproj" />
+    <ProjectReference Include="..\WordReplacer.Services\WordReplacer.Services.csproj" />
+  </ItemGroup>
+
 </Project>

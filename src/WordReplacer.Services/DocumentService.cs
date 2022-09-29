@@ -1,12 +1,13 @@
-using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Packaging;
 using MatBlazor;
 using Microsoft.JSInterop;
-using WordReplacer.WebApp.Models;
-using WordReplacer.WebApp.Utilities;
+using WordReplacer.Common;
+using WordReplacer.Models;
 
-namespace WordReplacer.WebApp.Services
+namespace WordReplacer.Services
 {
-    /// <summary>
+    
+   /// <summary>
     /// DocumentService Class Implementation
     /// </summary>
     public class DocumentService : IDocumentService
@@ -25,9 +26,9 @@ namespace WordReplacer.WebApp.Services
         /// <inheritdoc />
         public List<Dictionary<string, string>> GetAllCombinations(Dictionary<DocumentValue, DocumentValue> values)
         {
-            List<Node> nodeList = Helper.DictionaryToNode(values);
+            List<CombinationsNode> nodeList = values.DictionaryToNode();
             var combinationsResult = new List<Dictionary<string, string>>();
-            DocumentHelper.GetCombinations(nodeList, 0, combinationsResult, new Dictionary<string, string>());
+            combinationsResult.GetCombinations(nodeList, 0, new Dictionary<string, string>());
             return combinationsResult;
         }
 

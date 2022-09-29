@@ -1,11 +1,8 @@
-﻿using DocumentFormat.OpenXml.ExtendedProperties;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Vml.Office;
+﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using WordReplacer.WebApp.Models;
-using Document = WordReplacer.WebApp.Models.Document;
+using WordReplacer.Models;
 
-namespace WordReplacer.WebApp.Utilities;
+namespace WordReplacer.Common;
 
 /// A class that contains methods that help us to replace the text in a Word document.
 public static class DocumentHelper
@@ -99,12 +96,12 @@ public static class DocumentHelper
     /// <param name="resultList">The list of dictionaries that will be returned.</param>
     /// <param name="currentDict">This is the dictionary that will be added to the resultList.</param>
     public static void GetCombinations(
-        IList<Node> nodes,
+        this ICollection<Dictionary<string, string>> resultList,
+        IList<CombinationsNode> nodes,
         int currentNodeIdx,
-        ICollection<Dictionary<string, string>> resultList,
         IDictionary<string, string> currentDict)
     {
-        Node currentNode = nodes[currentNodeIdx];
+        CombinationsNode currentNode = nodes[currentNodeIdx];
         var isLastNode = currentNodeIdx == nodes.Count - 1;
 
         foreach (var value in currentNode.Values)
@@ -127,7 +124,7 @@ public static class DocumentHelper
             if (!isLastNode && isLastValue)
             {
                 currentDict.Add(currentNode.Key, value);
-                GetCombinations(nodes, currentNodeIdx + 1, resultList, currentDict);
+                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
             }
 
             // If is the LAST NODE and LAST VALUE
@@ -141,39 +138,8 @@ public static class DocumentHelper
             if (!isLastNode && !isLastValue)
             {
                 currentDict.Add(currentNode.Key, value);
-                GetCombinations(nodes, currentNodeIdx + 1, resultList, currentDict);
+                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
             }
-        }
-    }
-    /// <summary>
-    /// It replaces the text in the word document with the values in the dictionary.
-    /// </summary>
-    /// <param name="WordprocessingDocument">This is the document that we're going to be working with.</param>
-    /// <param name="values">A dictionary of key/value pairs. The key is the text to be replaced, and the value is the
-    /// replacement text.</param>
-    private static void DoReplaceText(WordprocessingDocument wordDoc,
-        Dictionary<string, string> values)
-    {
-        if (wordDoc.MainDocumentPart is null)
-        {
-            return;
-        }
-
-        string docText;
-        using (var sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
-        {
-            docText = sr.ReadToEnd();
-        }
-
-        foreach (KeyValuePair<string, string> value in values)
-        {
-            docText = Helper.ReplaceTextWithRegex(value.Key, docText, value.Value);
-        }
-
-        Stream wordStream = wordDoc.MainDocumentPart.GetStream(FileMode.Create);
-        using (var sw = new StreamWriter(wordStream))
-        {
-            sw.Write(docText);
         }
     }
 }

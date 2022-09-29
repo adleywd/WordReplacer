@@ -1,7 +1,7 @@
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using WordReplacer.WebApp.Services;
+using WordReplacer.Services;
 
 namespace WordReplacer.WebApp
 {

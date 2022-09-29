@@ -46,9 +46,10 @@
 
 @code
 {
-    bool _navMenuOpened = false;
+    // Navbar should start open
+    bool _navMenuOpened = true;
 
-    protected void ModelDrawerHiddenChanged(bool hidden)
+    private void ModelDrawerHiddenChanged(bool hidden)
     {
         if (!hidden)
         {

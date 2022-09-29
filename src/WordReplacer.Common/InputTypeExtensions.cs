@@ -1,6 +1,6 @@
-﻿using WordReplacer.WebApp.Enums;
+﻿using WordReplacer.Enums;
 
-namespace WordReplacer.WebApp.Utilities;
+namespace WordReplacer.Common;
 
 public static class InputTypeExtensions
 {
