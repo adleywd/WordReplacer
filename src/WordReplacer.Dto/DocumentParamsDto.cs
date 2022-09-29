@@ -1,6 +1,6 @@
 ﻿using WordReplacer.Enums;
 
-namespace WordReplacer.WebApp.Dto;
+namespace WordReplacer.Dto;
 
 public class DocumentParamsDto
 {

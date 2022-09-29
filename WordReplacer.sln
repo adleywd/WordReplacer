@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReplacer.Models", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReplacer.Enums", "src\WordReplacer.Enums\WordReplacer.Enums.csproj", "{DADBB930-3083-48FC-AAF8-CA54094A04EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReplacer.Dto", "src\WordReplacer.Dto\WordReplacer.Dto.csproj", "{A45935C2-7917-44EE-A907-284EE342122A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,10 @@ Global
 		{DADBB930-3083-48FC-AAF8-CA54094A04EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DADBB930-3083-48FC-AAF8-CA54094A04EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DADBB930-3083-48FC-AAF8-CA54094A04EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A45935C2-7917-44EE-A907-284EE342122A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A45935C2-7917-44EE-A907-284EE342122A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A45935C2-7917-44EE-A907-284EE342122A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A45935C2-7917-44EE-A907-284EE342122A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{7BBB402D-D936-4043-B5AF-2CD83CD90B9B} = {9067E32C-E6D0-47F4-A830-657E5C12E9C3}
 		{45D3625E-9C36-4170-BC32-2962832E7B8D} = {9067E32C-E6D0-47F4-A830-657E5C12E9C3}
 		{DADBB930-3083-48FC-AAF8-CA54094A04EB} = {9067E32C-E6D0-47F4-A830-657E5C12E9C3}
+		{A45935C2-7917-44EE-A907-284EE342122A} = {9067E32C-E6D0-47F4-A830-657E5C12E9C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E43599F9-603B-4906-8818-1AF40982C102}
