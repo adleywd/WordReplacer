@@ -3,7 +3,7 @@ using WordReplacer.Models;
 
 namespace WordReplacer.Common;
 
-public static class Helper
+public static class GenericExtensions
 {
     /// <summary>
     /// It replaces all the text that matches the regex pattern with the replacement text.
@@ -12,9 +12,10 @@ public static class Helper
     /// <param name="regexPattern">The regex pattern to use to find the text to replace.</param>
     /// <param name="replacement">The text to replace the matched text with.</param>
     /// <param name="onlyReplacingWholeWord">If true, then the regex pattern will be modified to only match whole words.</param>
+    /// <param name="ignoreCaseSensitive">If true, the search and replace will be case insensitive.</param>
     public static string ReplaceTextWithRegex(
-        this string text, 
-        string? regexPattern, 
+        this string text,
+        string? regexPattern,
         string? replacement,
         bool onlyReplacingWholeWord,
         bool ignoreCaseSensitive)
@@ -31,8 +32,8 @@ public static class Helper
             regexPattern = $"\\b{regexPattern}\\b";
         }
 
-        return ignoreCaseSensitive ? 
-            Regex.Replace(text, regexPattern, replacement, RegexOptions.IgnoreCase) 
+        return ignoreCaseSensitive
+            ? Regex.Replace(text, regexPattern, replacement, RegexOptions.IgnoreCase)
             : Regex.Replace(text, regexPattern, replacement);
     }
 
@@ -58,14 +59,32 @@ public static class Helper
     /// <param name="dict">The dictionary to convert to a node.</param>
     public static List<CombinationsNode> DictionaryToNode(this Dictionary<DocumentValue, DocumentValue> dict)
     {
+        dict.SanitizeValues();
+        
         var result = dict.Select(
                              d => new CombinationsNode(
-                                 d.Key.Text,
-                                 d.Value.Text.Split("\n")
+                                 d.Key.Text!,
+                                 d.Value.Text!.Split("\n")
                                   .Where(s => !string.IsNullOrWhiteSpace(s))
                                   .ToList())
                          )
                          .ToList();
         return result;
+    }
+
+    /// <summary>
+    /// It takes a document and replace all the empty strings to \n
+    /// </summary>
+    /// <param name="document">The document to sanitize.</param>
+    public static void SanitizeValues(this Dictionary<DocumentValue, DocumentValue> documentValues)
+    {
+        foreach (KeyValuePair<DocumentValue, DocumentValue> doc in documentValues
+                                                                           .Where(d =>
+                                                                               string.IsNullOrEmpty(d.Key.Text)
+                                                                               || string.IsNullOrEmpty(d.Value.Text)))
+        {
+            doc.Key.Text = string.IsNullOrEmpty(doc.Key.Text) ? "\n" : doc.Key.Text;
+            doc.Value.Text = string.IsNullOrEmpty(doc.Value.Text) ? "\n" : doc.Value.Text;
+        }
     }
 }

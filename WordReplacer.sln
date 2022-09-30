@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{54DF99FE-B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReplacer.WebApp", "src\WordReplacer.WebApp\WordReplacer.WebApp.csproj", "{9C6098E5-8961-4DCD-965E-0754B2A151B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReplacer.Pages", "src\WordReplacer.Pages\WordReplacer.Pages.csproj", "{2A5FB4DF-3D7D-4409-80B9-4AAB826499E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReplacer.UI", "src\WordReplacer.UI\WordReplacer.UI.csproj", "{2A5FB4DF-3D7D-4409-80B9-4AAB826499E7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReplacer.Services", "src\WordReplacer.Services\WordReplacer.Services.csproj", "{148D7E06-7C03-4095-8131-2E2D8DC6980B}"
 EndProject

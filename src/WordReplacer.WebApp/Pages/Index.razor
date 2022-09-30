@@ -5,6 +5,7 @@
 @using WordReplacer.Common
 @using WordReplacer.Dto
 @inject IDocumentService DocumentService
+@inject IMatToaster Toaster
 
 <PageTitle>Word Replacer</PageTitle>
 <hr/>
@@ -12,11 +13,7 @@
     <MatPaper Elevation="6" Class="p-3">
         <div class="row">
             <div class="col-12 mt-3">
-                <MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here"/>
-                @if (_doc.File is not null)
-                {
-                    <div class="mt-1">Selected File: <span class="text-info"> @_doc.File.Name</span></div>
-                }
+                <InputFileComponent @bind-Document="_doc"/>
             </div>
         </div>
         <hr/>
@@ -68,84 +65,7 @@
     <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12 mt-3">
         <DataAnnotationsValidator/>
 
-        <MatAccordion Multi="true">
-            @foreach (var docValue in _doc.DocumentValues)
-            {
-                @if (docValue.Value.ShouldReplaceForEachLine)
-                {
-                    <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text!.Replace("\n", " & ")}")"
-                                Wrap="true"
-                                Position="MatTooltipPosition.Top"
-                                TargetId="@docValue.Key.HtmlId">
-                    </MatTooltip>
-                }
-                else
-                {
-                    <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text}")"
-                                Wrap="true"
-                                Position="MatTooltipPosition.Top"
-                                TargetId="@docValue.Key.HtmlId">
-                    </MatTooltip>
-                }
-                <MatExpansionPanel @bind-Expanded="docValue.Key.IsAccordionOpen">
-                    <MatExpansionPanelSummary Style="height: auto;" Id="@docValue.Key.HtmlId">
-                        <div class="row" style=" width: 100%;">
-                            <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
-                                <b class="text-decoration-underline">@docValue.Key.Text</b>
-                            </div>
-                            <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
-                                <span>
-                                    <b class="text-decoration-underline">@docValue.Value.Text</b>
-                                </span>
-                            </div>
-                        </div>
-                    </MatExpansionPanelSummary>
-                    <MatExpansionPanelDetails>
-
-                        @if (docValue.Value.Type == InputType.List)
-                        {
-                            <div class="row">
-                                <div class="col-lg-5 col-md-5 col-sm-1"></div>
-                                <div class="col-lg-5 col-md-5 col-sm-12">
-                                    <MatSlideToggle @bind-Value="@docValue.Value.ShouldReplaceForEachLine"/>
-                                    <span class="ms-1">Create file for each line in replace area</span>
-                                </div>
-                            </div>
-                        }
-                        <div class="row">
-                            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                                <MatTextField @bind-Value="docValue.Key.Text"
-                                              Label="@docValue.Key.Label"
-                                              OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
-                                              HelperText="@docValue.Key.HelperText"
-                                              FullWidth="true"/>
-                            </div>
-                            @if (docValue.Value.Type is InputType.Text or InputType.List)
-                            {
-                                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                                    <MatTextField @bind-Value="docValue.Value.Text"
-                                                  OnInput="@(e => docValue.Value.Text = e.Value?.ToString())"
-                                                  HelperText="@docValue.Value.HelperText"
-                                                  Label="@docValue.Value.Label"
-                                                  TextArea="@docValue.Value.Type.IsTextArea()"
-                                                  FullWidth="true"
-                                                  Style="background: white;"/>
-                                </div>
-                            }
-                            <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
-                                <MatButton Outlined="true"
-                                           Icon="delete"
-                                           OnClickStopPropagation="true"
-                                           Type="button"
-                                           OnClick="() => RemoveItemsFromDict(docValue.Key)">
-                                    Remove
-                                </MatButton>
-                            </div>
-                        </div>
-                    </MatExpansionPanelDetails>
-                </MatExpansionPanel>
-            }
-        </MatAccordion>
+        <ValuesInputComponent @bind-Document="_doc" />
         <hr/>
         @if (_doc.DocumentValues.Count > 0) 
         {
@@ -153,24 +73,21 @@
             {
                 <MatProgressBar Class="mb-2" Indeterminate="false" Progress="_progressBarValue"></MatProgressBar>
             }
-            <MatButton Icon="@_btnReplaceIcon" Disabled="@(_doc.IsFileEmpty || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
+            <MatButton Icon="@_btnReplaceIcon" Disabled="@(_doc.File is null || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
         }
 
     </EditForm>
-    <MatSnackbar @bind-IsOpen="@_snackBarIsOpen" Timeout="@_snackBarTimeout">
-        <MatSnackbarContent>@_snackBarContent</MatSnackbarContent>
-        @if (_snackBarHasCloseButton)
-        {
-            <MatSnackbarActions>
-                <MatButton Raised="true" OnClick="@(() => _snackBarIsOpen = false)">Close</MatButton>
-            </MatSnackbarActions>
-        }
-    </MatSnackbar>
+    <SnackbarComponent
+        @bind-IsSnackbarOpen="_snackBarIsOpen"
+        @bind-Timeout="_snackBarTimeout"
+        @bind-HasCloseButton="_snackBarHasCloseButton">
+        @_snackBarContent
+    </SnackbarComponent>
 </div>
 
 @code
 {
-    private readonly Document _doc = new();
+    private Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
     
     // Snackbar configs
@@ -186,20 +103,6 @@
     // Submit btn configs
     private string _btnReplaceText = "Replace and Download";
     private string _btnReplaceIcon = "find_replace";
-
-    private void FilesReady(IMatFileUploadEntry[] files)
-    {
-        foreach (IMatFileUploadEntry file in files)
-        {
-            if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-            {
-                DisplaySnackBar("Only Word documents (.docx) are allowed.");
-                _doc.File = null;
-                return;
-            }
-            _doc.File = file;
-        }
-    }
 
     private void AddValues()
     {
@@ -234,7 +137,11 @@
         {
             PrepareUIToReplaceAndDownload();
             
+            // TODO: Validate textarea with empty values. It is not working. 
+            _doc.DocumentValues.SanitizeValues();
+            
             var combinations = new List<Dictionary<string, string>>();
+            
             var isThereAnyReplaceForMultipleLine = _doc.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine);
 
             if (isThereAnyReplaceForMultipleLine)
@@ -253,7 +160,9 @@
             }
             
             await DelayDotNetToUpdateUIAsync();
-
+            
+            DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, -1);
+            
             var originalFileInMemoryStream = new MemoryStream();
             if (_doc.File is not null)
             {
@@ -264,6 +173,7 @@
             }
 
             var progressSizePerFile = 1.0 / combinations.Count;
+            
             foreach (Dictionary<string, string> combination in combinations)
             {
                 // Replace
@@ -292,13 +202,14 @@
 
             // Dispose the input word file in memory stream
             await originalFileInMemoryStream.DisposeAsync();
-            
             SetDefaultUIAfterDownload();
         }
         catch (Exception ex)
         {
-            DisplaySnackBar("Something went wrong");
+            // DisplaySnackBar("Something went wrong");
+            Toaster.Add("Something went wrong, please try again.", MatToastType.Danger, "Error", "");
             SetDefaultUIAfterError();
+            ReloadUI();
         }
     }
 
@@ -313,7 +224,6 @@
         _progressBar = true;
         _btnReplaceText = "Wait, Replacing... ";
         _btnReplaceIcon = "hourglass_empty";
-        DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, -1);
     }
 
     private void SetDefaultUIAfterDownload()
@@ -336,18 +246,18 @@
         _btnReplaceIcon = "find_replace";
     }
 
-    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 10000)
+    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 100) // 10000
     {
+        if (_snackBarIsOpen)
+        {
+            _snackBarIsOpen = false;
+        }
+        
         _snackBarIsOpen = true;
         _snackBarContent = textMessage;
         _snackBarHasCloseButton = hasCloseButton;
         _snackBarTimeout = timeout;
         ReloadUI();
-    }
-
-    private void RemoveItemsFromDict(DocumentValue documentValue)
-    {
-        _doc.DocumentValues.Remove(documentValue);
     }
 
     private void ReloadUI()

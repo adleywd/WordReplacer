@@ -8,12 +8,12 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "img/icon-512.png",
+      "src": "_content/WordReplacer.UI/img/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "img/icon-192.png",
+      "src": "_content/WordReplacer.UI/img/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     }
