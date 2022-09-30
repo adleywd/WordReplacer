@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Components
+@using WordReplacer.Models
+@inject IMatToaster Toaster
+
+<MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here"/>
+@if (Document.File is not null)
+{
+    <div class="mt-1">Selected File: <span class="text-info"> @Document.File.Name</span></div>
+}
+
+@code {
+
+    [Parameter]
+    public Document Document { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<Document> DocumentChanged { get; set; }
+    
+    private async Task FilesReady(IMatFileUploadEntry[] files)
+    {
+        foreach (IMatFileUploadEntry file in files)
+        {
+            if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                Document.File = null;
+                Toaster.Add("Only Word documents (.docx) are allowed.", MatToastType.Warning, "Wrong file type", "block");
+            }
+            else
+            {
+                Document.File = file;
+            }
+        }
+
+        await DocumentChanged.InvokeAsync(Document);
+    }
+}

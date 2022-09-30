@@ -1,0 +1,37 @@
+﻿<MatSnackbar @bind-IsOpen="@IsSnackbarOpen" Timeout="@Timeout">
+    <MatSnackbarContent>@ChildContent</MatSnackbarContent>
+    @if (HasCloseButton)
+    {
+        <MatSnackbarActions>
+            <MatButton Raised="true" OnClick="@(() => IsSnackbarOpen = false)">Close</MatButton>
+        </MatSnackbarActions>
+    }
+</MatSnackbar>
+
+@code {
+    
+    [Parameter] 
+    public RenderFragment? ChildContent { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnSnackBarUpdated { get; set; }
+    
+    [Parameter]
+    public bool IsSnackbarOpen { get; set; }
+    
+    [Parameter]
+    public EventCallback<bool> IsSnackbarOpenChanged { get; set; }
+    
+    [Parameter]
+    public int Timeout { get; set; }
+    
+    [Parameter]
+    public EventCallback<int> TimeoutChanged { get; set; }
+
+    [Parameter]
+    public bool HasCloseButton { get; set; }
+    
+    [Parameter]
+    public EventCallback<bool> HasCloseButtonChanged { get; set; }
+
+}
