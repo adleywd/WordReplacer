@@ -1,0 +1,62 @@
+﻿@{
+    var showClass = IsVisible ? "d-block" : "d-none";
+}
+
+<div class="toast-container p-3 fixed-bottom-right @showClass" data-bs-autohide="true" data-bs-delay="5000">
+    <div class="toast show small-radius" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto icon-primary-color">@HeaderText</strong>
+            @if (HasCloseButton)
+            {
+                <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+            }
+        </div>
+
+        <div class="toast-body">
+            @Content
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+    
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
+    public string? HeaderText { get; set; }
+
+    [Parameter]
+    public bool HasCloseButton { get; set; }
+    
+    public void Show()
+    {
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    public void ShowCloseButton()
+    {
+        HasCloseButton = true;
+        StateHasChanged();
+    }
+
+    public void HideCloseButton()
+    {
+        HasCloseButton = false;
+        StateHasChanged();
+    }
+
+}

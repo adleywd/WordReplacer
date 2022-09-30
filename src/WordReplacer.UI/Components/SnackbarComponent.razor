@@ -1,5 +1,5 @@
 ﻿<MatSnackbar @bind-IsOpen="@IsSnackbarOpen" Timeout="@Timeout">
-    <MatSnackbarContent>@ChildContent</MatSnackbarContent>
+    <MatSnackbarContent>@Content</MatSnackbarContent>
     @if (HasCloseButton)
     {
         <MatSnackbarActions>
@@ -11,7 +11,7 @@
 @code {
     
     [Parameter] 
-    public RenderFragment? ChildContent { get; set; }
+    public RenderFragment? Content { get; set; }
     
     [Parameter] 
     public EventCallback OnSnackBarUpdated { get; set; }

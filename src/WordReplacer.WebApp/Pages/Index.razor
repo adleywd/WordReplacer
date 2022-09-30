@@ -9,6 +9,12 @@
 
 <PageTitle>Word Replacer</PageTitle>
 <hr/>
+<DownloadPopoutComponent @ref="_popupRef" HeaderText="Downloads"> 
+    <Content>
+        <DownloadDocumentList @bind-Downloads="_downloads" />
+    </Content>
+</DownloadPopoutComponent>
+
 <div class="container-fluid">
     <MatPaper Elevation="6" Class="p-3">
         <div class="row">
@@ -17,6 +23,12 @@
             </div>
         </div>
         <hr/>
+        
+        <div class="d-inline-block">
+            <MatButton OnClick="OpenDownloadPopup">Open</MatButton>
+            <MatButton OnClick="CloseDownloadPopup">Close</MatButton>
+        </div>
+        
         <EditForm Model="_docParamsDto" OnValidSubmit="AddValues">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
@@ -49,7 +61,7 @@
     {
         <div class="row">
             <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                <h3>Old values</h3>
+                <h3>Original values</h3>
             </div>
             <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                 <h3>New values</h3>
@@ -65,9 +77,9 @@
     <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12 mt-3">
         <DataAnnotationsValidator/>
 
-        <ValuesInputComponent @bind-Document="_doc" />
+        <ValuesInputComponent @bind-Document="_doc"/>
         <hr/>
-        @if (_doc.DocumentValues.Count > 0) 
+        @if (_doc.DocumentValues.Count > 0)
         {
             @if (_progressBar)
             {
@@ -81,12 +93,22 @@
         @bind-IsSnackbarOpen="_snackBarIsOpen"
         @bind-Timeout="_snackBarTimeout"
         @bind-HasCloseButton="_snackBarHasCloseButton">
-        @_snackBarContent
+        <Content>
+            @_snackBarContent
+        </Content>
     </SnackbarComponent>
 </div>
 
 @code
 {
+    private List<Download> _downloads = new();
+    // {
+    //     new Download{ FileName = "Teste.docx", Progress = 1, IsProgressIndeterminate = false, IsDownloading = false, IsDownloadCompleted = true},
+    //     new Download{ FileName = "Batata.docx", Progress = 1, IsDownloading = true, IsDownloadCompleted = false}
+    // };
+    
+    private DownloadPopoutComponent _popupRef = new ();
+    
     private Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
     
@@ -104,15 +126,30 @@
     private string _btnReplaceText = "Replace and Download";
     private string _btnReplaceIcon = "find_replace";
 
+    private void OpenDownloadPopup()
+    {
+        _popupRef.Show();
+    }
+    private void CloseDownloadPopup()
+    {
+        _popupRef.Close();
+    }
+
     private void AddValues()
     {
+
+        if (_doc.DocumentValues.Select(d => d.Key.Text).Any( text=> text == _docParamsDto.Text))
+        {
+            Toaster.Add("This value has already been added.", MatToastType.Danger, "Duplicate original value");
+            return;
+        }
         var oldValue = new DocumentValue()
         {
-            Label = "Old Value",
+            Label = "Original Value",
             HtmlId = Guid.NewGuid().ToString(),
             IsOldValue = true,
             Text = _docParamsDto.Text,
-            HelperText = "This is the old value",
+            HelperText = "This is the original value",
             Type = InputType.Text,
             IsAccordionOpen = true
         };
@@ -159,6 +196,8 @@
                     ));
             }
             
+            PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine);
+            
             await DelayDotNetToUpdateUIAsync();
             
             DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, -1);
@@ -173,6 +212,10 @@
             }
 
             var progressSizePerFile = 1.0 / combinations.Count;
+
+            OpenDownloadPopup();
+
+            await DelayDotNetToUpdateUIAsync();
             
             foreach (Dictionary<string, string> combination in combinations)
             {
@@ -180,13 +223,28 @@
                 Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream);
                 
                 // Get File Name
-                var fileName = isThereAnyReplaceForMultipleLine ? string.Join("_", combination.Values) : _doc.File!.Name;
+                var fileName = _doc.File!.Name;
+                
+                if (isThereAnyReplaceForMultipleLine)
+                {
+                    fileName = string.Join("_", combination.Values) + ".docx";
+                }
                 
                 // Download the file
-                await DocumentService.DownloadFile($"{fileName}.docx", docReplaced).ConfigureAwait(false);
+                await DocumentService.DownloadFile(fileName, docReplaced).ConfigureAwait(false);
                 
                 // Dispose current replaced doc
                 await docReplaced.DisposeAsync();
+
+                var currentDownloadFile = _downloads.FirstOrDefault(d => d.FileName == fileName);
+
+                if (currentDownloadFile is not null)
+                {
+                    currentDownloadFile.Progress = 1;
+                    currentDownloadFile.IsProgressIndeterminate = false;
+                    currentDownloadFile.IsDownloading = false;
+                    currentDownloadFile.IsDownloadCompleted = true;
+                }
                 
                 // Update progress UI
                 if (combination != combinations.Last())
@@ -206,10 +264,33 @@
         }
         catch (Exception ex)
         {
-            // DisplaySnackBar("Something went wrong");
+            Console.WriteLine(ex.Message);
             Toaster.Add("Something went wrong, please try again.", MatToastType.Danger, "Error", "");
             SetDefaultUIAfterError();
             ReloadUI();
+        }
+    }
+
+    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool multipleFiles)
+    {
+        _downloads = new List<Download>();
+        foreach (var combination in combinations)
+        {
+            var fileName = _doc.File!.Name;
+                
+            if (multipleFiles)
+            {
+                fileName = string.Join("_", combination.Values) + ".docx";
+            }
+
+            _downloads.Add(new Download
+            {
+                FileName=fileName,
+                Progress = 0.75,
+                IsDownloading = true,
+                IsDownloadCompleted = false,
+                IsProgressIndeterminate = true
+            });
         }
     }
 
@@ -224,6 +305,7 @@
         _progressBar = true;
         _btnReplaceText = "Wait, Replacing... ";
         _btnReplaceIcon = "hourglass_empty";
+        _popupRef.HideCloseButton();
     }
 
     private void SetDefaultUIAfterDownload()
@@ -231,12 +313,14 @@
         _progressBar = false;
         _snackBarIsOpen = false;
         _progressBarValue = 0;
+        _popupRef.ShowCloseButton();
         SetDefaultValuesForBtnReplace();
     }
     
     private void SetDefaultUIAfterError()
     {
         _progressBar = false;
+        CloseDownloadPopup();
         SetDefaultValuesForBtnReplace();
     }
 

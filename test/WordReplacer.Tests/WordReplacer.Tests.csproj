@@ -25,6 +25,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\WordReplacer.Common\WordReplacer.Common.csproj" />
+      <ProjectReference Include="..\..\src\WordReplacer.Models\WordReplacer.Models.csproj" />
       <ProjectReference Include="..\..\src\WordReplacer.WebApp\WordReplacer.WebApp.csproj" />
     </ItemGroup>
 

@@ -53,7 +53,8 @@
                                       Label="@docValue.Key.Label"
                                       OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
                                       HelperText="@docValue.Key.HelperText"
-                                      FullWidth="true"/>
+                                      FullWidth="true"
+                                      ReadOnly="true"/>
                     </div>
                     @if (docValue.Value.Type is InputType.Text or InputType.List)
                     {

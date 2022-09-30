@@ -72,3 +72,19 @@ a, .btn-link {
 .mdc-text-field--filled:not(.mdc-text-field--disabled){
     
 }
+
+.fixed-bottom-right {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    z-index: 1030;
+}
+
+.icon-primary-color {
+    color: var(--mdc-theme-primary);
+}
+
+.small-radius{
+    border-radius: 3%;   
+}
