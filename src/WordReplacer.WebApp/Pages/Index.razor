@@ -11,7 +11,7 @@
 <hr/>
 <DownloadPopoutComponent @ref="_popupRef" HeaderText="Downloads"> 
     <Content>
-        <DownloadDocumentList @bind-Downloads="_downloads" />
+        <DownloadDocumentListComponent @bind-DownloadsDict="_downloads" />
     </Content>
 </DownloadPopoutComponent>
 
@@ -59,14 +59,16 @@
     <hr/>
     @if (_doc.DocumentValues.Count > 0)
     {
-        <div class="row">
-            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                <h3>Original values</h3>
+        <MatHidden BreakPoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Down">
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                    <h3>Original values</h3>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                    <h3>New values</h3>
+                </div>
             </div>
-            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                <h3>New values</h3>
-            </div>
-        </div>
+        </MatHidden>
     }
     else
     {
@@ -74,7 +76,7 @@
             <p class="text-center justify-content-center">Select a file and add some values to begin the replacement</p>
         </div>
     }
-    <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12 mt-3">
+    <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12">
         <DataAnnotationsValidator/>
 
         <ValuesInputComponent @bind-Document="_doc"/>
@@ -101,12 +103,14 @@
 
 @code
 {
-    private List<Download> _downloads = new();
+    // private List<Download> _downloads = new();
     // {
     //     new Download{ FileName = "Teste.docx", Progress = 1, IsProgressIndeterminate = false, IsDownloading = false, IsDownloadCompleted = true},
     //     new Download{ FileName = "Batata.docx", Progress = 1, IsDownloading = true, IsDownloadCompleted = false}
     // };
-    
+
+    private Dictionary<string, Download> _downloads = new();
+
     private DownloadPopoutComponent _popupRef = new ();
     
     private Document _doc = new();
@@ -231,19 +235,19 @@
                 }
                 
                 // Download the file
-                await DocumentService.DownloadFile(fileName, docReplaced).ConfigureAwait(false);
+                await DocumentService.DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document").ConfigureAwait(false);
                 
                 // Dispose current replaced doc
                 await docReplaced.DisposeAsync();
 
-                var currentDownloadFile = _downloads.FirstOrDefault(d => d.FileName == fileName);
+                var currentDownloadFile = _downloads.FirstOrDefault(d => d.Value.FileName == fileName);
 
-                if (currentDownloadFile is not null)
+                if (currentDownloadFile.Value is not null)
                 {
-                    currentDownloadFile.Progress = 1;
-                    currentDownloadFile.IsProgressIndeterminate = false;
-                    currentDownloadFile.IsDownloading = false;
-                    currentDownloadFile.IsDownloadCompleted = true;
+                    currentDownloadFile.Value.Progress = 1;
+                    currentDownloadFile.Value.IsProgressIndeterminate = false;
+                    currentDownloadFile.Value.IsDownloading = false;
+                    currentDownloadFile.Value.IsDownloadCompleted = true;
                 }
                 
                 // Update progress UI
@@ -273,24 +277,34 @@
 
     private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool multipleFiles)
     {
-        _downloads = new List<Download>();
         foreach (var combination in combinations)
         {
             var fileName = _doc.File!.Name;
-                
+
             if (multipleFiles)
             {
                 fileName = string.Join("_", combination.Values) + ".docx";
             }
 
-            _downloads.Add(new Download
+            var download = new Download
             {
-                FileName=fileName,
+                FileName = fileName,
                 Progress = 0.75,
                 IsDownloading = true,
                 IsDownloadCompleted = false,
                 IsProgressIndeterminate = true
-            });
+            };
+            if (_downloads.ContainsKey(fileName))
+            {
+                // update
+                _downloads[fileName] = download;
+            }
+            else
+            {
+                // add
+                _downloads.Add(download.FileName, download);
+            }
+            
         }
     }
 
@@ -305,7 +319,7 @@
         _progressBar = true;
         _btnReplaceText = "Wait, Replacing... ";
         _btnReplaceIcon = "hourglass_empty";
-        _popupRef.HideCloseButton();
+        // _popupRef.HideCloseButton();
     }
 
     private void SetDefaultUIAfterDownload()
@@ -313,14 +327,14 @@
         _progressBar = false;
         _snackBarIsOpen = false;
         _progressBarValue = 0;
-        _popupRef.ShowCloseButton();
+        // _popupRef.ShowCloseButton();
         SetDefaultValuesForBtnReplace();
     }
     
     private void SetDefaultUIAfterError()
     {
         _progressBar = false;
-        CloseDownloadPopup();
+        // CloseDownloadPopup();
         SetDefaultValuesForBtnReplace();
     }
 

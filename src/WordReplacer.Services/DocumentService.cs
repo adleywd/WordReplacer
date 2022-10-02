@@ -59,16 +59,25 @@ namespace WordReplacer.Services
             streamFile.CopyTo(newFile);
 
             using var wordDoc = WordprocessingDocument.Open(newFile, true);
-            wordDoc.ReplaceWordBodyText(values);
-            wordDoc.ReplaceWordHeaderText(values);
-            wordDoc.ReplaceWordFooterText(values);
+            
+            foreach (var words in values)
+            {
+                wordDoc.ReplaceStringInWordDocument(words.Key, words.Value);
+            }
+            
+            // wordDoc.ReplaceWordBodyText(values);
+            // wordDoc.ReplaceWordHeaderText(values);
+            // wordDoc.ReplaceWordFooterText(values);
             wordDoc.Close();
                 
             return newFile;
         }
 
         /// <inheritdoc />
-        public async Task DownloadFile(string filename, Stream? docReplaced)
+        public async Task DownloadFile(
+            string filename, 
+            Stream? docReplaced, 
+            string mimiType)
         {
             if (docReplaced is null)
             {
@@ -76,7 +85,7 @@ namespace WordReplacer.Services
             }
 
             await _jsRuntime
-                  .InvokeVoidAsync("downloadFileFromStream", filename, docReplaced.ConvertToBase64())
+                  .InvokeVoidAsync("downloadFileFromStream", filename, docReplaced.ConvertToBase64(), mimiType)
                   .ConfigureAwait(false);
         }
     }

@@ -27,7 +27,8 @@ public interface IDocumentService
     /// </summary>
     /// <param name="filename">The name of the file to download.</param>
     /// <param name="docReplaced">The stream of the document that was replaced.</param>
-    public Task DownloadFile(string filename, Stream? docReplaced);
+    /// <param name="mimiType">The mimi type of the file.</param>
+    public Task DownloadFile(string filename, Stream? docReplaced, string mimiType);
 
     /// <summary>
     /// It replaces the values in a word document as MemoryStream for the values in the dictionary.

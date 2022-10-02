@@ -1,4 +1,7 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System.Text;
+using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using WordReplacer.Models;
 
@@ -141,5 +144,124 @@ public static class DocumentHelper
                 GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
             }
         }
+    }
+
+    /// <summary>
+    /// It replaces all instances of a string in a Word document with another string.
+    /// </summary>
+    /// <param name="wordProcessingDocument">The WordProcessingDocument object that you want to replace text in.</param>
+    /// <param name="originalValue">The string you want to replace.</param>
+    /// <param name="newerValue">The string you want to replace the replaceWhat string with.</param>
+    public static void ReplaceStringInWordDocument(
+        this WordprocessingDocument wordProcessingDocument, 
+        string originalValue, 
+        string newerValue, 
+        bool matchExactly = false)
+    {
+        List<WordMatchedPhrase> matchedPhrases = FindWordMatchedPhrases(wordProcessingDocument, originalValue);
+
+        DocumentFormat.OpenXml.Wordprocessing.Document document = wordProcessingDocument.MainDocumentPart.Document;
+        var currentDocTextIndex = 0;
+        var isInPhrase = false;
+        var isInEndOfPhrase = false;
+        foreach (Text text in document.Descendants<Text>()) // <<< Here
+        {
+            char[] textChars = text.Text.ToCharArray();
+            List<WordMatchedPhrase> curParPhrases = matchedPhrases.FindAll(a => (a.FirstCharParOccurrence.Equals(currentDocTextIndex) || a.LastCharParOccurrence.Equals(currentDocTextIndex)));
+            StringBuilder outStringBuilder = new StringBuilder();
+
+            for (int c = 0; c < textChars.Length; c++)
+            {
+                if (isInEndOfPhrase)
+                {
+                    isInPhrase = false;
+                    isInEndOfPhrase = false;
+                }
+
+                foreach (var parPhrase in curParPhrases)
+                {
+                    if (c == parPhrase.CharStartInFirstPar && currentDocTextIndex == parPhrase.FirstCharParOccurrence)
+                    {
+                        outStringBuilder.Append(newerValue);
+                        isInPhrase = true;
+                    }
+                    if (c == parPhrase.CharEndInLastPar && currentDocTextIndex == parPhrase.LastCharParOccurrence)
+                    {
+                        isInEndOfPhrase = true;
+                    }
+
+                }
+                if (isInPhrase == false && isInEndOfPhrase == false)
+                {
+                    outStringBuilder.Append(textChars[c]);
+                }
+            }
+            text.Text = outStringBuilder.ToString();
+            currentDocTextIndex = currentDocTextIndex + 1;
+        }
+    }
+
+    private static List<WordMatchedPhrase> FindWordMatchedPhrases(WordprocessingDocument wordProcessingDocument, string originalValue, bool matchExactly = false)
+    {
+        char[] replaceWhatChars = originalValue.ToCharArray();
+        int overlapsRequired = replaceWhatChars.Length;
+        var currentChar = 0;
+        var firstCharParOccurrence = 0;
+        //int lastCharParOccurrence = 0;
+        var startChar = 0;
+        //int endChar = 0;
+        var wordMatchedPhrases = new List<WordMatchedPhrase>();
+        var document = wordProcessingDocument.MainDocumentPart!.Document;
+        var currentDocTextIndex = 0;
+        foreach (Text text in document.Descendants<Text>())
+        {
+            char[] textChars = text.Text.ToCharArray();
+            for (int c = 0; c < textChars.Length; c++)
+            {
+                char compareToChar = replaceWhatChars[currentChar];
+                // TODO: Check previous and preceding chars to check if is Empty (if not, it's in the middle of a phrase
+                // TODO: like replacing ana for test, Banana should not be replaced
+                if (textChars[c] == compareToChar)
+                {
+                    currentChar = currentChar + 1;
+                    if (currentChar == 1)
+                    {
+                        startChar = c;
+                        firstCharParOccurrence = currentDocTextIndex;
+                    }
+                    if (currentChar == overlapsRequired)
+                    {
+                        var endChar = c;
+                        var lastCharParOccurrence = currentDocTextIndex;
+                        WordMatchedPhrase matchedPhrase = new WordMatchedPhrase
+                        {
+                            FirstCharParOccurrence = firstCharParOccurrence,
+                            LastCharParOccurrence = lastCharParOccurrence,
+                            CharEndInLastPar = endChar,
+                            CharStartInFirstPar = startChar
+                        };
+                        wordMatchedPhrases.Add(matchedPhrase);
+                        currentChar = 0;
+                    }
+                }
+                else
+                {
+                    currentChar = 0;
+
+                }
+            }
+            currentDocTextIndex = currentDocTextIndex + 1;
+        }
+
+        return wordMatchedPhrases;
+    }
+
+
+    private class WordMatchedPhrase
+    {
+        public int CharStartInFirstPar { get; set; }
+        public int CharEndInLastPar { get; set; }
+        public int FirstCharParOccurrence { get; set; }
+        public int LastCharParOccurrence { get; set; }
     }
 }
