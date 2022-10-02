@@ -1,0 +1,352 @@
+﻿@page "/"
+@using WordReplacer.Enums
+@using WordReplacer.Models
+@using Microsoft.AspNetCore.Components
+@using WordReplacer.Common
+@using WordReplacer.Dto
+@inject IDocumentService DocumentService
+@inject IMatToaster Toaster
+
+<PageTitle>Word Replacer</PageTitle>
+<hr/>
+<DownloadPopoutComponent @ref="_popupRef" HeaderText="Downloads"> 
+    <Content>
+        <DownloadDocumentList @bind-Downloads="_downloads" />
+    </Content>
+</DownloadPopoutComponent>
+
+<div class="container-fluid">
+    <MatPaper Elevation="6" Class="p-3">
+        <div class="row">
+            <div class="col-12 mt-3">
+                <InputFileComponent @bind-Document="_doc"/>
+            </div>
+        </div>
+        <hr/>
+        
+        <div class="d-inline-block">
+            <MatButton OnClick="OpenDownloadPopup">Open</MatButton>
+            <MatButton OnClick="CloseDownloadPopup">Close</MatButton>
+        </div>
+        
+        <EditForm Model="_docParamsDto" OnValidSubmit="AddValues">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                    <MatTextField @bind-Value="_docParamsDto.Text"
+                                  OnInput="@(e => _docParamsDto.Text = e.Value?.ToString())"
+                                  HelperText="The text that will be replaced"
+                                  Label="Value to be replaced"
+                                  FullWidth="true"/>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                    <label>The field you want for your new input</label>
+                    <br/>
+                    <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mb-2 justify-content-center text-center">
+                    <MatButton Icon="add"
+                               Style="width: 98%"
+                               Raised="true"
+                               Disabled="_docParamsDto.IsTextEmpty">
+                        Add value
+                    </MatButton>
+                </div>
+            </div>
+        </EditForm>
+    </MatPaper>
+    <hr/>
+    @if (_doc.DocumentValues.Count > 0)
+    {
+        <div class="row">
+            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                <h3>Original values</h3>
+            </div>
+            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                <h3>New values</h3>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info justify-content-center">
+            <p class="text-center justify-content-center">Select a file and add some values to begin the replacement</p>
+        </div>
+    }
+    <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12 mt-3">
+        <DataAnnotationsValidator/>
+
+        <ValuesInputComponent @bind-Document="_doc"/>
+        <hr/>
+        @if (_doc.DocumentValues.Count > 0)
+        {
+            @if (_progressBar)
+            {
+                <MatProgressBar Class="mb-2" Indeterminate="false" Progress="_progressBarValue"></MatProgressBar>
+            }
+            <MatButton Icon="@_btnReplaceIcon" Disabled="@(_doc.File is null || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
+        }
+
+    </EditForm>
+    <SnackbarComponent
+        @bind-IsSnackbarOpen="_snackBarIsOpen"
+        @bind-Timeout="_snackBarTimeout"
+        @bind-HasCloseButton="_snackBarHasCloseButton">
+        <Content>
+            @_snackBarContent
+        </Content>
+    </SnackbarComponent>
+</div>
+
+@code
+{
+    private List<Download> _downloads = new();
+    // {
+    //     new Download{ FileName = "Teste.docx", Progress = 1, IsProgressIndeterminate = false, IsDownloading = false, IsDownloadCompleted = true},
+    //     new Download{ FileName = "Batata.docx", Progress = 1, IsDownloading = true, IsDownloadCompleted = false}
+    // };
+    
+    private DownloadPopoutComponent _popupRef = new ();
+    
+    private Document _doc = new();
+    private readonly DocumentParamsDto _docParamsDto = new();
+    
+    // Snackbar configs
+    private bool _snackBarIsOpen;
+    private string _snackBarContent = string.Empty;
+    private bool _snackBarHasCloseButton;
+    private int _snackBarTimeout = 10000;
+    
+    // Progress bar configs
+    private bool _progressBar;
+    private double _progressBarValue;
+    
+    // Submit btn configs
+    private string _btnReplaceText = "Replace and Download";
+    private string _btnReplaceIcon = "find_replace";
+
+    private void OpenDownloadPopup()
+    {
+        _popupRef.Show();
+    }
+    private void CloseDownloadPopup()
+    {
+        _popupRef.Close();
+    }
+
+    private void AddValues()
+    {
+
+        if (_doc.DocumentValues.Select(d => d.Key.Text).Any( text=> text == _docParamsDto.Text))
+        {
+            Toaster.Add("This value has already been added.", MatToastType.Danger, "Duplicate original value");
+            return;
+        }
+        var oldValue = new DocumentValue()
+        {
+            Label = "Original Value",
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = true,
+            Text = _docParamsDto.Text,
+            HelperText = "This is the original value",
+            Type = InputType.Text,
+            IsAccordionOpen = true
+        };
+        var newValue = new DocumentValue()
+        {
+            Label = $"New value for {_docParamsDto.Text}",
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = false,
+            Text = "",
+            HelperText = "This is will be the new value",
+            Type = _docParamsDto.Type,
+            IsAccordionOpen = true,
+            ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
+        };
+        _doc.DocumentValues.Add(oldValue, newValue);
+        _docParamsDto.Text = string.Empty; // Cleat text field
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        try
+        {
+            PrepareUIToReplaceAndDownload();
+            
+            // TODO: Validate textarea with empty values. It is not working. 
+            _doc.DocumentValues.SanitizeValues();
+            
+            var combinations = new List<Dictionary<string, string>>();
+            
+            var isThereAnyReplaceForMultipleLine = _doc.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine);
+
+            if (isThereAnyReplaceForMultipleLine)
+            {
+                // Get all possible combinations
+                combinations = DocumentService.GetAllCombinations(_doc.DocumentValues);
+            }
+            else
+            {
+                // Add the single combination to the combination list
+                combinations.Add(_doc.DocumentValues
+                                     .ToDictionary(
+                                         d => d.Key.Text!,
+                                         d => d.Value.Text!
+                    ));
+            }
+            
+            PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine);
+            
+            await DelayDotNetToUpdateUIAsync();
+            
+            DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, -1);
+            
+            var originalFileInMemoryStream = new MemoryStream();
+            if (_doc.File is not null)
+            {
+                // Get the MemoryStream
+                originalFileInMemoryStream = await DocumentService.GetMemoryStream(_doc.File);
+                
+                await DelayDotNetToUpdateUIAsync();
+            }
+
+            var progressSizePerFile = 1.0 / combinations.Count;
+
+            OpenDownloadPopup();
+
+            await DelayDotNetToUpdateUIAsync();
+            
+            foreach (Dictionary<string, string> combination in combinations)
+            {
+                // Replace
+                Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream);
+                
+                // Get File Name
+                var fileName = _doc.File!.Name;
+                
+                if (isThereAnyReplaceForMultipleLine)
+                {
+                    fileName = string.Join("_", combination.Values) + ".docx";
+                }
+                
+                // Download the file
+                await DocumentService.DownloadFile(fileName, docReplaced).ConfigureAwait(false);
+                
+                // Dispose current replaced doc
+                await docReplaced.DisposeAsync();
+
+                var currentDownloadFile = _downloads.FirstOrDefault(d => d.FileName == fileName);
+
+                if (currentDownloadFile is not null)
+                {
+                    currentDownloadFile.Progress = 1;
+                    currentDownloadFile.IsProgressIndeterminate = false;
+                    currentDownloadFile.IsDownloading = false;
+                    currentDownloadFile.IsDownloadCompleted = true;
+                }
+                
+                // Update progress UI
+                if (combination != combinations.Last())
+                {
+                    _progressBarValue += progressSizePerFile;
+                    ReloadUI();
+                 
+                    await DelayDotNetToUpdateUIAsync();
+                }
+            }
+
+            await DelayDotNetToUpdateUIAsync();
+
+            // Dispose the input word file in memory stream
+            await originalFileInMemoryStream.DisposeAsync();
+            SetDefaultUIAfterDownload();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Toaster.Add("Something went wrong, please try again.", MatToastType.Danger, "Error", "");
+            SetDefaultUIAfterError();
+            ReloadUI();
+        }
+    }
+
+    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool multipleFiles)
+    {
+        _downloads = new List<Download>();
+        foreach (var combination in combinations)
+        {
+            var fileName = _doc.File!.Name;
+                
+            if (multipleFiles)
+            {
+                fileName = string.Join("_", combination.Values) + ".docx";
+            }
+
+            _downloads.Add(new Download
+            {
+                FileName=fileName,
+                Progress = 0.75,
+                IsDownloading = true,
+                IsDownloadCompleted = false,
+                IsProgressIndeterminate = true
+            });
+        }
+    }
+
+    // Delay the to UI (Javascript) to catch a breath to update UI
+    private static async Task DelayDotNetToUpdateUIAsync(int timeInMs = 100)
+    {
+        await Task.Delay(timeInMs);
+    }
+    
+    private void PrepareUIToReplaceAndDownload()
+    {
+        _progressBar = true;
+        _btnReplaceText = "Wait, Replacing... ";
+        _btnReplaceIcon = "hourglass_empty";
+        _popupRef.HideCloseButton();
+    }
+
+    private void SetDefaultUIAfterDownload()
+    {
+        _progressBar = false;
+        _snackBarIsOpen = false;
+        _progressBarValue = 0;
+        _popupRef.ShowCloseButton();
+        SetDefaultValuesForBtnReplace();
+    }
+    
+    private void SetDefaultUIAfterError()
+    {
+        _progressBar = false;
+        CloseDownloadPopup();
+        SetDefaultValuesForBtnReplace();
+    }
+
+    private void SetDefaultValuesForBtnReplace()
+    {
+        _btnReplaceText = "Replace and Download";
+        _btnReplaceIcon = "find_replace";
+    }
+
+    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 100) // 10000
+    {
+        if (_snackBarIsOpen)
+        {
+            _snackBarIsOpen = false;
+        }
+        
+        _snackBarIsOpen = true;
+        _snackBarContent = textMessage;
+        _snackBarHasCloseButton = hasCloseButton;
+        _snackBarTimeout = timeout;
+        ReloadUI();
+    }
+
+    private void ReloadUI()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+}

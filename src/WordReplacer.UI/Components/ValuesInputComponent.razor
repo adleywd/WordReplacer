@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Components
+@using WordReplacer.Common
+@using WordReplacer.Enums
+@using WordReplacer.Models
+
+<MatAccordion Multi="true">
+    @foreach (var docValue in Document.DocumentValues)
+    {
+        @if (docValue.Value.ShouldReplaceForEachLine)
+        {
+            <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text!.Replace("\n", " & ")}")"
+                        Wrap="true"
+                        Position="MatTooltipPosition.Top"
+                        TargetId="@docValue.Key.HtmlId">
+            </MatTooltip>
+        }
+        else
+        {
+            <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text}")"
+                        Wrap="true"
+                        Position="MatTooltipPosition.Top"
+                        TargetId="@docValue.Key.HtmlId">
+            </MatTooltip>
+        }
+        <MatExpansionPanel @bind-Expanded="docValue.Key.IsAccordionOpen">
+            <MatExpansionPanelSummary Style="height: auto;" Id="@docValue.Key.HtmlId">
+                <div class="row" style=" width: 100%;">
+                    <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
+                        <b class="text-decoration-underline">@docValue.Key.Text</b>
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
+                        <span>
+                            <b class="text-decoration-underline">@docValue.Value.Text</b>
+                        </span>
+                    </div>
+                </div>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+
+                @if (docValue.Value.Type == InputType.List)
+                {
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-1"></div>
+                        <div class="col-lg-5 col-md-5 col-sm-12">
+                            <MatSlideToggle @bind-Value="@docValue.Value.ShouldReplaceForEachLine"/>
+                            <span class="ms-1">Create file for each line in replace area</span>
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                        <MatTextField @bind-Value="docValue.Key.Text"
+                                      Label="@docValue.Key.Label"
+                                      OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
+                                      HelperText="@docValue.Key.HelperText"
+                                      FullWidth="true"
+                                      ReadOnly="true"/>
+                    </div>
+                    @if (docValue.Value.Type is InputType.Text or InputType.List)
+                    {
+                        <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                            <MatTextField @bind-Value="docValue.Value.Text"
+                                          OnInput="@(e => docValue.Value.Text = e.Value?.ToString())"
+                                          HelperText="@docValue.Value.HelperText"
+                                          Label="@docValue.Value.Label"
+                                          TextArea="@docValue.Value.Type.IsTextArea()"
+                                          FullWidth="true"
+                                          Style="background: white;"/>
+                        </div>
+                    }
+                    <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
+                        <MatButton Outlined="true"
+                                   Icon="delete"
+                                   OnClickStopPropagation="true"
+                                   Type="button"
+                                   OnClick="() => RemoveItemsFromDict(docValue.Key)">
+                            Remove
+                        </MatButton>
+                    </div>
+                </div>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
+    }
+</MatAccordion>
+
+@code
+{
+    [Parameter]
+    public Document Document { get; set; } = new ();
+    
+    [Parameter]
+    public EventCallback<Document> DocumentChanged { get; set; }
+    
+    private async Task RemoveItemsFromDict(DocumentValue documentValue)
+    {
+        Document.DocumentValues.Remove(documentValue);
+        await DocumentChanged.InvokeAsync(Document);
+    }
+}

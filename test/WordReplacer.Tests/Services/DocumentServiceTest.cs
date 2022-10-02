@@ -1,6 +1,6 @@
 using System.Text.Json;
+using WordReplacer.Common;
 using WordReplacer.Models;
-using WordReplacer.Utilities;
 
 namespace WordReplacer.Tests.Services;
 
@@ -30,17 +30,17 @@ public class DocumentServiceTest
             }
         };
 
-        List<Node> nodes = new()
+        List<CombinationsNode> nodes = new()
         {
-            new Node() { Key = "Student", Values = new List<string>() { "A1", "A2" } },
-            new Node() { Key = "School", Values = new List<string>() { "E1" } },
-            new Node() { Key = "Date", Values = new List<string>() { "D1", "D2" } }
+            new CombinationsNode() { Key = "Student", Values = new List<string>() { "A1", "A2" } },
+            new CombinationsNode() { Key = "School", Values = new List<string>() { "E1" } },
+            new CombinationsNode() { Key = "Date", Values = new List<string>() { "D1", "D2" } }
         };
 
-        var result = new List<IDictionary<string, string>>();
+        var result = new List<Dictionary<string, string>>();
 
         // Act
-        DocumentHelper.GetCombinations(nodes, 0, result, new Dictionary<string, string>());
+        result.GetCombinations(nodes, 0, new Dictionary<string, string>());
 
         // Assert
         var serializedResult = JsonSerializer.Serialize(result);
@@ -48,20 +48,5 @@ public class DocumentServiceTest
         serializedResult.ShouldBe(serializedExpectedResult);
         // CompareListDictionaries(result, expectedListResult).ShouldBeTrue();
     }
-
-    // private static bool CompareListDictionaries(IList<IDictionary<string, string>> list1, IList<IDictionary<string, string>> list2)
-    // {
-    //     var dict1Keys = list1.Select(d => d.Keys).ToList();
-    //     var dict2Keys = list2.Select(d => d.Keys).ToList();
-    //     var dict1Values = list1.Select(d => d.Values.Select(v => v)).ToList();
-    //     var dict2Values = list2.Select(d => d.Values.Select(v => v)).ToList();
-    //     
-    //
-    //     var areKeysEqual = dict1Keys.SequenceEqual(dict2Keys);
-    //     var areValuesEqual = dict1Values.SequenceEqual(dict2Values);
-    //
-    //     return areKeysEqual && areValuesEqual;
-    //
-    // }
     
 }
