@@ -152,25 +152,26 @@ public static class DocumentHelper
     /// <param name="wordProcessingDocument">The WordProcessingDocument object that you want to replace text in.</param>
     /// <param name="originalValue">The string you want to replace.</param>
     /// <param name="newerValue">The string you want to replace the replaceWhat string with.</param>
+    /// <param name="matchExactly">True for the words needs to match exactly to be replaced.</param>
     public static void ReplaceStringInWordDocument(
         this WordprocessingDocument wordProcessingDocument, 
         string originalValue, 
         string newerValue, 
         bool matchExactly = false)
     {
-        List<WordMatchedPhrase> matchedPhrases = FindWordMatchedPhrases(wordProcessingDocument, originalValue);
+        List<WordMatchedPhrase> matchedPhrases = FindWordMatchedPhrases(wordProcessingDocument, originalValue, matchExactly);
 
-        DocumentFormat.OpenXml.Wordprocessing.Document document = wordProcessingDocument.MainDocumentPart.Document;
+        var document = wordProcessingDocument.MainDocumentPart!.Document;
         var currentDocTextIndex = 0;
         var isInPhrase = false;
         var isInEndOfPhrase = false;
         foreach (Text text in document.Descendants<Text>()) // <<< Here
         {
-            char[] textChars = text.Text.ToCharArray();
+            var textChars = text.Text.ToCharArray();
             List<WordMatchedPhrase> curParPhrases = matchedPhrases.FindAll(a => (a.FirstCharParOccurrence.Equals(currentDocTextIndex) || a.LastCharParOccurrence.Equals(currentDocTextIndex)));
             StringBuilder outStringBuilder = new StringBuilder();
 
-            for (int c = 0; c < textChars.Length; c++)
+            for (var c = 0; c < textChars.Length; c++)
             {
                 if (isInEndOfPhrase)
                 {
@@ -197,15 +198,20 @@ public static class DocumentHelper
                 }
             }
             text.Text = outStringBuilder.ToString();
-            currentDocTextIndex = currentDocTextIndex + 1;
+            currentDocTextIndex++;
         }
     }
 
-    private static List<WordMatchedPhrase> FindWordMatchedPhrases(WordprocessingDocument wordProcessingDocument, string originalValue, bool matchExactly = false)
+    private static List<WordMatchedPhrase> FindWordMatchedPhrases(WordprocessingDocument wordProcessingDocument, string originalValue, bool matchExactly)
     {
+        // TODO: CHANGE EMPTY CHARACTER TO A FUNCTION isValidForExactlyMatch That will check for characters in ASCII (see notepad++)
+        // TODO: Validate for nextChar for incoming iterations, ex: next will be null Exception, so still need checking
+        const char emptyCharacter = (char)32;
+        char previousChar = emptyCharacter;
+        char nextChar = emptyCharacter;
         char[] replaceWhatChars = originalValue.ToCharArray();
         int overlapsRequired = replaceWhatChars.Length;
-        var currentChar = 0;
+        var currentOriginalCharIndex = 0;
         var firstCharParOccurrence = 0;
         //int lastCharParOccurrence = 0;
         var startChar = 0;
@@ -215,42 +221,86 @@ public static class DocumentHelper
         var currentDocTextIndex = 0;
         foreach (Text text in document.Descendants<Text>())
         {
-            char[] textChars = text.Text.ToCharArray();
-            for (int c = 0; c < textChars.Length; c++)
+            var textChars = text.Text.ToCharArray();
+            // If previous char is empty, stay empty (with space). Otherwise it will keep the previous char
+            previousChar = previousChar == emptyCharacter ? emptyCharacter : previousChar;
+
+            for (var c = 0; c < textChars.Length; c++)
             {
-                char compareToChar = replaceWhatChars[currentChar];
-                // TODO: Check previous and preceding chars to check if is Empty (if not, it's in the middle of a phrase
-                // TODO: like replacing ana for test, Banana should not be replaced
+                char compareToChar = replaceWhatChars[currentOriginalCharIndex];
+
+                if (c-1 >= 0)
+                {
+                    previousChar = textChars[c - 1];
+                }
+
+                // If next char is possible to get, get it
+                if (c + 1 < textChars.Length)
+                {
+                    nextChar = textChars[c + 1];
+                }
+                // If not possible, assume as empty
+                else if (c + 1 > textChars.Length)
+                {
+                    nextChar = emptyCharacter;
+                    //bool needsValidationInTheNextRun = true;
+                }
+
                 if (textChars[c] == compareToChar)
                 {
-                    currentChar = currentChar + 1;
-                    if (currentChar == 1)
+                    // Check for match Exactly the word
+                    if (matchExactly)
+                    {
+                        if (currentOriginalCharIndex == 0 && previousChar != emptyCharacter)
+                        {
+                            continue;
+                        }
+
+                        if (currentOriginalCharIndex == overlapsRequired && nextChar != emptyCharacter)
+                        {
+                            currentDocTextIndex = 0;
+                            continue;
+                        }
+                    }
+
+                    currentOriginalCharIndex++;
+
+                    if (currentOriginalCharIndex == 1 ) 
                     {
                         startChar = c;
                         firstCharParOccurrence = currentDocTextIndex;
                     }
-                    if (currentChar == overlapsRequired)
+                    if (currentOriginalCharIndex == overlapsRequired)
                     {
                         var endChar = c;
+
                         var lastCharParOccurrence = currentDocTextIndex;
-                        WordMatchedPhrase matchedPhrase = new WordMatchedPhrase
+
+                        var matchedPhrase = new WordMatchedPhrase
                         {
                             FirstCharParOccurrence = firstCharParOccurrence,
                             LastCharParOccurrence = lastCharParOccurrence,
                             CharEndInLastPar = endChar,
                             CharStartInFirstPar = startChar
                         };
+
                         wordMatchedPhrases.Add(matchedPhrase);
-                        currentChar = 0;
+
+                        currentOriginalCharIndex = 0;
                     }
                 }
                 else
                 {
-                    currentChar = 0;
+                    currentOriginalCharIndex = 0;
+                }
 
+                // If is the last iteration so the next Text iteration will have the previous char from previous Text iteration
+                if (c + 1 == textChars.Length)
+                {
+                    previousChar = textChars[c];
                 }
             }
-            currentDocTextIndex = currentDocTextIndex + 1;
+            currentDocTextIndex++;
         }
 
         return wordMatchedPhrases;
