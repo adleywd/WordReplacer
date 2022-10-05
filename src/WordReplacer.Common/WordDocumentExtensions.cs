@@ -1,6 +1,4 @@
 ﻿using System.Text;
-using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using WordReplacer.Models;
@@ -153,8 +151,8 @@ public static class DocumentHelper
     /// <param name="originalValue">The string you want to replace.</param>
     /// <param name="newerValue">The string you want to replace the replaceWhat string with.</param>
     public static void ReplaceStringInWordDocument(
-        this WordprocessingDocument wordProcessingDocument, 
-        string originalValue, 
+        this WordprocessingDocument wordProcessingDocument,
+        string originalValue,
         string newerValue)
     {
         List<WordMatchedPhrase> matchedPhrases = FindWordMatchedPhrases(wordProcessingDocument, originalValue);
@@ -230,7 +228,7 @@ public static class DocumentHelper
             {
                 char compareToChar = replaceWhatChars[currentOriginalCharIndex];
 
-                if (c-1 >= 0)
+                if (c - 1 >= 0)
                 {
                     previousChar = textChars[c - 1];
                 }
@@ -251,7 +249,7 @@ public static class DocumentHelper
                     else
                     {
                         // Find the text in the next text obj.
-                        nextChar = texts[i+1].Text.ToCharArray().FirstOrDefault(emptyCharacter);
+                        nextChar = texts[i + 1].Text.ToCharArray().FirstOrDefault(emptyCharacter);
                     }
                 }
 
@@ -266,7 +264,7 @@ public static class DocumentHelper
                         }
 
                         // If last character is not empty, it will not replace
-                        if (currentOriginalCharIndex == overlapsRequired-1 && nextChar != emptyCharacter)
+                        if (currentOriginalCharIndex == overlapsRequired - 1 && nextChar != emptyCharacter)
                         {
                             currentDocTextIndex = 0;
                             continue;
@@ -275,7 +273,7 @@ public static class DocumentHelper
 
                     currentOriginalCharIndex++;
 
-                    if (currentOriginalCharIndex == 1 ) 
+                    if (currentOriginalCharIndex == 1)
                     {
                         startChar = c;
                         firstCharParOccurrence = currentDocTextIndex;
