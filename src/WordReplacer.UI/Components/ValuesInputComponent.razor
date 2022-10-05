@@ -54,7 +54,7 @@
                                       OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
                                       HelperText="@docValue.Key.HelperText"
                                       FullWidth="true"
-                                      ReadOnly="true"/>
+                                      Disabled="true"/>
                     </div>
                     @if (docValue.Value.Type is InputType.Text or InputType.List)
                     {

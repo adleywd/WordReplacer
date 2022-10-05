@@ -46,7 +46,7 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
-        public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile)
+        public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile, bool isReplaceMultipleWordsAtOnce)
         {
             if (streamFile is null)
             {
@@ -59,17 +59,22 @@ namespace WordReplacer.Services
             streamFile.CopyTo(newFile);
 
             using var wordDoc = WordprocessingDocument.Open(newFile, true);
-            
-            foreach (var words in values)
+
+            if (isReplaceMultipleWordsAtOnce)
             {
-                wordDoc.ReplaceStringInWordDocument(words.Key, words.Value);
+                foreach (var words in values)
+                {
+                    wordDoc.ReplaceStringInWordDocument(words.Key, words.Value);
+                }
             }
-            
-            // wordDoc.ReplaceWordBodyText(values);
-            // wordDoc.ReplaceWordHeaderText(values);
-            // wordDoc.ReplaceWordFooterText(values);
-            wordDoc.Close();
-                
+            else
+            {
+                wordDoc.ReplaceWordBodyText(values);
+                wordDoc.ReplaceWordHeaderText(values);
+                wordDoc.ReplaceWordFooterText(values);
+                wordDoc.Close();
+            }
+
             return newFile;
         }
 

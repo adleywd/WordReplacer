@@ -1,8 +1,9 @@
 ﻿@{
     var showDownloadPopupClass = IsDownloadsListVisible ? "d-block" : "d-none";
+    var showFabButton = !IsDownloadsListVisible ? "d-block" : "d-none";
 }
 
-<div class="toast-container p-3 fixed-bottom-right @showDownloadPopupClass" data-bs-autohide="true" data-bs-delay="5000">
+<div class="toast-container p-3 fixed-bottom-right fade-in @showDownloadPopupClass" data-bs-autohide="true" data-bs-delay="5000">
     <div class="toast show small-radius" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header ms-2 mt-1">
             <strong class="me-auto icon-primary-color">@HeaderText</strong>
@@ -26,11 +27,9 @@
                 }
 </style>
 
-@if (!IsDownloadsListVisible)
-{
+<div class="fade-in @showFabButton">
     <MatFAB Class="app-fab--absolute" Icon="@MatIconNames.Save_alt" OnClick="Toggle"></MatFAB>
-}
-
+</div>
 
 @code {
 
@@ -78,5 +77,4 @@
         HasCloseButton = false;
         StateHasChanged();
     }
-
 }

@@ -152,14 +152,12 @@ public static class DocumentHelper
     /// <param name="wordProcessingDocument">The WordProcessingDocument object that you want to replace text in.</param>
     /// <param name="originalValue">The string you want to replace.</param>
     /// <param name="newerValue">The string you want to replace the replaceWhat string with.</param>
-    /// <param name="matchExactly">True for the words needs to match exactly to be replaced.</param>
     public static void ReplaceStringInWordDocument(
         this WordprocessingDocument wordProcessingDocument, 
         string originalValue, 
-        string newerValue, 
-        bool matchExactly = false)
+        string newerValue)
     {
-        List<WordMatchedPhrase> matchedPhrases = FindWordMatchedPhrases(wordProcessingDocument, originalValue, matchExactly);
+        List<WordMatchedPhrase> matchedPhrases = FindWordMatchedPhrases(wordProcessingDocument, originalValue);
 
         var document = wordProcessingDocument.MainDocumentPart!.Document;
         var currentDocTextIndex = 0;
@@ -202,8 +200,10 @@ public static class DocumentHelper
         }
     }
 
-    private static List<WordMatchedPhrase> FindWordMatchedPhrases(WordprocessingDocument wordProcessingDocument, string originalValue, bool matchExactly)
+    /// <param name="matchExactly">Current NOT WORKING. True for the words needs to match exactly to be replaced.</param>
+    private static List<WordMatchedPhrase> FindWordMatchedPhrases(WordprocessingDocument wordProcessingDocument, string originalValue, bool matchExactly = false)
     {
+        // TODO: Match exactly not work properly because sometimes the previous char still the last one matched.
         // TODO: CHANGE EMPTY CHARACTER TO A FUNCTION isValidForExactlyMatch That will check for characters in ASCII (see notepad++)
         // TODO: Validate for nextChar for incoming iterations, ex: next will be null Exception, so still need checking
         const char emptyCharacter = (char)32;
@@ -219,10 +219,11 @@ public static class DocumentHelper
         var wordMatchedPhrases = new List<WordMatchedPhrase>();
         var document = wordProcessingDocument.MainDocumentPart!.Document;
         var currentDocTextIndex = 0;
-        foreach (Text text in document.Descendants<Text>())
+        List<Text> texts = document.Descendants<Text>().ToList();
+        for (var i = 0; i < texts.Count; i++)
         {
-            var textChars = text.Text.ToCharArray();
-            // If previous char is empty, stay empty (with space). Otherwise it will keep the previous char
+            var textChars = texts[i].Text.ToCharArray();
+
             previousChar = previousChar == emptyCharacter ? emptyCharacter : previousChar;
 
             for (var c = 0; c < textChars.Length; c++)
@@ -240,10 +241,18 @@ public static class DocumentHelper
                     nextChar = textChars[c + 1];
                 }
                 // If not possible, assume as empty
-                else if (c + 1 > textChars.Length)
+                else if (c + 1 >= textChars.Length)
                 {
-                    nextChar = emptyCharacter;
-                    //bool needsValidationInTheNextRun = true;
+                    if (i == texts.Count - 1)
+                    {
+                        // If the last run of all texts
+                        nextChar = emptyCharacter;
+                    }
+                    else
+                    {
+                        // Find the text in the next text obj.
+                        nextChar = texts[i+1].Text.ToCharArray().FirstOrDefault(emptyCharacter);
+                    }
                 }
 
                 if (textChars[c] == compareToChar)
@@ -256,7 +265,8 @@ public static class DocumentHelper
                             continue;
                         }
 
-                        if (currentOriginalCharIndex == overlapsRequired && nextChar != emptyCharacter)
+                        // If last character is not empty, it will not replace
+                        if (currentOriginalCharIndex == overlapsRequired-1 && nextChar != emptyCharacter)
                         {
                             currentDocTextIndex = 0;
                             continue;
@@ -309,9 +319,9 @@ public static class DocumentHelper
 
     private class WordMatchedPhrase
     {
-        public int CharStartInFirstPar { get; set; }
-        public int CharEndInLastPar { get; set; }
-        public int FirstCharParOccurrence { get; set; }
-        public int LastCharParOccurrence { get; set; }
+        public int CharStartInFirstPar { get; init; }
+        public int CharEndInLastPar { get; init; }
+        public int FirstCharParOccurrence { get; init; }
+        public int LastCharParOccurrence { get; init; }
     }
 }

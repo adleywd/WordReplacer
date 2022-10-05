@@ -36,5 +36,6 @@ public interface IDocumentService
     /// <param name="values">A dictionary of key/value pairs. The key is the old value to be replace, and the value
     /// is the value to replace it with.</param>
     /// <param name="streamFile">The file to be replaced.</param>
-    public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile);
+    /// <param name="isReplaceMultipleWordsAtOnce">True if should be replace whole phrases. False to replace only words</param>
+    public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile, bool isReplaceMultipleWordsAtOnce);
 }
