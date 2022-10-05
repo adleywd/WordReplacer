@@ -1,10 +1,11 @@
 ﻿@{
-    var showClass = IsVisible ? "d-block" : "d-none";
+    var showDownloadPopupClass = IsDownloadsListVisible ? "d-block" : "d-none";
+    var showFabButton = !IsDownloadsListVisible ? "d-block" : "d-none";
 }
 
-<div class="toast-container p-3 fixed-bottom-right @showClass" data-bs-autohide="true" data-bs-delay="5000">
+<div class="toast-container p-3 fixed-bottom-right fade-in @showDownloadPopupClass" data-bs-autohide="true" data-bs-delay="5000">
     <div class="toast show small-radius" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
+        <div class="toast-header ms-2 mt-1">
             <strong class="me-auto icon-primary-color">@HeaderText</strong>
             @if (HasCloseButton)
             {
@@ -18,13 +19,25 @@
     </div>
 </div>
 
+<style>
+    .app-fab--absolute {
+                    position: fixed;
+                    bottom: 1rem;
+                    right: 1rem;
+                }
+</style>
+
+<div class="fade-in @showFabButton">
+    <MatFAB Class="app-fab--absolute" Icon="@MatIconNames.Save_alt" OnClick="Toggle"></MatFAB>
+</div>
+
 @code {
 
     [Parameter]
     public RenderFragment? Content { get; set; }
     
     [Parameter]
-    public bool IsVisible { get; set; }
+    public bool IsDownloadsListVisible { get; set; }
 
     [Parameter]
     public EventCallback<bool> IsVisibleChanged { get; set; }
@@ -33,17 +46,23 @@
     public string? HeaderText { get; set; }
 
     [Parameter]
-    public bool HasCloseButton { get; set; }
+    public bool HasCloseButton { get; set; } = true;
+
+    private void Toggle()
+    {
+        IsDownloadsListVisible = !IsDownloadsListVisible;
+        StateHasChanged();
+    }
     
     public void Show()
     {
-        IsVisible = true;
+        IsDownloadsListVisible = true;
         StateHasChanged();
     }
 
     public void Close()
     {
-        IsVisible = false;
+        IsDownloadsListVisible = false;
         StateHasChanged();
     }
 
@@ -58,5 +77,4 @@
         HasCloseButton = false;
         StateHasChanged();
     }
-
 }

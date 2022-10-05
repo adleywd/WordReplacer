@@ -27,7 +27,8 @@ public interface IDocumentService
     /// </summary>
     /// <param name="filename">The name of the file to download.</param>
     /// <param name="docReplaced">The stream of the document that was replaced.</param>
-    public Task DownloadFile(string filename, Stream? docReplaced);
+    /// <param name="mimiType">The mimi type of the file.</param>
+    public Task DownloadFile(string filename, Stream? docReplaced, string mimiType);
 
     /// <summary>
     /// It replaces the values in a word document as MemoryStream for the values in the dictionary.
@@ -35,5 +36,6 @@ public interface IDocumentService
     /// <param name="values">A dictionary of key/value pairs. The key is the old value to be replace, and the value
     /// is the value to replace it with.</param>
     /// <param name="streamFile">The file to be replaced.</param>
-    public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile);
+    /// <param name="isReplaceMultipleWordsAtOnce">True if should be replace whole phrases. False to replace only words</param>
+    public Stream Replace(Dictionary<string, string> values, MemoryStream streamFile, bool isReplaceMultipleWordsAtOnce);
 }

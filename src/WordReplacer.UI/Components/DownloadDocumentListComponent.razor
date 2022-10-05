@@ -1,0 +1,83 @@
+﻿@using WordReplacer.Models
+<div class="container">
+    @if (Downloads is not null)
+    {
+        @if (Downloads.Count > 0)
+        {
+            @foreach (var download in Downloads)
+            {
+                <div class="row">
+                    <div class="col-9">
+                        @download.FileName
+                    </div>
+                    <div class="col-3">
+                        @if (download.IsDownloadCompleted)
+                        {
+                            <MatIcon Icon="done" Class="icon-primary-color"/>
+                        }
+                        else
+                        {
+                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small"/>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-12">
+                    No downloads yet.
+                </div>
+            </div>
+        }
+    }
+    else if(DownloadsDict is not null)
+    {
+        @if (DownloadsDict.Values.Count > 0)
+        {
+            @foreach (var download in DownloadsDict.Values)
+            {
+                <div class="row">
+                    <div class="col-9">
+                        @download.FileName
+                    </div>
+                    <div class="col-3">
+                        @if (download.IsDownloadCompleted)
+                        {
+                            <MatIcon Icon="done" Class="icon-primary-color"/>
+                        }
+                        else
+                        {
+                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small"/>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-12">
+                    No downloads yet.
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public List<Download>? Downloads { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Download>> DownloadsChanged { get; set; }
+    
+    [Parameter]
+    public Dictionary<string, Download>? DownloadsDict { get; set; }
+
+    [Parameter]
+    public EventCallback<Dictionary<string, Download>> DownloadsDictChanged { get; set; }
+
+}
