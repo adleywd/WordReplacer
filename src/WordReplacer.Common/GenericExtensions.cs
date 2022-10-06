@@ -57,7 +57,7 @@ public static class GenericExtensions
     /// It takes a dictionary of DocumentValues and returns a list of Nodes.
     /// </summary>
     /// <param name="dict">The dictionary to convert to a node.</param>
-    public static List<CombinationsNode> DictionaryToNode(this Dictionary<DocumentValue, DocumentValue> dict)
+    public static List<CombinationsNode> DictionaryToNode(this List<KeyValuePair<DocumentValue, DocumentValue>> dict)
     {
         dict.SanitizeValues();
         
@@ -76,7 +76,7 @@ public static class GenericExtensions
     /// It takes a document and replace all the empty strings to \n
     /// </summary>
     /// <param name="document">The document to sanitize.</param>
-    public static void SanitizeValues(this Dictionary<DocumentValue, DocumentValue> documentValues)
+    public static void SanitizeValues(this List<KeyValuePair<DocumentValue, DocumentValue>> documentValues)
     {
         foreach (KeyValuePair<DocumentValue, DocumentValue> doc in documentValues
                                                                            .Where(d =>

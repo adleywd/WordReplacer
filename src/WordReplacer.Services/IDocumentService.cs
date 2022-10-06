@@ -12,9 +12,9 @@ public interface IDocumentService
     /// Given a dictionary of DocumentValue objects, return a list of dictionaries of string key/value pairs, where each
     /// dictionary represents a possible combination of Text element from the Key and Text element from the Value.
     /// </summary>
-    /// <param name="values">A dictionary of DocumentValue objects. The key represents the Old Value and the
+    /// <param name="values">A List of Keys and values of DocumentValue objects. The key represents the Old Value and the
     /// value represents the New Value.</param>
-    public List<Dictionary<string, string>> GetAllCombinations(Dictionary<DocumentValue, DocumentValue> values);
+    public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values);
 
     /// <summary>
     /// This function returns a `MemoryStream` of the file uploaded by the user

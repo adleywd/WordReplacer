@@ -24,7 +24,7 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
-        public List<Dictionary<string, string>> GetAllCombinations(Dictionary<DocumentValue, DocumentValue> values)
+        public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values)
         {
             List<CombinationsNode> nodeList = values.DictionaryToNode();
             var combinationsResult = new List<Dictionary<string, string>>();

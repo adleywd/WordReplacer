@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -18,14 +19,16 @@ namespace WordReplacer.WebApp
             builder.Services.AddMatToaster(config
                 =>
             {
-                config.Position = MatToastPosition.BottomRight;
+                config.Position = MatToastPosition.TopRight;
                 config.PreventDuplicates = true;
-                config.NewestOnTop = true;
+                config.NewestOnTop = false;
                 config.ShowCloseButton = true;
-                config.MaximumOpacity = 95;
+                config.MaximumOpacity = 100;
                 config.VisibleStateDuration = 5000;
             });
 
+            builder.Services.AddBlazoredLocalStorage();
+            
             builder.Services.AddTransient<IDocumentService, DocumentService>();
 
             await builder.Build().RunAsync().ConfigureAwait(false);

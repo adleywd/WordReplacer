@@ -2,10 +2,12 @@
 @using WordReplacer.Enums
 @using WordReplacer.Models
 @using Microsoft.AspNetCore.Components
+@using Newtonsoft.Json
 @using WordReplacer.Common
 @using WordReplacer.Dto
 @inject IDocumentService DocumentService
 @inject IMatToaster Toaster
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <PageTitle>Word Replacer</PageTitle>
 <hr/>
@@ -14,6 +16,14 @@
         <DownloadDocumentListComponent @bind-DownloadsDict="_downloads" />
     </Content>
 </DownloadPopoutComponent>
+
+
+<MatButton OnClick="SaveLocallyAsync">
+        Save
+</MatButton>
+<MatButton OnClick="ReadLocallyAsync">
+    Read
+</MatButton>
 
 <div class="container-fluid">
     @*<div class="row">
@@ -87,7 +97,7 @@
                     Icon="@MatIconNames.Delete_forever"
                     Type="button"
                     OnClickStopPropagation="true"
-                    OnClick="@(() => { _doc.DocumentValues = new Dictionary<DocumentValue, DocumentValue>(); })">
+                    OnClick="@(() => { _doc.DocumentValues = new (); })">
                     Remove All
                 </MatButton>
             </div>
@@ -157,6 +167,26 @@
         _popupRef?.Close();
     }
 
+    private async Task SaveLocallyAsync()
+    {
+        var json = JsonConvert.SerializeObject(_doc.DocumentValues);
+        await LocalStorage.SetItemAsync("document_values", json);
+    }
+
+    private async Task ReadLocallyAsync()
+    {
+        try
+        {
+            var documentValues = await LocalStorage.GetItemAsync<string>("document_values");
+            var result = JsonConvert.DeserializeObject<List<KeyValuePair<DocumentValue, DocumentValue>>>(documentValues);
+            _doc.DocumentValues = result ?? new();
+        }
+        catch (Exception ex)
+        {
+            var e = ex;
+        }
+    }
+    
     private void AddValues()
     {
 
@@ -186,7 +216,7 @@
             IsAccordionOpen = true,
             ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
         };
-        _doc.DocumentValues.Add(oldValue, newValue);
+        _doc.DocumentValues.Add(new KeyValuePair<DocumentValue, DocumentValue>(oldValue, newValue));
         _docParamsDto.Text = string.Empty; // Cleat text field
     }
 
@@ -197,7 +227,7 @@
             PrepareUIToReplaceAndDownload();
             
             // TODO: Validate textarea with empty values. It is not working. 
-            _doc.DocumentValues.SanitizeValues();
+             _doc.DocumentValues.SanitizeValues();
             
             var combinations = new List<Dictionary<string, string>>();
             
@@ -206,7 +236,7 @@
             if (isThereAnyReplaceForMultipleLine)
             {
                 // Get all possible combinations
-                combinations = DocumentService.GetAllCombinations(_doc.DocumentValues);
+                 combinations = DocumentService.GetAllCombinations(_doc.DocumentValues);
             }
             else
             {
