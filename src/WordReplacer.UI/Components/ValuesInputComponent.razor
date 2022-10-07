@@ -4,8 +4,10 @@
 @using WordReplacer.Models
 
 <MatAccordion Multi="true">
-    @foreach (var docValue in Document.DocumentValues)
+    @for (var i = 0; i < Document.DocumentValues.Count; i ++)
     {
+        var docValue = Document.DocumentValues[i];
+
         @if (docValue.Value.ShouldReplaceForEachLine)
         {
             <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text!.Replace("\n", " & ")}")"
@@ -42,7 +44,7 @@
                     <div class="row">
                         <div class="col-lg-5 col-md-5 col-sm-1"></div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
-                            <MatSlideToggle @bind-Value="@docValue.Value.ShouldReplaceForEachLine"/>
+                            <MatSlideToggle @bind-Value="docValue.Value.ShouldReplaceForEachLine"/>
                             <span class="ms-1">Create file for each line in replace area</span>
                         </div>
                     </div>
@@ -69,11 +71,12 @@
                         </div>
                     }
                     <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
+                        @{var index = i-1;}
                         <MatButton Outlined="true"
                                    Icon="delete"
                                    OnClickStopPropagation="true"
                                    Type="button"
-                                   OnClick="() => RemoveItemsFromDict(docValue.Key)">
+                               OnClick="() => RemoveItemsFromDict(docValue)">
                             Remove
                         </MatButton>
                     </div>
@@ -91,7 +94,7 @@
     [Parameter]
     public EventCallback<Document> DocumentChanged { get; set; }
     
-    private async Task RemoveItemsFromDict(DocumentValue documentValue)
+    private async Task RemoveItemsFromDict(KeyValuePair<DocumentValue, DocumentValue> documentValue)
     {
         Document.DocumentValues.Remove(documentValue);
         await DocumentChanged.InvokeAsync(Document);

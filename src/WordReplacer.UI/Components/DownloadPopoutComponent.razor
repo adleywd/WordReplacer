@@ -3,10 +3,10 @@
     var showFabButton = !IsDownloadsListVisible ? "d-block" : "d-none";
 }
 
-<div class="toast-container p-3 fixed-bottom-right fade-in @showDownloadPopupClass" data-bs-autohide="true" data-bs-delay="5000">
+<div class="toast-container p-3 fixed-bottom-right fade-in fab @showDownloadPopupClass" data-bs-autohide="true" data-bs-delay="5000">
     <div class="toast show small-radius" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header ms-2 mt-1">
-            <strong class="me-auto icon-primary-color">@HeaderText</strong>
+            <strong class="me-auto primary-color">@HeaderText</strong>
             @if (HasCloseButton)
             {
                 <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
@@ -28,7 +28,7 @@
 </style>
 
 <div class="fade-in @showFabButton">
-    <MatFAB Class="app-fab--absolute" Icon="@MatIconNames.Save_alt" OnClick="Toggle"></MatFAB>
+    <MatFAB Class="app-fab--absolute fab" Icon="@MatIconNames.Save_alt" OnClick="Toggle"></MatFAB>
 </div>
 
 @code {

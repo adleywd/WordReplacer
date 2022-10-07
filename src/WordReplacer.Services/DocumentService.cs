@@ -1,4 +1,6 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Packaging;
 using MatBlazor;
 using Microsoft.JSInterop;
 using WordReplacer.Common;
@@ -24,7 +26,7 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
-        public List<Dictionary<string, string>> GetAllCombinations(Dictionary<DocumentValue, DocumentValue> values)
+        public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values)
         {
             List<CombinationsNode> nodeList = values.DictionaryToNode();
             var combinationsResult = new List<Dictionary<string, string>>();
@@ -60,28 +62,32 @@ namespace WordReplacer.Services
 
             using var wordDoc = WordprocessingDocument.Open(newFile, true);
 
-            if (isReplaceMultipleWordsAtOnce)
+            foreach (var words in values)
             {
-                foreach (var words in values)
+
+                if (words.Key.HasOnlyOneWord())
                 {
-                    wordDoc.ReplaceStringInWordDocument(words.Key, words.Value);
+                    // This will replace word by word.
+                    wordDoc.ReplaceWordBodyText(words);
+                    wordDoc.ReplaceWordHeaderText(words);
+                    wordDoc.ReplaceWordFooterText(words);
+                }
+                else
+                {
+                    // This will use the characters to compare, so it'll be used for multiple words/phrases
+                    wordDoc.ReplaceMultipleWordsBodyText(words.Key, words.Value);
+                    // TODO: Add replace for header and footer in phrases
                 }
             }
-            else
-            {
-                wordDoc.ReplaceWordBodyText(values);
-                wordDoc.ReplaceWordHeaderText(values);
-                wordDoc.ReplaceWordFooterText(values);
-                wordDoc.Close();
-            }
+            wordDoc.Close();
 
             return newFile;
         }
 
         /// <inheritdoc />
         public async Task DownloadFile(
-            string filename, 
-            Stream? docReplaced, 
+        string filename,
+        Stream? docReplaced, 
             string mimiType)
         {
             if (docReplaced is null)

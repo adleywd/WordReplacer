@@ -6,6 +6,63 @@ namespace WordReplacer.Common;
 public static class GenericExtensions
 {
     /// <summary>
+    /// Given a list of nodes, a current node index, a result list, and a current dictionary, add to the result list all
+    /// possible combinations of nodes that can be created by traversing the nodes in the list starting at the current node
+    /// index, and using the current dictionary to store the values of the nodes that have been traversed
+    /// </summary>
+    /// <param name="nodes">The list of nodes to be combined.</param>
+    /// <param name="currentNodeIdx">The index of the current node in the list of nodes.</param>
+    /// <param name="resultList">The list of dictionaries that will be returned.</param>
+    /// <param name="currentDict">This is the dictionary that will be added to the resultList.</param>
+    public static void GetCombinations(
+        this ICollection<Dictionary<string, string>> resultList,
+        IList<CombinationsNode> nodes,
+        int currentNodeIdx,
+        IDictionary<string, string> currentDict)
+    {
+        CombinationsNode currentNode = nodes[currentNodeIdx];
+        var isLastNode = currentNodeIdx == nodes.Count - 1;
+
+        foreach (var value in currentNode.Values)
+        {
+            // Since the same dictionary is used in the loops, sometimes the key will be already filled with older value.
+            // To avoid the error of duplicated value inside a dictionary, the current key is removed.
+            currentDict = currentDict.RemoveFromDictIfExists(currentNode.Key);
+
+            var isLastValue = value == currentNode.Values.Last();
+
+            // If LAST NODE but NOT LAST VALUE
+            if (isLastNode && !isLastValue)
+            {
+                //AddOrReplace
+                currentDict.Add(currentNode.Key, value);
+                resultList.Add(new Dictionary<string, string>(currentDict));
+            }
+
+            // If is NOT the LAST NODE but it is the LAST VALUE
+            if (!isLastNode && isLastValue)
+            {
+                currentDict.Add(currentNode.Key, value);
+                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
+            }
+
+            // If is the LAST NODE and LAST VALUE
+            if (isLastNode && isLastValue)
+            {
+                currentDict.Add(currentNode.Key, value);
+                resultList.Add(new Dictionary<string, string>(currentDict));
+            }
+
+            // if NOT LAST NODE and NOT LAST VALUE
+            if (!isLastNode && !isLastValue)
+            {
+                currentDict.Add(currentNode.Key, value);
+                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
+            }
+        }
+    }
+
+    /// <summary>
     /// It replaces all the text that matches the regex pattern with the replacement text.
     /// </summary>
     /// <param name="text">The text to be searched and replaced.</param>
@@ -57,7 +114,7 @@ public static class GenericExtensions
     /// It takes a dictionary of DocumentValues and returns a list of Nodes.
     /// </summary>
     /// <param name="dict">The dictionary to convert to a node.</param>
-    public static List<CombinationsNode> DictionaryToNode(this Dictionary<DocumentValue, DocumentValue> dict)
+    public static List<CombinationsNode> DictionaryToNode(this List<KeyValuePair<DocumentValue, DocumentValue>> dict)
     {
         dict.SanitizeValues();
         
@@ -76,7 +133,7 @@ public static class GenericExtensions
     /// It takes a document and replace all the empty strings to \n
     /// </summary>
     /// <param name="document">The document to sanitize.</param>
-    public static void SanitizeValues(this Dictionary<DocumentValue, DocumentValue> documentValues)
+    public static void SanitizeValues(this List<KeyValuePair<DocumentValue, DocumentValue>> documentValues)
     {
         foreach (KeyValuePair<DocumentValue, DocumentValue> doc in documentValues
                                                                            .Where(d =>
@@ -86,5 +143,27 @@ public static class GenericExtensions
             doc.Key.Text = string.IsNullOrEmpty(doc.Key.Text) ? "\n" : doc.Key.Text;
             doc.Value.Text = string.IsNullOrEmpty(doc.Value.Text) ? "\n" : doc.Value.Text;
         }
+    }
+
+    /// <summary>
+    /// It checks if the string has only one word.
+    /// </summary>
+    /// <param name="originalValue">The string to check.</param>
+    public static bool HasOnlyOneWord(this string originalValue)
+    {
+        var regex = new Regex(@"^\b[a-zA-Z0-9_’]+\b$", RegexOptions.IgnoreCase);
+
+        return regex.IsMatch(originalValue);
+    }
+    
+    /// <summary>
+    /// This function returns true if the string has multiple words, otherwise it returns false
+    /// </summary>
+    /// <param name="originalValue">The string to check for multiple words.</param>
+    public static bool HasMultipleWords(this string originalValue)
+    {
+        var regex = new Regex(@"^\s*\S+(?:\s+\S+)+\s*$", RegexOptions.IgnoreCase);
+
+        return regex.IsMatch(originalValue);
     }
 }

@@ -8,35 +8,36 @@
 @inject IMatToaster Toaster
 
 <PageTitle>Word Replacer</PageTitle>
-<hr/>
-<DownloadPopoutComponent @ref="_popupRef" HeaderText="Downloads"> 
+<hr />
+<DownloadPopoutComponent @ref="_popupRef" HeaderText="Downloads">
     <Content>
         <DownloadDocumentListComponent @bind-DownloadsDict="_downloads" />
     </Content>
 </DownloadPopoutComponent>
 
-<div class="container-fluid">
-    @*<div class="row">
-        <div class="col-12">
-            <label>Replace multiple words at time?</label>
-            <br/>
-            <label>I will be replacing @(_isMultipleWordsAtOnce ? "one word" : "multiple words") at time</label>
-            <MatSlideToggle @bind-Value="_isMultipleWordsAtOnce"/>
-            <MatRadioGroup @bind-Value="_isMultipleWordsAtOnce" TValue="bool">
-                <MatRadioButton Value="false" Label="one word" TValue="bool" />
-                <MatRadioButton Value="true" Label="multiple words" TValue="bool" />
-            </MatRadioGroup>
-        </div>
-    </div>
-    <hr/>*@
 
-    <MatPaper Elevation="6" Class="p-3">
+<div class="container-fluid">
+    <MatPaper Elevation="6" Class="p-3" Rounded="true">
+        <div class="d-inline-block">
+            <MatTooltip 
+                Tooltip="You can save some presets, with original and newer values, to replace it later. THIS DATA WILL ONLY BE SAVED IN YOUR BROWSER." 
+                TargetId="preset-text-id"
+                Position="MatTooltipPosition.Right">
+                    <i id="preset-text-id" class="fa fa-info-circle primary-color"></i>
+                    <span class="preset-text">My Presets:</span>
+            </MatTooltip>
+            <PresetsComponent @bind-Document="_doc" />
+        </div>
+    </MatPaper>
+
+    <hr />
+    <MatPaper Elevation="6" Class="p-3" Rounded="true">
         <div class="row">
             <div class="col-12 mt-3">
-                <InputFileComponent @bind-Document="_doc"/>
+                <InputFileComponent @bind-Document="_doc" />
             </div>
         </div>
-        <hr/>
+        <br />
         <EditForm Model="_docParamsDto" OnValidSubmit="AddValues">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
@@ -44,21 +45,21 @@
                                   OnInput="@(e => _docParamsDto.Text = e.Value?.ToString())"
                                   HelperText="The text that will be replaced"
                                   Label="Value to be replaced"
-                                  FullWidth="true"/>
+                                  FullWidth="true" />
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
                     <label>
-                        @(_docParamsDto.Type == InputType.Text ? 
-                        "I will replace this word for another one" 
-                        : "I will replace this word for multiple words (generate multiple files)")
-                        </label>
-                    <br/>
-                    <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())"/>
+                        @(_docParamsDto.Type == InputType.Text ?
+                            "I will replace this word for another one"
+                            : "I will replace this word for multiple words (generate multiple files)")
+                    </label>
+                    <br />
+                    <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())" />
                 </div>
             </div>
             <div class="row">
                 <div class="col-12 mb-2 justify-content-center text-center">
-                    <MatButton Icon="add"
+                    <MatButton Icon="@MatIconNames.Add"
                                Style="width: 98%"
                                Raised="true"
                                Disabled="_docParamsDto.IsTextEmpty">
@@ -68,19 +69,30 @@
             </div>
         </EditForm>
     </MatPaper>
-    <hr/>
+    <hr />
+
     @if (_doc.DocumentValues.Count > 0)
     {
-        <MatHidden BreakPoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Down">
-            <div class="row">
+        <div class="row">
+            <MatHidden BreakPoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Down">
                 <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                     <h3>Original values</h3>
                 </div>
-                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                <div class="col-lg-4 col-md-4 col-sm-12 mt-2">
                     <h3>New values</h3>
                 </div>
+            </MatHidden>
+
+            <div class="col-lg-3 col-md-12 col-sm-12 mt-2">
+                <MatButton Class="float-end"
+                       Icon="@MatIconNames.Delete_forever"
+                       Type="button"
+                       OnClickStopPropagation="true"
+                       OnClick="@(() => { _doc.DocumentValues = new (); })">
+                    Remove All
+                </MatButton>
             </div>
-        </MatHidden>
+        </div>
     }
     else
     {
@@ -89,10 +101,10 @@
         </div>
     }
     <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12">
-        <DataAnnotationsValidator/>
+        <DataAnnotationsValidator />
 
-        <ValuesInputComponent @bind-Document="_doc"/>
-        <hr/>
+        <ValuesInputComponent @bind-Document="_doc" />
+        <hr />
         @if (_doc.DocumentValues.Count > 0)
         {
             @if (_progressBar)
@@ -103,10 +115,9 @@
         }
 
     </EditForm>
-    <SnackbarComponent
-        @bind-IsSnackbarOpen="_snackBarIsOpen"
-        @bind-Timeout="_snackBarTimeout"
-        @bind-HasCloseButton="_snackBarHasCloseButton">
+    <SnackbarComponent @bind-IsSnackbarOpen="_snackBarIsOpen"
+                       @bind-Timeout="_snackBarTimeout"
+                       @bind-HasCloseButton="_snackBarHasCloseButton">
         <Content>
             @_snackBarContent
         </Content>
@@ -117,11 +128,11 @@
 {
     private Dictionary<string, Download> _downloads = new();
 
-    private DownloadPopoutComponent? _popupRef = new ();
+    private DownloadPopoutComponent? _popupRef = new();
 
     private Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
-    private bool _isMultipleWordsAtOnce = true;
+    private readonly bool _isMultipleWordsAtOnce = true;
 
     // SnackBar configs
     private bool _snackBarIsOpen;
@@ -146,36 +157,38 @@
         _popupRef?.Close();
     }
 
+
+
     private void AddValues()
     {
 
-        if (_doc.DocumentValues.Select(d => d.Key.Text).Any( text=> text == _docParamsDto.Text))
+        if (_doc.DocumentValues.Select(d => d.Key.Text).Any(text => text == _docParamsDto.Text))
         {
             Toaster.Add("This value has already been added.", MatToastType.Danger, "Duplicate original value");
             return;
         }
         var oldValue = new DocumentValue()
-        {
-            Label = "Original Value",
-            HtmlId = Guid.NewGuid().ToString(),
-            IsOldValue = true,
-            Text = _docParamsDto.Text,
-            HelperText = "This is the original value",
-            Type = InputType.Text,
-            IsAccordionOpen = true
-        };
+            {
+                Label = "Original Value",
+                HtmlId = Guid.NewGuid().ToString(),
+                IsOldValue = true,
+                Text = _docParamsDto.Text,
+                HelperText = "This is the original value",
+                Type = InputType.Text,
+                IsAccordionOpen = true
+            };
         var newValue = new DocumentValue()
-        {
-            Label = $"New value for {_docParamsDto.Text}",
-            HtmlId = Guid.NewGuid().ToString(),
-            IsOldValue = false,
-            Text = "",
-            HelperText = "This is will be the new value",
-            Type = _docParamsDto.Type,
-            IsAccordionOpen = true,
-            ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
-        };
-        _doc.DocumentValues.Add(oldValue, newValue);
+            {
+                Label = $"New value for {_docParamsDto.Text}",
+                HtmlId = Guid.NewGuid().ToString(),
+                IsOldValue = false,
+                Text = "",
+                HelperText = "This is will be the new value",
+                Type = _docParamsDto.Type,
+                IsAccordionOpen = true,
+                ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
+            };
+        _doc.DocumentValues.Add(new KeyValuePair<DocumentValue, DocumentValue>(oldValue, newValue));
         _docParamsDto.Text = string.Empty; // Cleat text field
     }
 
@@ -184,12 +197,12 @@
         try
         {
             PrepareUIToReplaceAndDownload();
-            
-            // TODO: Validate textarea with empty values. It is not working. 
+
+            // TODO: Validate textarea with empty values. It is not working.
             _doc.DocumentValues.SanitizeValues();
-            
+
             var combinations = new List<Dictionary<string, string>>();
-            
+
             var isThereAnyReplaceForMultipleLine = _doc.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine);
 
             if (isThereAnyReplaceForMultipleLine)
@@ -206,19 +219,21 @@
                                          d => d.Value.Text!
                     ));
             }
-            
+
             PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine);
-            
+
             await DelayDotNetToUpdateUIAsync();
-            
-            DisplaySnackBar("The site may freezes during the replacing process. Please just wait.", false, -1);
-            
+
+            //DisplaySnackBar("The site may freeze during the replacement process. Please just wait.", false, -1);
+
+            Toaster.Add("The site may freeze during the replacement process. Please just wait.", MatToastType.Primary);
+
             var originalFileInMemoryStream = new MemoryStream();
             if (_doc.File is not null)
             {
                 // Get the MemoryStream
                 originalFileInMemoryStream = await DocumentService.GetMemoryStream(_doc.File);
-                
+
                 await DelayDotNetToUpdateUIAsync();
             }
 
@@ -227,27 +242,30 @@
             OpenDownloadPopup();
 
             await DelayDotNetToUpdateUIAsync();
-            
+
             foreach (Dictionary<string, string> combination in combinations)
             {
                 // Replace
                 Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream, _isMultipleWordsAtOnce);
-                
+
                 // Get File Name
                 var fileName = _doc.File!.Name;
-                
+
                 if (isThereAnyReplaceForMultipleLine)
                 {
                     fileName = string.Join("_", combination.Values) + ".docx";
                 }
-                
+
                 // Download the file
                 await DocumentService.DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document").ConfigureAwait(false);
-                
+
                 // Dispose current replaced doc
                 await docReplaced.DisposeAsync();
 
-                var currentDownloadFile = _downloads.FirstOrDefault(d => d.Value.FileName == fileName);
+                var currentDownloadFile = _downloads
+                    .FirstOrDefault(d =>
+                        d.Value.FileName == fileName
+                        && d.Value.IsDownloadCompleted == false);
 
                 if (currentDownloadFile.Value is not null)
                 {
@@ -256,13 +274,13 @@
                     currentDownloadFile.Value.IsDownloading = false;
                     currentDownloadFile.Value.IsDownloadCompleted = true;
                 }
-                
+
                 // Update progress UI
                 if (combination != combinations.Last())
                 {
                     _progressBarValue += progressSizePerFile;
                     ReloadUI();
-                 
+
                     await DelayDotNetToUpdateUIAsync();
                 }
             }
@@ -294,13 +312,13 @@
             }
 
             var download = new Download
-            {
-                FileName = fileName,
-                Progress = 0.75,
-                IsDownloading = true,
-                IsDownloadCompleted = false,
-                IsProgressIndeterminate = true
-            };
+                {
+                    FileName = fileName,
+                    Progress = 0.75,
+                    IsDownloading = true,
+                    IsDownloadCompleted = false,
+                    IsProgressIndeterminate = true
+                };
             if (_downloads.ContainsKey(fileName))
             {
                 // update
@@ -311,7 +329,7 @@
                 // add
                 _downloads.Add(download.FileName, download);
             }
-            
+
         }
     }
 
@@ -320,7 +338,7 @@
     {
         await Task.Delay(timeInMs);
     }
-    
+
     private void PrepareUIToReplaceAndDownload()
     {
         _progressBar = true;
@@ -337,7 +355,7 @@
         // _popupRef.ShowCloseButton();
         SetDefaultValuesForBtnReplace();
     }
-    
+
     private void SetDefaultUIAfterError()
     {
         _progressBar = false;
@@ -351,13 +369,13 @@
         _btnReplaceIcon = "find_replace";
     }
 
-    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 100) // 10000
+    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 100)
     {
         if (_snackBarIsOpen)
         {
             _snackBarIsOpen = false;
         }
-        
+
         _snackBarIsOpen = true;
         _snackBarContent = textMessage;
         _snackBarHasCloseButton = hasCloseButton;

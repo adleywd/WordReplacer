@@ -12,8 +12,8 @@ public static class DocumentHelper
     /// Replaces the body text from Word file.
     /// </summary>
     /// <param name="doc">The document.</param>
-    /// <param name="replaceWords">The replace words.</param>
-    public static void ReplaceWordBodyText(this WordprocessingDocument doc, Dictionary<string, string> replaceWords)
+    /// <param name="words">The replace words.</param>
+    public static void ReplaceWordBodyText(this WordprocessingDocument doc, KeyValuePair<string, string> words)
     {
         var body = doc.MainDocumentPart?.Document.Body;
 
@@ -24,17 +24,21 @@ public static class DocumentHelper
 
         foreach (var text in body.Descendants<Text>())
         {
-            foreach (var words in replaceWords)
+            if (text.Text.Contains(words.Key))
             {
-                if (text.Text.Contains(words.Key))
-                {
-                    text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
-                }
+                text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
             }
         }
     }
 
-    public static void ReplaceWordHeaderText(this WordprocessingDocument doc, Dictionary<string, string> replaceWords)
+    /// <summary>
+    /// This function takes a WordprocessingDocument and a KeyValuePair of strings and replaces the text in the header of
+    /// the document with the value of the KeyValuePair
+    /// </summary>
+    /// <param name="doc">The document you want to replace the text in.</param>
+    /// <param name="words">A KeyValuePair with strings where the Key is the text to replace and the Value is the
+    /// replacement text.</param>
+    public static void ReplaceWordHeaderText(this WordprocessingDocument doc, KeyValuePair<string, string> words)
     {
         IEnumerable<HeaderPart>? headers = doc.MainDocumentPart?.HeaderParts;
         if (headers is null)
@@ -44,23 +48,29 @@ public static class DocumentHelper
 
         foreach (var headerPart in headers)
         {
-            if (headerPart.RootElement is not null)
+            if (headerPart.RootElement is null)
             {
-                foreach (var text in headerPart.RootElement.Descendants<Text>())
+                continue;
+            }
+
+            foreach (var text in headerPart.RootElement.Descendants<Text>())
+            {
+                if (text.Text.Contains(words.Key))
                 {
-                    foreach (var words in replaceWords)
-                    {
-                        if (text.Text.Contains(words.Key))
-                        {
-                            text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
-                        }
-                    }
+                    text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
                 }
             }
         }
     }
 
-    public static void ReplaceWordFooterText(this WordprocessingDocument doc, Dictionary<string, string> replaceWords)
+    /// <summary>
+    /// This function takes a WordprocessingDocument and a KeyValuePair of strings and replaces the text in the footer of
+    /// the document with the value of the KeyValuePair.
+    /// </summary>
+    /// <param name="doc">The document you want to replace the text in.</param>
+    /// <param name="words">A KeyValuePair with strings where the key is the text to replace and the value is the text to
+    /// replace it with.</param>
+    public static void ReplaceWordFooterText(this WordprocessingDocument doc, KeyValuePair<string, string> words)
     {
         IEnumerable<FooterPart>? footer = doc.MainDocumentPart?.FooterParts;
 
@@ -71,75 +81,17 @@ public static class DocumentHelper
 
         foreach (var headerPart in footer)
         {
-            if (headerPart.RootElement is not null)
+            if (headerPart.RootElement is null)
             {
-                foreach (var text in headerPart.RootElement.Descendants<Text>())
+                continue;
+            }
+
+            foreach (var text in headerPart.RootElement.Descendants<Text>())
+            {
+                if (text.Text.Contains(words.Key))
                 {
-                    foreach (var words in replaceWords)
-                    {
-                        if (text.Text.Contains(words.Key))
-                        {
-                            text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
-                        }
-                    }
+                    text.Text = text.Text.ReplaceTextWithRegex(words.Key, words.Value, true, false);
                 }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Given a list of nodes, a current node index, a result list, and a current dictionary, add to the result list all
-    /// possible combinations of nodes that can be created by traversing the nodes in the list starting at the current node
-    /// index, and using the current dictionary to store the values of the nodes that have been traversed
-    /// </summary>
-    /// <param name="nodes">The list of nodes to be combined.</param>
-    /// <param name="currentNodeIdx">The index of the current node in the list of nodes.</param>
-    /// <param name="resultList">The list of dictionaries that will be returned.</param>
-    /// <param name="currentDict">This is the dictionary that will be added to the resultList.</param>
-    public static void GetCombinations(
-        this ICollection<Dictionary<string, string>> resultList,
-        IList<CombinationsNode> nodes,
-        int currentNodeIdx,
-        IDictionary<string, string> currentDict)
-    {
-        CombinationsNode currentNode = nodes[currentNodeIdx];
-        var isLastNode = currentNodeIdx == nodes.Count - 1;
-
-        foreach (var value in currentNode.Values)
-        {
-            // Since the same dictionary is used in the loops, sometimes the key will be already filled with older value.
-            // To avoid the error of duplicated value inside a dictionary, the current key is removed.
-            currentDict = currentDict.RemoveFromDictIfExists(currentNode.Key);
-
-            var isLastValue = value == currentNode.Values.Last();
-
-            // If LAST NODE but NOT LAST VALUE
-            if (isLastNode && !isLastValue)
-            {
-                //AddOrReplace
-                currentDict.Add(currentNode.Key, value);
-                resultList.Add(new Dictionary<string, string>(currentDict));
-            }
-
-            // If is NOT the LAST NODE but it is the LAST VALUE
-            if (!isLastNode && isLastValue)
-            {
-                currentDict.Add(currentNode.Key, value);
-                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
-            }
-
-            // If is the LAST NODE and LAST VALUE
-            if (isLastNode && isLastValue)
-            {
-                currentDict.Add(currentNode.Key, value);
-                resultList.Add(new Dictionary<string, string>(currentDict));
-            }
-
-            // if NOT LAST NODE and NOT LAST VALUE
-            if (!isLastNode && !isLastValue)
-            {
-                currentDict.Add(currentNode.Key, value);
-                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
             }
         }
     }
@@ -150,7 +102,7 @@ public static class DocumentHelper
     /// <param name="wordProcessingDocument">The WordProcessingDocument object that you want to replace text in.</param>
     /// <param name="originalValue">The string you want to replace.</param>
     /// <param name="newerValue">The string you want to replace the replaceWhat string with.</param>
-    public static void ReplaceStringInWordDocument(
+    public static void ReplaceMultipleWordsBodyText(
         this WordprocessingDocument wordProcessingDocument,
         string originalValue,
         string newerValue)

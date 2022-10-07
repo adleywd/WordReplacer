@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
         <PackageReference Include="MatBlazor" Version="2.8.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
     </ItemGroup>
