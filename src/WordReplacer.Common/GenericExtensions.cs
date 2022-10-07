@@ -144,4 +144,26 @@ public static class GenericExtensions
             doc.Value.Text = string.IsNullOrEmpty(doc.Value.Text) ? "\n" : doc.Value.Text;
         }
     }
+
+    /// <summary>
+    /// It checks if the string has only one word.
+    /// </summary>
+    /// <param name="originalValue">The string to check.</param>
+    public static bool HasOnlyOneWord(this string originalValue)
+    {
+        var regex = new Regex(@"^\b[a-zA-Z0-9_’]+\b$", RegexOptions.IgnoreCase);
+
+        return regex.IsMatch(originalValue);
+    }
+    
+    /// <summary>
+    /// This function returns true if the string has multiple words, otherwise it returns false
+    /// </summary>
+    /// <param name="originalValue">The string to check for multiple words.</param>
+    public static bool HasMultipleWords(this string originalValue)
+    {
+        var regex = new Regex(@"^\s*\S+(?:\s+\S+)+\s*$", RegexOptions.IgnoreCase);
+
+        return regex.IsMatch(originalValue);
+    }
 }

@@ -1,4 +1,6 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using DocumentFormat.OpenXml.Packaging;
 using MatBlazor;
 using Microsoft.JSInterop;
 using WordReplacer.Common;
@@ -60,30 +62,32 @@ namespace WordReplacer.Services
 
             using var wordDoc = WordprocessingDocument.Open(newFile, true);
 
-            // TODO: Check if key has more the one word. if not, use the ReplaceWordBodyText. If it has more than one use ReplaceStringInWordDocument
-            if (isReplaceMultipleWordsAtOnce)
+            foreach (var words in values)
             {
-                foreach (var words in values)
+
+                if (words.Key.HasOnlyOneWord())
                 {
-                    wordDoc.ReplaceStringInWordDocument(words.Key, words.Value);
+                    // This will replace word by word.
+                    wordDoc.ReplaceWordBodyText(words);
+                    wordDoc.ReplaceWordHeaderText(words);
+                    wordDoc.ReplaceWordFooterText(words);
+                }
+                else
+                {
+                    // This will use the characters to compare, so it'll be used for multiple words/phrases
+                    wordDoc.ReplaceMultipleWordsBodyText(words.Key, words.Value);
+                    // TODO: Add replace for header and footer in phrases
                 }
             }
-            else
-            {
-                // TODO: Make the foreach inside this method so will be able to validate each value to check where should be
-                wordDoc.ReplaceWordBodyText(values);
-                wordDoc.ReplaceWordHeaderText(values);
-                wordDoc.ReplaceWordFooterText(values);
-                wordDoc.Close();
-            }
+            wordDoc.Close();
 
             return newFile;
         }
 
         /// <inheritdoc />
         public async Task DownloadFile(
-            string filename, 
-            Stream? docReplaced, 
+        string filename,
+        Stream? docReplaced, 
             string mimiType)
         {
             if (docReplaced is null)
