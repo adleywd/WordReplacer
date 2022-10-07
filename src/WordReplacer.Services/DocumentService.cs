@@ -60,6 +60,7 @@ namespace WordReplacer.Services
 
             using var wordDoc = WordprocessingDocument.Open(newFile, true);
 
+            // TODO: Check if key has more the one word. if not, use the ReplaceWordBodyText. If it has more than one use ReplaceStringInWordDocument
             if (isReplaceMultipleWordsAtOnce)
             {
                 foreach (var words in values)
@@ -69,6 +70,7 @@ namespace WordReplacer.Services
             }
             else
             {
+                // TODO: Make the foreach inside this method so will be able to validate each value to check where should be
                 wordDoc.ReplaceWordBodyText(values);
                 wordDoc.ReplaceWordHeaderText(values);
                 wordDoc.ReplaceWordFooterText(values);

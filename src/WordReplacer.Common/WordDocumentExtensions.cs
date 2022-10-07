@@ -88,63 +88,6 @@ public static class DocumentHelper
     }
 
     /// <summary>
-    /// Given a list of nodes, a current node index, a result list, and a current dictionary, add to the result list all
-    /// possible combinations of nodes that can be created by traversing the nodes in the list starting at the current node
-    /// index, and using the current dictionary to store the values of the nodes that have been traversed
-    /// </summary>
-    /// <param name="nodes">The list of nodes to be combined.</param>
-    /// <param name="currentNodeIdx">The index of the current node in the list of nodes.</param>
-    /// <param name="resultList">The list of dictionaries that will be returned.</param>
-    /// <param name="currentDict">This is the dictionary that will be added to the resultList.</param>
-    public static void GetCombinations(
-        this ICollection<Dictionary<string, string>> resultList,
-        IList<CombinationsNode> nodes,
-        int currentNodeIdx,
-        IDictionary<string, string> currentDict)
-    {
-        CombinationsNode currentNode = nodes[currentNodeIdx];
-        var isLastNode = currentNodeIdx == nodes.Count - 1;
-
-        foreach (var value in currentNode.Values)
-        {
-            // Since the same dictionary is used in the loops, sometimes the key will be already filled with older value.
-            // To avoid the error of duplicated value inside a dictionary, the current key is removed.
-            currentDict = currentDict.RemoveFromDictIfExists(currentNode.Key);
-
-            var isLastValue = value == currentNode.Values.Last();
-
-            // If LAST NODE but NOT LAST VALUE
-            if (isLastNode && !isLastValue)
-            {
-                //AddOrReplace
-                currentDict.Add(currentNode.Key, value);
-                resultList.Add(new Dictionary<string, string>(currentDict));
-            }
-
-            // If is NOT the LAST NODE but it is the LAST VALUE
-            if (!isLastNode && isLastValue)
-            {
-                currentDict.Add(currentNode.Key, value);
-                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
-            }
-
-            // If is the LAST NODE and LAST VALUE
-            if (isLastNode && isLastValue)
-            {
-                currentDict.Add(currentNode.Key, value);
-                resultList.Add(new Dictionary<string, string>(currentDict));
-            }
-
-            // if NOT LAST NODE and NOT LAST VALUE
-            if (!isLastNode && !isLastValue)
-            {
-                currentDict.Add(currentNode.Key, value);
-                GetCombinations(resultList, nodes, currentNodeIdx + 1, currentDict);
-            }
-        }
-    }
-
-    /// <summary>
     /// It replaces all instances of a string in a Word document with another string.
     /// </summary>
     /// <param name="wordProcessingDocument">The WordProcessingDocument object that you want to replace text in.</param>

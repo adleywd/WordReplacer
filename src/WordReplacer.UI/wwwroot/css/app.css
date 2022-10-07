@@ -81,6 +81,10 @@ a, .btn-link {
     z-index: 1030;
 }
 
+.fab {
+    z-index: 1000;
+}
+
 .icon-primary-color {
     color: var(--mdc-theme-primary);
 }
@@ -104,4 +108,9 @@ a, .btn-link {
     100% {
         opacity: 1;
     }
+}
+
+.preset-text {
+    font-size: 1.3em;
+    font-weight: 500;
 }
