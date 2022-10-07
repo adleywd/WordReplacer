@@ -5,32 +5,12 @@
 @inject IMatToaster Toaster
 
 <MatButton OnClick="@(() => { _savePresetDialogIsOpen = true; _presetSaveName = string.Empty; })" Raised="false">Save</MatButton>
-@if (_documentsKeysList.Count > 0)
+@if (_documentsPresetList.Count > 0)
 {
     <MatButton Class="ms-1" OnClick="@(() => { _loadPresetDialogIsOpen = true; _selectedPresetToLoad = string.Empty; })" Raised="false">Load</MatButton>
 
-    <MatButton Class="ms-1" OnClick="@(() => { _deletePresetDialogIsOpen = true; _selectedPresetToDelete = string.Empty; })" Raised="false">Delete</MatButton>
+    <MatButton Class="ms-1" OnClick="@(() => { _deletePresetDialogIsOpen = true; _selectedPresetToDelete = null; })" Raised="false">Delete</MatButton>
 }
-
-
-
-<MatDialog @bind-IsOpen="@_loadPresetDialogIsOpen">
-    <MatDialogTitle>Load presets</MatDialogTitle>
-    <MatDialogContent>
-        @if (_documentsKeysList.Count > 0)
-        {
-            <MatSelectValue @bind-Value="@_selectedPresetToLoad" Items="@_documentsKeysList" ValueSelector=@(i=>i.ToString())></MatSelectValue>
-        }
-    </MatDialogContent>
-    <MatDialogActions>
-        <MatButton Raised="true" OnClick="ReadLocalStorageAsync">
-            Load
-        </MatButton>
-        <MatButton OnClick="@(() => _loadPresetDialogIsOpen = false)">
-            Close
-        </MatButton>
-    </MatDialogActions>
-</MatDialog>
 
 <MatDialog @bind-IsOpen="@_savePresetDialogIsOpen">
     <MatDialogTitle>Save presets</MatDialogTitle>
@@ -47,10 +27,28 @@
     </MatDialogActions>
 </MatDialog>
 
+<MatDialog @bind-IsOpen="@_loadPresetDialogIsOpen">
+    <MatDialogTitle>Load presets</MatDialogTitle>
+    <MatDialogContent>
+        @if (_documentsPresetList.Count > 0)
+        {
+            <MatSelectValue @bind-Value="@_selectedPresetToLoad" Items="@_documentsPresetList" ValueSelector=@(i=>i.ToString())></MatSelectValue>
+        }
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton Raised="true" OnClick="ReadLocalStorageAsync">
+            Load
+        </MatButton>
+        <MatButton OnClick="@(() => _loadPresetDialogIsOpen = false)">
+            Close
+        </MatButton>
+    </MatDialogActions>
+</MatDialog>
+
 <MatDialog @bind-IsOpen="@_deletePresetDialogIsOpen">
     <MatDialogTitle>Delete presets</MatDialogTitle>
     <MatDialogContent>
-        <MatSelectValue @bind-Value="@_selectedPresetToDelete" Items="@_documentsKeysList" ValueSelector=@(i=>i.ToString())></MatSelectValue>
+        <MatSelectItem @bind-Value="@_selectedPresetToDelete" Items="@_documentsPresetList"></MatSelectItem>
     </MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="DeleteLocalStorageAsync">
@@ -77,7 +75,7 @@
 
     private bool _deletePresetDialogIsOpen;
 
-    private List<string> _documentsKeysList = new();
+    private List<string> _documentsPresetList = new();
 
     private const string DocumentsSavesKey = "documents_saves";
 
@@ -97,11 +95,6 @@
                 return;
             }
 
-            if (_documentsKeysList.Contains(_presetSaveName) || await LocalStorage.ContainKeyAsync(_presetSaveName))
-            {
-                Toaster.Add("Duplicate preset name is not allowed", MatToastType.Danger);
-                return;
-            }
 
             if (Document.DocumentValues.Count == 0)
             {
@@ -109,8 +102,22 @@
                 return;
             }
 
-            _documentsKeysList.Add(_presetSaveName);
-            var documentValuesKeysListSerialized = JsonSerializer.Serialize(_documentsKeysList);
+            if (_documentsPresetList.Contains(_presetSaveName) || await LocalStorage.ContainKeyAsync(_presetSaveName))
+            {
+                var shouldReplace = await MatDialogService.ConfirmAsync($"This will replace {_presetSaveName}");
+                if (!shouldReplace)
+                {
+                    return;
+                }
+            }
+
+            // If it doesn't have in the local list, than add it. Otherwise, ignore because it will just replace it in Local Storage.
+            if (!_documentsPresetList.Contains(_presetSaveName))
+            {
+                _documentsPresetList.Add(_presetSaveName);
+            }
+
+            var documentValuesKeysListSerialized = JsonSerializer.Serialize(_documentsPresetList);
             await LocalStorage.SetItemAsync(DocumentsSavesKey, documentValuesKeysListSerialized);
 
             var newDocumentsValuesSerialized = JsonSerializer.Serialize(Document.DocumentValues);
@@ -149,9 +156,16 @@
             }
 
             var documentValues = await LocalStorage.GetItemAsync<string>(_selectedPresetToLoad);
+            if(documentValues is null)
+            {
+                Toaster.Add($"The {_selectedPresetToLoad} preset is corrupted. Please save a new one with the same name or delete it.", MatToastType.Danger);
+                return;
+            }
+
             var result = JsonSerializer.Deserialize<List<KeyValuePair<DocumentValue, DocumentValue>>>(documentValues);
             Document.DocumentValues = result ?? new();
             Toaster.Add($"{_selectedPresetToLoad} was successfully loaded", MatToastType.Success);
+            CloseAllDialogs();
         }
         catch
         {
@@ -160,8 +174,8 @@
         finally
         {
             _selectedPresetToLoad = string.Empty;
+            _selectedPresetToDelete = string.Empty;
             await DocumentHasChanged();
-            CloseAllDialogs();
         }
     }
 
@@ -169,22 +183,28 @@
     {
         try
         {
-            if (_documentsKeysList.Count == 0)
+
+            if (_documentsPresetList.Count == 0)
             {
-                Toaster.Add($"There is not items to delete", MatToastType.Danger);
+                Toaster.Add($"There is not presets to delete", MatToastType.Danger);
                 return;
             }
 
             if (string.IsNullOrEmpty(_selectedPresetToDelete))
             {
-                Toaster.Add($"Select a preset to download", MatToastType.Danger);
+                Toaster.Add($"Select a preset to delete", MatToastType.Danger);
                 return;
             }
 
-            _documentsKeysList.Remove(_selectedPresetToDelete);
+            var shouldDelete = await MatDialogService.ConfirmAsync($"This will delete {_selectedPresetToDelete}");
+            if (!shouldDelete)
+            {
+                return;
+            }
+
+            _documentsPresetList.Remove(_selectedPresetToDelete);
             await LocalStorage.RemoveItemAsync(_selectedPresetToDelete);
             Toaster.Add($"{_selectedPresetToDelete} was successfully deleted", MatToastType.Success);
-            
         }
         catch
         {
@@ -208,7 +228,7 @@
             }
 
             await LocalStorage.ClearAsync();
-            _documentsKeysList = new();
+            _documentsPresetList = new();
             Toaster.Add($"All presets were successfully deleted", MatToastType.Success);
         }
         catch
@@ -242,11 +262,11 @@
             var documentsKeysStringList = await LocalStorage.GetItemAsync<string>(DocumentsSavesKey);
             if (string.IsNullOrEmpty(documentsKeysStringList))
             {
-                _documentsKeysList = new List<string>(); 
+                _documentsPresetList = new List<string>(); 
                 return;
             }
 
-            _documentsKeysList = JsonSerializer.Deserialize<List<string>>(documentsKeysStringList) ?? new List<string>();
+            _documentsPresetList = JsonSerializer.Deserialize<List<string>>(documentsKeysStringList) ?? new List<string>();
         }
         catch
         {
