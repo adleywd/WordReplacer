@@ -85,7 +85,7 @@ a, .btn-link {
     z-index: 1000;
 }
 
-.icon-primary-color {
+.primary-color {
     color: var(--mdc-theme-primary);
 }
 
