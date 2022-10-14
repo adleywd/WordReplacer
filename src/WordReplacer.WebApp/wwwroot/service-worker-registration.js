@@ -10,9 +10,6 @@
         .then(registration => {
             console.info(`Service worker registration successful (scope: ${registration.scope})`);
 
-            // Activate the new service worker without the need to close all tabs and browser.
-            self.skipWaiting();
-
             registration.onupdatefound = () => {
                 const installingServiceWorker = registration.installing;
                 installingServiceWorker.onstatechange = () => {
