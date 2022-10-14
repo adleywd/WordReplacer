@@ -57,6 +57,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Update="Resources\ApplicationUpdateResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ApplicationUpdateResource.resx</DependentUpon>
+      </Compile>
       <Compile Update="Resources\DownloadDocumentListResource.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -85,6 +90,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Update="Resources\ApplicationUpdateResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ApplicationUpdateResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
       <EmbeddedResource Update="Resources\DownloadDocumentListResource.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>DownloadDocumentListResource.Designer.cs</LastGenOutput>
