@@ -2,6 +2,7 @@
 @using WordReplacer.Common
 @using WordReplacer.Enums
 @using WordReplacer.Models
+@inject IStringLocalizer<ValuesInputResource> Localizer
 
 <MatAccordion Multi="true">
     @for (var i = 0; i < Document.DocumentValues.Count; i ++)
@@ -10,7 +11,7 @@
 
         @if (docValue.Value.ShouldReplaceForEachLine)
         {
-            <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text!.Replace("\n", " & ")}")"
+            <MatTooltip Tooltip="@string.Format(Localizer["tooltipReplaceText"], docValue.Key.Text, docValue.Value.Text!.Replace("\n", " & "))"
                         Wrap="true"
                         Position="MatTooltipPosition.Top"
                         TargetId="@docValue.Key.HtmlId">
@@ -18,7 +19,7 @@
         }
         else
         {
-            <MatTooltip Tooltip="@($"{docValue.Key.Text} will be replaced for {docValue.Value.Text}")"
+            <MatTooltip Tooltip="@string.Format(Localizer["tooltipReplaceText"], docValue.Key.Text, docValue.Value.Text)"
                         Wrap="true"
                         Position="MatTooltipPosition.Top"
                         TargetId="@docValue.Key.HtmlId">
@@ -45,7 +46,7 @@
                         <div class="col-lg-5 col-md-5 col-sm-1"></div>
                         <div class="col-lg-5 col-md-5 col-sm-12">
                             <MatSlideToggle @bind-Value="docValue.Value.ShouldReplaceForEachLine"/>
-                            <span class="ms-1">Create file for each line in replace area</span>
+                            <span class="ms-1">@Localizer["slideToggleReplaceForEachLineLabel"]</span>
                         </div>
                     </div>
                 }
@@ -73,7 +74,7 @@
                     <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
                         @{var index = i-1;}
                         <MatButton Outlined="true"
-                                   Icon="delete"
+                                   Icon="@MatIconNames.Delete"
                                    OnClickStopPropagation="true"
                                    Type="button"
                                OnClick="() => RemoveItemsFromDict(docValue)">

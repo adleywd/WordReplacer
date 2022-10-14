@@ -3,32 +3,48 @@
 @inject IMatDialogService MatDialogService
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject IMatToaster Toaster
+@inject IStringLocalizer<PresetsResource> Localizer
 
-<MatButton OnClick="@(() => { _savePresetDialogIsOpen = true; _presetSaveName = string.Empty; })" Raised="false">Save</MatButton>
+<MatButton 
+    OnClick="@(() => { _savePresetDialogIsOpen = true; _presetSaveName = string.Empty; })" 
+    Raised="false">
+        @Localizer["btnSavePreset"]
+</MatButton>
+
 @if (_documentsPresetList.Count > 0)
 {
-    <MatButton Class="ms-1" OnClick="@(() => { _loadPresetDialogIsOpen = true; _selectedPresetToLoad = string.Empty; })" Raised="false">Load</MatButton>
+    <MatButton 
+        Class="ms-1" 
+        OnClick="@(() => { _loadPresetDialogIsOpen = true; _selectedPresetToLoad = string.Empty; })" 
+        Raised="false">
+            @Localizer["btnLoadPreset"]
+    </MatButton>
 
-    <MatButton Class="ms-1" OnClick="@(() => { _deletePresetDialogIsOpen = true; _selectedPresetToDelete = null; })" Raised="false">Delete</MatButton>
+    <MatButton 
+        Class="ms-1" 
+        OnClick="@(() => { _deletePresetDialogIsOpen = true; _selectedPresetToDelete = null; })" 
+        Raised="false">
+            @Localizer["btnDeletePreset"]
+    </MatButton>
 }
 
 <MatDialog @bind-IsOpen="@_savePresetDialogIsOpen">
-    <MatDialogTitle>Save presets</MatDialogTitle>
+    <MatDialogTitle>@Localizer["saveTitle"]</MatDialogTitle>
     <MatDialogContent>
-        <MatTextField @bind-Value="@_presetSaveName" Label="Preset name"></MatTextField>
+        <MatTextField @bind-Value="@_presetSaveName" Label="@Localizer["savePresetNameLabel"]"></MatTextField>
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton Raised="true" OnClick="SaveLocalStorageAsync">
-            Save
+        <MatButton Class="me-1" Raised="true" OnClick="SaveLocalStorageAsync">
+            @Localizer["save"]
         </MatButton>
         <MatButton OnClick="@(() => _savePresetDialogIsOpen = false)">
-            Close
+            @Localizer["close"]
         </MatButton>
     </MatDialogActions>
 </MatDialog>
 
 <MatDialog @bind-IsOpen="@_loadPresetDialogIsOpen">
-    <MatDialogTitle>Load presets</MatDialogTitle>
+    <MatDialogTitle>@Localizer["loadTitle"]</MatDialogTitle>
     <MatDialogContent>
         @if (_documentsPresetList.Count > 0)
         {
@@ -36,27 +52,27 @@
         }
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton Raised="true" OnClick="ReadLocalStorageAsync">
-            Load
+        <MatButton Class="me-1" Raised="true" OnClick="ReadLocalStorageAsync">
+            @Localizer["load"]
         </MatButton>
         <MatButton OnClick="@(() => _loadPresetDialogIsOpen = false)">
-            Close
+            @Localizer["close"]
         </MatButton>
     </MatDialogActions>
 </MatDialog>
 
 <MatDialog @bind-IsOpen="@_deletePresetDialogIsOpen">
-    <MatDialogTitle>Delete presets</MatDialogTitle>
+    <MatDialogTitle>@Localizer["deleteTitle"]</MatDialogTitle>
     <MatDialogContent>
         <MatSelectItem @bind-Value="@_selectedPresetToDelete" Items="@_documentsPresetList"></MatSelectItem>
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="DeleteLocalStorageAsync">
-            Delete
+        <MatButton Class="me-1" OnClick="DeleteAllLocalStorageAsync">@Localizer["btnDeleteAll"]</MatButton>
+        <MatButton Class="me-1" OnClick="DeleteLocalStorageAsync">
+            @Localizer["delete"]
         </MatButton>
-        <MatButton OnClick="DeleteAllLocalStorageAsync"> Delete All</MatButton>
         <MatButton Raised="true" OnClick="@(() => _deletePresetDialogIsOpen = false)">
-            Close
+            @Localizer["close"]
         </MatButton>
     </MatDialogActions>
 </MatDialog>
@@ -81,7 +97,7 @@
 
     private string _selectedPresetToLoad = string.Empty;
 
-    private string _selectedPresetToDelete = string.Empty;
+    private string? _selectedPresetToDelete = string.Empty;
 
     private string _presetSaveName = string.Empty;
 
@@ -91,20 +107,20 @@
         {
             if (string.IsNullOrEmpty(_presetSaveName))
             {
-                Toaster.Add("Empty preset name is not allowed", MatToastType.Danger);
+                Toaster.Add(Localizer["toasterEmptyPresetName"], MatToastType.Danger);
                 return;
             }
 
 
             if (Document.DocumentValues.Count == 0)
             {
-                Toaster.Add("Add some values before creating the preset", MatToastType.Danger);
+                Toaster.Add(Localizer["toasterValuesListEmpty"], MatToastType.Danger);
                 return;
             }
 
             if (_documentsPresetList.Contains(_presetSaveName) || await LocalStorage.ContainKeyAsync(_presetSaveName))
             {
-                var shouldReplace = await MatDialogService.ConfirmAsync($"This will replace {_presetSaveName}");
+                var shouldReplace = await MatDialogService.ConfirmAsync(string.Format(Localizer["saveOverrideConfirmation"], _presetSaveName));
                 if (!shouldReplace)
                 {
                     return;
@@ -122,7 +138,7 @@
 
             var newDocumentsValuesSerialized = JsonSerializer.Serialize(Document.DocumentValues);
             await LocalStorage.SetItemAsync(_presetSaveName, newDocumentsValuesSerialized);
-            Toaster.Add($"{_presetSaveName} was successfully saved", MatToastType.Success);
+            Toaster.Add(string.Format(Localizer["toasterSuccessSave"], _presetSaveName), MatToastType.Success);
         }
         catch
         {
@@ -142,13 +158,13 @@
         {
             if (string.IsNullOrWhiteSpace(_selectedPresetToLoad))
             {
-                Toaster.Add($"Select a preset to load", MatToastType.Danger);
+                Toaster.Add(Localizer["toasterErrorSelectPresetFirst"], MatToastType.Danger);
                 return;
             }
 
             if (Document.DocumentValues.Count > 0)
             {
-                var shouldContinueLoading = await MatDialogService.ConfirmAsync("You will lose your current preset if it is not saved");
+                var shouldContinueLoading = await MatDialogService.ConfirmAsync(@Localizer["loadLoseCurrentValuesPrompt"]);
                 if (!shouldContinueLoading)
                 {
                     return;
@@ -158,18 +174,18 @@
             var documentValues = await LocalStorage.GetItemAsync<string>(_selectedPresetToLoad);
             if(documentValues is null)
             {
-                Toaster.Add($"The {_selectedPresetToLoad} preset is corrupted. Please save a new one with the same name or delete it.", MatToastType.Danger);
+                Toaster.Add(string.Format(Localizer["toasterCorruptedPresetError"], _selectedPresetToLoad), MatToastType.Danger);
                 return;
             }
 
             var result = JsonSerializer.Deserialize<List<KeyValuePair<DocumentValue, DocumentValue>>>(documentValues);
             Document.DocumentValues = result ?? new();
-            Toaster.Add($"{_selectedPresetToLoad} was successfully loaded", MatToastType.Success);
+            Toaster.Add(string.Format(Localizer["toasterSuccessLoadPreset"], _selectedPresetToLoad), MatToastType.Success);
             CloseAllDialogs();
         }
         catch
         {
-            Toaster.Add($"Error while loading the preset {_selectedPresetToLoad}", MatToastType.Danger);
+            Toaster.Add(string.Format(Localizer["toasterErrorLoadingPreset"], _selectedPresetToLoad), MatToastType.Danger);
         }
         finally
         {
@@ -186,17 +202,17 @@
 
             if (_documentsPresetList.Count == 0)
             {
-                Toaster.Add($"There is not presets to delete", MatToastType.Danger);
+                Toaster.Add(Localizer["toasterNoPresetToDelete"], MatToastType.Danger);
                 return;
             }
 
             if (string.IsNullOrEmpty(_selectedPresetToDelete))
             {
-                Toaster.Add($"Select a preset to delete", MatToastType.Danger);
+                Toaster.Add(Localizer["toasterErrorNoPresetSelectedToDelete"], MatToastType.Danger);
                 return;
             }
 
-            var shouldDelete = await MatDialogService.ConfirmAsync($"This will delete {_selectedPresetToDelete}");
+            var shouldDelete = await MatDialogService.ConfirmAsync(string.Format(Localizer["deleteConfirmationPrompt"], _selectedPresetToDelete));
             if (!shouldDelete)
             {
                 return;
@@ -204,11 +220,11 @@
 
             _documentsPresetList.Remove(_selectedPresetToDelete);
             await LocalStorage.RemoveItemAsync(_selectedPresetToDelete);
-            Toaster.Add($"{_selectedPresetToDelete} was successfully deleted", MatToastType.Success);
+            Toaster.Add(string.Format(Localizer["toasterSuccessfullyDeleted"], _selectedPresetToDelete), MatToastType.Success);
         }
         catch
         {
-            Toaster.Add($"Error while deleting the preset {_selectedPresetToDelete}", MatToastType.Danger);
+            Toaster.Add(string.Format(Localizer["toasterErrorDeletePreset"], _selectedPresetToDelete), MatToastType.Danger);
         }
         finally
         {
@@ -221,7 +237,7 @@
     {
         try
         {
-            var shouldDelete = await MatDialogService.ConfirmAsync("This will delete all presets");
+            var shouldDelete = await MatDialogService.ConfirmAsync(Localizer["deleteAllPrompt"]);
             if (!shouldDelete)
             {
                 return;
@@ -229,11 +245,11 @@
 
             await LocalStorage.ClearAsync();
             _documentsPresetList = new();
-            Toaster.Add($"All presets were successfully deleted", MatToastType.Success);
+            Toaster.Add(Localizer["toasterAllPresetsDeleted"], MatToastType.Success);
         }
         catch
         {
-            Toaster.Add($"Error while removing all preset", MatToastType.Danger);
+            Toaster.Add(Localizer["toasterErrorDeleteAllPresets"], MatToastType.Danger);
         }
         finally
         {
@@ -270,7 +286,7 @@
         }
         catch
         {
-            Toaster.Add("Error while loading the saved presets", MatToastType.Danger);
+            Toaster.Add(Localizer["toasterErrorLoadingPresets"], MatToastType.Danger);
         }
         finally
         {

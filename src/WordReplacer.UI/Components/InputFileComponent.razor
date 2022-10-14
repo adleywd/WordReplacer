@@ -1,11 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Components
 @using WordReplacer.Models
 @inject IMatToaster Toaster
+@inject IStringLocalizer<InputFileResource> Localizer
 
-<MatFileUpload OnChange="@FilesReady" Label="Drop a Word .docx file or Browse here"/>
+<MatFileUpload OnChange="@FilesReady" Label="@Localizer["selectFileLabel"]" />
 @if (Document.File is not null)
 {
-    <div class="mt-1">Selected File: <span class="text-info"> @Document.File.Name</span></div>
+    <div class="mt-1">@Localizer["selectedFileLabel"]<span class="text-info">@Document.File.Name</span></div>
 }
 
 @code {
@@ -23,7 +24,7 @@
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
                 Document.File = null;
-                Toaster.Add("Only Word documents (.docx) are allowed.", MatToastType.Warning, "Wrong file type", "block");
+                Toaster.Add(Localizer["toasterWrongFileTypeDescription"], MatToastType.Warning, Localizer["toasterWrongFileTypeTitle"], MatIconNames.Block);
             }
             else
             {

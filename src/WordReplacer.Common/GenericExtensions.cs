@@ -166,4 +166,15 @@ public static class GenericExtensions
 
         return regex.IsMatch(originalValue);
     }
+
+    /// <summary>
+    /// Sets the default value if null or empty.
+    /// </summary>
+    /// <param name="text">The text.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
+    public static string SetDefaultIfNullOrEmpty(this string? text, string defaultValue)
+    {
+        return string.IsNullOrEmpty(text) ? defaultValue : text;
+    }
 }
