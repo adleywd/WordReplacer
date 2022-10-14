@@ -70,7 +70,7 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drop a Word .docx file or Browse here.
+        ///   Looks up a localized string similar to Drop a Word(.docx) file or Browse here.
         /// </summary>
         internal static string selectFileLabel {
             get {

@@ -98,7 +98,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="selectFileLabel" xml:space="preserve">
-    <value>Drop a Word .docx file or Browse here</value>
+    <value>Drop a Word(.docx) file or Browse here</value>
   </data>
   <data name="selectedFileLabel" xml:space="preserve">
     <value>Selected File:</value>
