@@ -22,14 +22,14 @@ namespace WordReplacer.UI.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class InputFileResource {
+    internal class ApplicationUpdateResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal InputFileResource() {
+        internal ApplicationUpdateResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace WordReplacer.UI.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.UI.Resources.InputFileResource", typeof(InputFileResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.UI.Resources.ApplicationUpdateResource", typeof(ApplicationUpdateResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,38 +61,20 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Selected File:.
+        ///   Looks up a localized string similar to Reload.
         /// </summary>
-        internal static string selectedFileLabel {
+        internal static string btnReload {
             get {
-                return ResourceManager.GetString("selectedFileLabel", resourceCulture);
+                return ResourceManager.GetString("btnReload", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drop a Word(.docx) file or Browse here.
+        ///   Looks up a localized string similar to New update is ready. Please refresh the page..
         /// </summary>
-        internal static string selectFileLabel {
+        internal static string messageUpdateReady {
             get {
-                return ResourceManager.GetString("selectFileLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Only Word documents (.docx) are allowed..
-        /// </summary>
-        internal static string toasterWrongFileTypeDescription {
-            get {
-                return ResourceManager.GetString("toasterWrongFileTypeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Wrong file type.
-        /// </summary>
-        internal static string toasterWrongFileTypeTitle {
-            get {
-                return ResourceManager.GetString("toasterWrongFileTypeTitle", resourceCulture);
+                return ResourceManager.GetString("messageUpdateReady", resourceCulture);
             }
         }
     }

@@ -11,3 +11,7 @@
             document.body.removeChild(link);
         });
 }
+
+window.reloadPage = function() {
+    window.location.reload();
+}

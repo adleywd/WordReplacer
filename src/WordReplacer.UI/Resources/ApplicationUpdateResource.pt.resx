@@ -97,16 +97,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="selectFileLabel" xml:space="preserve">
-    <value>Drop a Word(.docx) file or Browse here</value>
+  <data name="messageUpdateReady" xml:space="preserve">
+    <value>Nova atualização pronta. Por favor atualize a página.</value>
   </data>
-  <data name="selectedFileLabel" xml:space="preserve">
-    <value>Selected File:</value>
-  </data>
-  <data name="toasterWrongFileTypeDescription" xml:space="preserve">
-    <value>Only Word documents (.docx) are allowed.</value>
-  </data>
-  <data name="toasterWrongFileTypeTitle" xml:space="preserve">
-    <value>Wrong file type</value>
+  <data name="btnReload" xml:space="preserve">
+    <value>Atualizar</value>
   </data>
 </root>

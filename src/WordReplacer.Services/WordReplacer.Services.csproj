@@ -4,7 +4,13 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+	    <PublishTrimmed>true</PublishTrimmed>
+	    <Version>1.0.0</Version>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Content Remove="C:\Users\Adley\.nuget\packages\matblazor\2.8.0\contentFiles\any\netstandard2.1\Properties\launchSettings.json" />
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="MatBlazor" Version="2.8.0" />

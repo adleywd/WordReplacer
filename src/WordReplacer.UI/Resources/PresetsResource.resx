@@ -131,7 +131,7 @@
     <value>Delete All</value>
   </data>
   <data name="saveOverrideConfirmation" xml:space="preserve">
-    <value>This will replace {0}</value>
+    <value>This will override {0}</value>
   </data>
   <data name="toasterSuccessSave" xml:space="preserve">
     <value>{0} was successfully saved</value>
