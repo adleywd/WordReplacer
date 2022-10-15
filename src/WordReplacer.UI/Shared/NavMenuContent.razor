@@ -5,3 +5,17 @@
     @*<MatDivider></MatDivider>*@
     @*<MatNavItem Href="about-it"><MatIcon Icon="table_chart"></MatIcon>&nbsp; About it </MatNavItem>*@
 </MatNavMenu>
+@if (_uiVersion is not null)
+{
+    <span class="version-drawer-bottom">v@(_uiVersion)</span>
+}
+@code
+{
+    string? _uiVersion;
+
+    protected override Task OnInitializedAsync()
+    {
+        _uiVersion = GetType().Assembly?.GetName().Version?.ToString(3);
+        return base.OnInitializedAsync();
+    }
+}
