@@ -97,7 +97,7 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select a file and add some values to begin the replacement.
+        ///   Looks up a localized string similar to Select a file and add some text to begin the replacement.
         /// </summary>
         public static string emptyValueListInfo {
             get {

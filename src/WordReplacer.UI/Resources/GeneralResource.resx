@@ -142,7 +142,7 @@
     <value>Remove All</value>
   </data>
   <data name="emptyValueListInfo" xml:space="preserve">
-    <value>Select a file and add some values to begin the replacement</value>
+    <value>Select a file and add some text to begin the replacement</value>
   </data>
   <data name="valueAlreadyAddedError" xml:space="preserve">
     <value>The word/text {0} has already been added.</value>

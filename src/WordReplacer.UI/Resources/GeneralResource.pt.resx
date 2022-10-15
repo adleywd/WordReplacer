@@ -127,7 +127,7 @@
     <value>Adicionar Text</value>
   </data>
   <data name="presetToolTip" xml:space="preserve">
-    <value>Presets são pré-configurações que você pode utilizar para armazenar um conjunto de textos para subistuir depois.</value>
+    <value>Presets são pré-configurações que você pode utilizar para armazenar um conjunto de textos para substituir depois.</value>
   </data>
   <data name="presetLabel" xml:space="preserve">
     <value>Meus Presets:</value>
@@ -142,7 +142,7 @@
     <value>Remover tudo</value>
   </data>
   <data name="emptyValueListInfo" xml:space="preserve">
-    <value>Selecione um arquivo e adicione alguns valores para iniciar as subistituições</value>
+    <value>Selecione um arquivo e adicione um texto para iniciar as substituição</value>
   </data>
   <data name="valueAlreadyAddedError" xml:space="preserve">
     <value>O word/texto {0} já foi adicionado.</value>
