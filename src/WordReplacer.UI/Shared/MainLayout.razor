@@ -10,6 +10,11 @@
                 <MatIcon><img style="width: 100%;" src="_content/WordReplacer.UI/img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo"/></MatIcon>
                 <MatAppBarTitle Style="margin-left: 0;">Word Replacer</MatAppBarTitle>
             </MatAppBarSection>
+                <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                    <MatIconButton Link="https://github.com/adleywd" Target="_blank">
+                        <i class="fa fa-github text-centered-in-btn" aria-hidden="true"></i>
+                    </MatIconButton>
+                </MatAppBarSection>
         </MatAppBarRow>
     </MatAppBar>
     
@@ -50,6 +55,8 @@
 {
     // Navbar should start closed
     bool _navMenuOpened = false;
+
+    string? _version;
 
     private void ModelDrawerHiddenChanged(bool hidden)
     {
