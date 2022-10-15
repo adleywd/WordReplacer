@@ -28,6 +28,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReplacer.Enums", "src\W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReplacer.Dto", "src\WordReplacer.Dto\WordReplacer.Dto.csproj", "{A45935C2-7917-44EE-A907-284EE342122A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{F798C5AC-4AD4-419C-8C7A-9BD0D39C0DE0}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main.yml = .github\workflows\main.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
