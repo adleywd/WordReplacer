@@ -53,7 +53,7 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-tff1LlBVUapXrWcUphfjA7vrXCojMfTpAM\/vk7\/qlsU=",
+      "hash": "sha256-ad6xganud77jhVM7l3XYc0D0uFB9FS9eUQev3EivMDs=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -285,15 +285,15 @@
       "url": "_framework\/WordReplacer.Services.dll"
     },
     {
-      "hash": "sha256-32JXn5IL5RGaLVvhNYv\/uhB183Pi7dVUYG+iClSiZmI=",
+      "hash": "sha256-U8fgPfj7Bsel78J6dnzrfFeUYDPRyeEOb4vzcOddpCk=",
       "url": "_framework\/WordReplacer.UI.dll"
     },
     {
-      "hash": "sha256-3neXVTEJuoVU05a2G+w085MUcIoWcQwfqZp4FsIOtTQ=",
+      "hash": "sha256-LnVhJItsAvewrUUzqwUEOVbCuKMNW2X32XJfDUjW4i0=",
       "url": "_framework\/WordReplacer.WebApp.dll"
     },
     {
-      "hash": "sha256-lDsyUidrOpUkAN8WmnAJ3fVxzCIzH3dPrUCc\/cOV0bI=",
+      "hash": "sha256-8wRZNdnM8e3pSh\/8JmPCDYXwoxMmGCXjesb89LZhqQ4=",
       "url": "_framework\/pt\/WordReplacer.UI.resources.dll"
     },
     {
@@ -409,5 +409,5 @@
       "url": "_content\/WordReplacer.UI\/WordReplacer.UI.bundle.scp.css"
     }
   ],
-  "version": "xZeAnSQ5"
+  "version": "HK81i7hu"
 };
