@@ -5,7 +5,7 @@
       "url": "favicon.ico"
     },
     {
-      "hash": "sha256-6Lu63HIAqsOJJ79+lyfxuQYlfSBNm1va7UtbsI8Y5s8=",
+      "hash": "sha256-SLqS3/T48Utx56fh+KXP2DwgpCF+sKVcrWONq/JAsu0=",
       "url": "index.html"
     },
     {
@@ -409,5 +409,5 @@
       "url": "_content\/WordReplacer.UI\/WordReplacer.UI.bundle.scp.css"
     }
   ],
-  "version": "lVtk3UvU"
+  "version": "FX0fyi4K"
 };
