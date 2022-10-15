@@ -53,7 +53,7 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-WFNOgVxUM670dEEOHWqJZKdjefZTFjdghiu7avSNwHk=",
+      "hash": "sha256-mN3yl7zj6c6SVwWsBgRAjIzoZYWzTDoco5DqsNrIUf8=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -217,7 +217,7 @@
       "url": "_framework\/System.ObjectModel.dll"
     },
     {
-      "hash": "sha256-eLVJjbG4Opk5p3EK2iwJdrs\/VHIy0no2X2ioK72\/ybo=",
+      "hash": "sha256-LIIcWzjNoDRhW1hKr7FERTE6fYPdyLAGXISJ9o9Pe0U=",
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
@@ -265,6 +265,10 @@
       "url": "_framework\/System.Threading.dll"
     },
     {
+      "hash": "sha256-FjCMed8gVUK2YRdU3C6MiFRh3JSIPGTcoaBNKVHDlkU=",
+      "url": "_framework\/System.Threading.Thread.dll"
+    },
+    {
       "hash": "sha256-VK34OZw1UcCXJfXlAJqLjrpHeRAvYlc3CkBf58N91O4=",
       "url": "_framework\/WordReplacer.Common.dll"
     },
@@ -285,15 +289,15 @@
       "url": "_framework\/WordReplacer.Services.dll"
     },
     {
-      "hash": "sha256-8fU66gueiAKUkDHbWFzqxsgPPME4KQkv7BPIx\/Nah4c=",
+      "hash": "sha256-8V73KvUmLTjbj9C6lwtrxZ+5FECjlV1oCX+2CN3WQ3w=",
       "url": "_framework\/WordReplacer.UI.dll"
     },
     {
-      "hash": "sha256-ik\/6zuqhBIMQGie+QFhFPzXUI793KlDOFzcuCsUqfrg=",
+      "hash": "sha256-iZ87iR5u1vk\/UqKMa73Lim6A8N2wUezALJArXgocaOY=",
       "url": "_framework\/WordReplacer.WebApp.dll"
     },
     {
-      "hash": "sha256-EWZJ9\/F\/nhAm+6TDvpaP3UgcTXadQqabVxmebVV\/Tq8=",
+      "hash": "sha256-EHCmP+9YCXqDATwD9x8XFor4G1FKJHvDyDoga97ys1M=",
       "url": "_framework\/pt\/WordReplacer.UI.resources.dll"
     },
     {
@@ -385,6 +389,14 @@
       "url": "_content\/WordReplacer.UI\/css\/open-iconic\/README.md"
     },
     {
+      "hash": "sha256-a2EPaZT619o1IolgFQktCcNMO4Kzs91VVHu0pbfz4ns=",
+      "url": "_content\/WordReplacer.UI\/img\/flag-brazil.svg"
+    },
+    {
+      "hash": "sha256-+8XGK\/h7N4PihW+V1zUx4ERn\/WDRvbLkSiex0JGR57k=",
+      "url": "_content\/WordReplacer.UI\/img\/flag-united-states.svg"
+    },
+    {
       "hash": "sha256-kcmdfvv\/nmp\/jfrFNRHF\/jT9eB7nu4wBdjPXaVvHh3Q=",
       "url": "_content\/WordReplacer.UI\/img\/icon-192.png"
     },
@@ -409,5 +421,5 @@
       "url": "_content\/WordReplacer.UI\/WordReplacer.UI.bundle.scp.css"
     }
   ],
-  "version": "gxPcdCiD"
+  "version": "n5viwgri"
 };

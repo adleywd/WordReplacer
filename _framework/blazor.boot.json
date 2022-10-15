@@ -47,7 +47,7 @@
       "System.Net.Http.dll": "sha256-5JRhwSuuylt0PrwGxHeNZ9N3fxjgBatqAiAHlhiXTPg=",
       "System.Net.Primitives.dll": "sha256-+Y4W0aDgbo1USROQ7RoPF965XjIrYKKIxqCDI21DyHQ=",
       "System.ObjectModel.dll": "sha256-ndZQqz4zrqBRiypTdIdBotZXGqpFTs8um+qtM6LnxH8=",
-      "System.Private.CoreLib.dll": "sha256-eLVJjbG4Opk5p3EK2iwJdrs\/VHIy0no2X2ioK72\/ybo=",
+      "System.Private.CoreLib.dll": "sha256-LIIcWzjNoDRhW1hKr7FERTE6fYPdyLAGXISJ9o9Pe0U=",
       "System.Private.Runtime.InteropServices.JavaScript.dll": "sha256-\/PQapbyIUJF7Z4t1n5+gy\/3eauEtweRPMJAvSnoFPIM=",
       "System.Private.Uri.dll": "sha256-wvdBQimOGBXFekKMW7oMtDGcZa1Hb\/DHjSg5KFqg0Q8=",
       "System.Private.Xml.dll": "sha256-1ZwX9BNxHnTQT+SrsVudC5ae78wdXGliRX02RGvypKs=",
@@ -59,13 +59,14 @@
       "System.Text.Json.dll": "sha256-dWRIC0Yiw6h0MsOQ\/QDKBpUn7075iG9kVJkN5b5gPto=",
       "System.Text.RegularExpressions.dll": "sha256-jgf5g4fl6qvmBMvL86B+V\/Qne9CFvtfP1OlvLVNOF6w=",
       "System.Threading.dll": "sha256-FZxz2f0C\/\/87CCWiktrDH3igpvuIFYY3YbtX\/Y5WB88=",
+      "System.Threading.Thread.dll": "sha256-FjCMed8gVUK2YRdU3C6MiFRh3JSIPGTcoaBNKVHDlkU=",
       "WordReplacer.Common.dll": "sha256-VK34OZw1UcCXJfXlAJqLjrpHeRAvYlc3CkBf58N91O4=",
       "WordReplacer.Dto.dll": "sha256-56aoKDNM7dFc8PdRcFjWqrphBLWBOrJe6e4rbl1pOSI=",
       "WordReplacer.Enums.dll": "sha256-+VlfnBUHZymp3H5wZx8wSOb+rSj2Uz2XI0bSqDP414Q=",
       "WordReplacer.Models.dll": "sha256-BgINjtP5DVKaD6K2cbv1JkYzx33KiVngrDYKjOYRPV4=",
       "WordReplacer.Services.dll": "sha256-Pv8W7+FPdcFxJzwP7nGQVwOogwwY30EkePExqdzV5Xg=",
-      "WordReplacer.UI.dll": "sha256-8fU66gueiAKUkDHbWFzqxsgPPME4KQkv7BPIx\/Nah4c=",
-      "WordReplacer.WebApp.dll": "sha256-ik\/6zuqhBIMQGie+QFhFPzXUI793KlDOFzcuCsUqfrg="
+      "WordReplacer.UI.dll": "sha256-8V73KvUmLTjbj9C6lwtrxZ+5FECjlV1oCX+2CN3WQ3w=",
+      "WordReplacer.WebApp.dll": "sha256-iZ87iR5u1vk\/UqKMa73Lim6A8N2wUezALJArXgocaOY="
     },
     "extensions": null,
     "lazyAssembly": null,
@@ -82,7 +83,7 @@
     },
     "satelliteResources": {
       "pt": {
-        "pt\/WordReplacer.UI.resources.dll": "sha256-EWZJ9\/F\/nhAm+6TDvpaP3UgcTXadQqabVxmebVV\/Tq8="
+        "pt\/WordReplacer.UI.resources.dll": "sha256-EHCmP+9YCXqDATwD9x8XFor4G1FKJHvDyDoga97ys1M="
       }
     }
   }
