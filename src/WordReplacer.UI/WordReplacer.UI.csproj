@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -73,6 +73,11 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>GeneralResource.resx</DependentUpon>
       </Compile>
+      <Compile Update="Resources\NavMenuContentResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>NavMenuContentResource.resx</DependentUpon>
+      </Compile>
       <Compile Update="Resources\PresetsResource.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -104,6 +109,10 @@
       <EmbeddedResource Update="Resources\GeneralResource.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>GeneralResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\NavMenuContentResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>NavMenuContentResource.Designer.cs</LastGenOutput>
       </EmbeddedResource>
       <EmbeddedResource Update="Resources\PresetsResource.resx">
         <Generator>ResXFileCodeGenerator</Generator>
