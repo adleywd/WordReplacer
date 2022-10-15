@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @using WordReplacer.UI.Components
+@using System.Globalization
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <MatThemeProvider Theme="@_primaryTheme">
     <MatAnchorUtils></MatAnchorUtils>
@@ -10,11 +12,23 @@
                 <MatIcon><img style="width: 100%;" src="_content/WordReplacer.UI/img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo"/></MatIcon>
                 <MatAppBarTitle Style="margin-left: 0;">Word Replacer</MatAppBarTitle>
             </MatAppBarSection>
-                <MatAppBarSection Align="@MatAppBarSectionAlign.End">
-                    <MatIconButton Link="https://github.com/adleywd" Target="_blank">
-                        <i class="fa fa-github text-centered-in-btn" aria-hidden="true"></i>
+            <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                @if (_selectedLanguage != "pt")
+                {
+                    <MatIconButton OnClick="@(() => ChangeUIToLanguage("pt"))">
+                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-brazil.svg" />
+                </MatIconButton>
+                }
+                @if (_selectedLanguage != "en")
+                {
+                    <MatIconButton OnClick="@(() => ChangeUIToLanguage("en"))">
+                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-united-states.svg" />
                     </MatIconButton>
-                </MatAppBarSection>
+                }
+                <MatIconButton Link="https://github.com/adleywd" Target="_blank">
+                    <i class="fa fa-github text-centered-in-btn" aria-hidden="true"></i>
+                </MatIconButton>
+            </MatAppBarSection>
         </MatAppBarRow>
     </MatAppBar>
     
@@ -53,10 +67,23 @@
 
 @code
 {
-    // Navbar should start closed
-    bool _navMenuOpened = false;
+    private const string ChosenLanguageKey = "choose_language";
 
-    string? _version;
+    // Navbar should start closed
+    private bool _navMenuOpened = false;
+
+    private string _selectedLanguage = "";
+
+    private async Task ChangeUIToLanguage(string language)
+    {
+        _selectedLanguage = language;
+        var newCulture = new CultureInfo(language);
+        Thread.CurrentThread.CurrentCulture = newCulture;
+        Thread.CurrentThread.CurrentUICulture = newCulture;
+        CultureInfo.DefaultThreadCurrentCulture = newCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = newCulture;
+        await LocalStorage.SetItemAsStringAsync(ChosenLanguageKey, language);
+    }
 
     private void ModelDrawerHiddenChanged(bool hidden)
     {
@@ -78,4 +105,17 @@
         Secondary = MatThemeColors.DeepPurple._300.Value,
         Background = MatThemeColors.Grey._200.Value
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _selectedLanguage = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+        if (await LocalStorage.ContainKeyAsync(ChosenLanguageKey))
+        {
+            _selectedLanguage = await LocalStorage.GetItemAsStringAsync(ChosenLanguageKey);
+            await ChangeUIToLanguage(_selectedLanguage);
+        }
+        
+        await base.OnInitializedAsync();
+    }
 }
