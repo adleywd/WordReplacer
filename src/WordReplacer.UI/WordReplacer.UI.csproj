@@ -4,7 +4,13 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+		<PublishTrimmed>true</PublishTrimmed>
+	    <Version>1.0.0</Version>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Content Remove="C:\Users\Adley\.nuget\packages\matblazor\2.8.0\contentFiles\any\netstandard2.1\Properties\launchSettings.json" />
+    </ItemGroup>
 
     <ItemGroup>
         <SupportedPlatform Include="browser" />
@@ -14,6 +20,7 @@
         <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
         <PackageReference Include="MatBlazor" Version="2.8.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.9" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,9 +43,6 @@
       <Content Update="wwwroot\css\app.css">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Update="Components\DownloadDocumentListComponent.razor">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <Content Update="wwwroot\js\app.js">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -47,6 +51,69 @@
     <ItemGroup>
       <ProjectReference Include="..\WordReplacer.Common\WordReplacer.Common.csproj" />
       <ProjectReference Include="..\WordReplacer.Models\WordReplacer.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\ApplicationUpdateResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ApplicationUpdateResource.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\DownloadDocumentListResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>DownloadDocumentListResource.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\InputFileResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>InputFileResource.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\GeneralResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>GeneralResource.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\PresetsResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>PresetsResource.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\ValuesInputResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ValuesInputResource.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\ApplicationUpdateResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ApplicationUpdateResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\DownloadDocumentListResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>DownloadDocumentListResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\InputFileResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>InputFileResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\GeneralResource.pt.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\GeneralResource.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>GeneralResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\PresetsResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>PresetsResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\ValuesInputResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ValuesInputResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

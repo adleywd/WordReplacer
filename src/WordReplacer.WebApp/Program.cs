@@ -31,6 +31,8 @@ namespace WordReplacer.WebApp
             
             builder.Services.AddTransient<IDocumentService, DocumentService>();
 
+            builder.Services.AddLocalization();
+
             await builder.Build().RunAsync().ConfigureAwait(false);
         }
     }

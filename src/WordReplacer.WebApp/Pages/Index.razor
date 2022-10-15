@@ -6,6 +6,7 @@
 @using WordReplacer.Dto
 @inject IDocumentService DocumentService
 @inject IMatToaster Toaster
+@inject IStringLocalizer<GeneralResource> Localizer
 
 <PageTitle>Word Replacer</PageTitle>
 <hr />
@@ -15,16 +16,14 @@
     </Content>
 </DownloadPopoutComponent>
 
-
 <div class="container-fluid">
     <MatPaper Elevation="6" Class="p-3" Rounded="true">
         <div class="d-inline-block">
-            <MatTooltip 
-                Tooltip="You can save some presets, with original and newer values, to replace it later. THIS DATA WILL ONLY BE SAVED IN YOUR BROWSER." 
+            <MatTooltip Tooltip="@Localizer["presetToolTip"]"
                 TargetId="preset-text-id"
                 Position="MatTooltipPosition.Right">
                     <i id="preset-text-id" class="fa fa-info-circle primary-color"></i>
-                    <span class="preset-text">My Presets:</span>
+                    <span class="preset-text">@Localizer["presetLabel"]</span>
             </MatTooltip>
             <PresetsComponent @bind-Document="_doc" />
         </div>
@@ -43,15 +42,15 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
                     <MatTextField @bind-Value="_docParamsDto.Text"
                                   OnInput="@(e => _docParamsDto.Text = e.Value?.ToString())"
-                                  HelperText="The text that will be replaced"
-                                  Label="Value to be replaced"
+                                  HelperText="@Localizer["helperTextAddValues"]"
+                                  Label="@Localizer["labelTextAddValues"]"
                                   FullWidth="true" />
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
-                    <label>
+                    <label class="text-wrap text-break">
                         @(_docParamsDto.Type == InputType.Text ?
-                            "I will replace this word for another one"
-                            : "I will replace this word for multiple words (generate multiple files)")
+                            string.Format(Localizer["inputTypeTextLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])) :
+                            string.Format(Localizer["inputTypeListLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])))
                     </label>
                     <br />
                     <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())" />
@@ -63,7 +62,7 @@
                                Style="width: 98%"
                                Raised="true"
                                Disabled="_docParamsDto.IsTextEmpty">
-                        Add value
+                        @Localizer["buttonTextAddValues"]
                     </MatButton>
                 </div>
             </div>
@@ -76,10 +75,10 @@
         <div class="row">
             <MatHidden BreakPoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Down">
                 <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                    <h3>Original values</h3>
+                    <h3>@Localizer["headerOriginalValues"]</h3>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 mt-2">
-                    <h3>New values</h3>
+                    <h3>@Localizer["headerNewValues"]</h3>
                 </div>
             </MatHidden>
 
@@ -89,7 +88,7 @@
                        Type="button"
                        OnClickStopPropagation="true"
                        OnClick="@(() => { _doc.DocumentValues = new (); })">
-                    Remove All
+                    @Localizer["btnRemoveAll"]
                 </MatButton>
             </div>
         </div>
@@ -97,7 +96,7 @@
     else
     {
         <div class="alert alert-info justify-content-center">
-            <p class="text-center justify-content-center">Select a file and add some values to begin the replacement</p>
+            <p class="text-center justify-content-center">@Localizer["emptyValueListInfo"]</p>
         </div>
     }
     <EditForm Model="_doc" OnValidSubmit="HandleSubmitAsync" class="col-12">
@@ -145,8 +144,8 @@
     private double _progressBarValue;
 
     // Submit btn configs
-    private string _btnReplaceText = "Replace and Download";
-    private string _btnReplaceIcon = "find_replace";
+    private string _btnReplaceText = string.Empty;
+    private string _btnReplaceIcon = MatIconNames.Find_replace;
 
     private void OpenDownloadPopup()
     {
@@ -164,32 +163,32 @@
 
         if (_doc.DocumentValues.Select(d => d.Key.Text).Any(text => text == _docParamsDto.Text))
         {
-            Toaster.Add("This value has already been added.", MatToastType.Danger, "Duplicate original value");
+            Toaster.Add(string.Format(Localizer["valueAlreadyAddedError"], _docParamsDto.Text), MatToastType.Danger, @Localizer["valueAlreadyAddedErrorTitle"]);
             return;
         }
         var oldValue = new DocumentValue()
             {
-                Label = "Original Value",
+                Label = Localizer["originalDocumentLabel"],
                 HtmlId = Guid.NewGuid().ToString(),
                 IsOldValue = true,
                 Text = _docParamsDto.Text,
-                HelperText = "This is the original value",
+                HelperText = Localizer["originalDocumentHelperText"],
                 Type = InputType.Text,
                 IsAccordionOpen = true
             };
         var newValue = new DocumentValue()
             {
-                Label = $"New value for {_docParamsDto.Text}",
+                Label = string.Format(Localizer["newDocumentLabel"], _docParamsDto.Text),
                 HtmlId = Guid.NewGuid().ToString(),
                 IsOldValue = false,
-                Text = "",
-                HelperText = "This is will be the new value",
+                Text = string.Empty,
+                HelperText = Localizer["newDocumentHelperText"],
                 Type = _docParamsDto.Type,
                 IsAccordionOpen = true,
                 ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
             };
         _doc.DocumentValues.Add(new KeyValuePair<DocumentValue, DocumentValue>(oldValue, newValue));
-        _docParamsDto.Text = string.Empty; // Cleat text field
+        _docParamsDto.Text = string.Empty; // Cleat add values text
     }
 
     private async Task HandleSubmitAsync()
@@ -224,9 +223,7 @@
 
             await DelayDotNetToUpdateUIAsync();
 
-            //DisplaySnackBar("The site may freeze during the replacement process. Please just wait.", false, -1);
-
-            Toaster.Add("The site may freeze during the replacement process. Please just wait.", MatToastType.Primary);
+            Toaster.Add(Localizer["InfoSiteFreezes"], MatToastType.Primary);
 
             var originalFileInMemoryStream = new MemoryStream();
             if (_doc.File is not null)
@@ -294,7 +291,7 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            Toaster.Add("Something went wrong, please try again.", MatToastType.Danger, "Error", "");
+            Toaster.Add(Localizer["toasterGenericError"], MatToastType.Danger);
             SetDefaultUIAfterError();
             ReloadUI();
         }
@@ -342,9 +339,8 @@
     private void PrepareUIToReplaceAndDownload()
     {
         _progressBar = true;
-        _btnReplaceText = "Wait, Replacing... ";
-        _btnReplaceIcon = "hourglass_empty";
-        // _popupRef.HideCloseButton();
+        _btnReplaceText = Localizer["btnReplaceTextReplacing"];
+        _btnReplaceIcon = MatIconNames.Hourglass_empty;
     }
 
     private void SetDefaultUIAfterDownload()
@@ -352,21 +348,19 @@
         _progressBar = false;
         _snackBarIsOpen = false;
         _progressBarValue = 0;
-        // _popupRef.ShowCloseButton();
         SetDefaultValuesForBtnReplace();
     }
 
     private void SetDefaultUIAfterError()
     {
         _progressBar = false;
-        // CloseDownloadPopup();
         SetDefaultValuesForBtnReplace();
     }
 
     private void SetDefaultValuesForBtnReplace()
     {
-        _btnReplaceText = "Replace and Download";
-        _btnReplaceIcon = "find_replace";
+        _btnReplaceText = Localizer["btnReplaceTextDefault"];
+        _btnReplaceIcon = MatIconNames.Find_replace;
     }
 
     private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 100)
@@ -386,6 +380,13 @@
     private void ReloadUI()
     {
         InvokeAsync(StateHasChanged);
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        _btnReplaceText = Localizer["btnReplaceTextDefault"];
+
+        return base.OnInitializedAsync();
     }
 
 }
