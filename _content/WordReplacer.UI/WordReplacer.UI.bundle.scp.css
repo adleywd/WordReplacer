@@ -1,0 +1,68 @@
+/* _content/WordReplacer.UI/Shared/MainLayout.razor.rz.scp.css */
+/* _content/WordReplacer.UI/Shared/NavMenuContent.razor.rz.scp.css */
+.navbar-toggler[b-vpoayhqh89] {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row[b-vpoayhqh89] {
+    height: 3.5rem;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.navbar-brand[b-vpoayhqh89] {
+    font-size: 1.1rem;
+}
+
+.oi[b-vpoayhqh89] {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.nav-item[b-vpoayhqh89] {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+.nav-item:first-of-type[b-vpoayhqh89] {
+    padding-top: 1rem;
+}
+
+.nav-item:last-of-type[b-vpoayhqh89] {
+    padding-bottom: 1rem;
+}
+
+.nav-item[b-vpoayhqh89]  a {
+    color: #d7d7d7;
+    border-radius: 4px;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    line-height: 3rem;
+}
+
+.nav-item[b-vpoayhqh89]  a.active {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: white;
+}
+
+.nav-item[b-vpoayhqh89]  a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.mdc-drawer[b-vpoayhqh89] {
+    box-shadow: 2px 0px 2px 0px rgba(199, 199, 199, 0.29);
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler[b-vpoayhqh89] {
+        display: none;
+    }
+
+    .collapse[b-vpoayhqh89] {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+}
