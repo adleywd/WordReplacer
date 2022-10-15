@@ -114,3 +114,15 @@ a, .btn-link {
     font-size: 1.3em;
     font-weight: 500;
 }
+
+.text-centered-in-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.version-drawer-bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

@@ -5,7 +5,7 @@
       "url": "favicon.ico"
     },
     {
-      "hash": "sha256-SLqS3/T48Utx56fh+KXP2DwgpCF+sKVcrWONq/JAsu0=",
+      "hash": "sha256-zTmWnLT143rQMyRv2hC43IAc+O2NsJiVlX/pfATEA2s=",
       "url": "index.html"
     },
     {
@@ -53,7 +53,7 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-ad6xganud77jhVM7l3XYc0D0uFB9FS9eUQev3EivMDs=",
+      "hash": "sha256-WFNOgVxUM670dEEOHWqJZKdjefZTFjdghiu7avSNwHk=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -241,7 +241,7 @@
       "url": "_framework\/System.Runtime.CompilerServices.Unsafe.dll"
     },
     {
-      "hash": "sha256-2MWoxiE97xVrhBkSARzFWRIATWZw41\/78MjUZFzcOQQ=",
+      "hash": "sha256-hQ+fZDg1WBzm5nSmE6TTOmAvOJ+6QZzWKr98hk+lMkM=",
       "url": "_framework\/System.Runtime.dll"
     },
     {
@@ -285,15 +285,15 @@
       "url": "_framework\/WordReplacer.Services.dll"
     },
     {
-      "hash": "sha256-U8fgPfj7Bsel78J6dnzrfFeUYDPRyeEOb4vzcOddpCk=",
+      "hash": "sha256-8fU66gueiAKUkDHbWFzqxsgPPME4KQkv7BPIx\/Nah4c=",
       "url": "_framework\/WordReplacer.UI.dll"
     },
     {
-      "hash": "sha256-LnVhJItsAvewrUUzqwUEOVbCuKMNW2X32XJfDUjW4i0=",
+      "hash": "sha256-ik\/6zuqhBIMQGie+QFhFPzXUI793KlDOFzcuCsUqfrg=",
       "url": "_framework\/WordReplacer.WebApp.dll"
     },
     {
-      "hash": "sha256-8wRZNdnM8e3pSh\/8JmPCDYXwoxMmGCXjesb89LZhqQ4=",
+      "hash": "sha256-EWZJ9\/F\/nhAm+6TDvpaP3UgcTXadQqabVxmebVV\/Tq8=",
       "url": "_framework\/pt\/WordReplacer.UI.resources.dll"
     },
     {
@@ -305,7 +305,7 @@
       "url": "_content\/MatBlazor\/dist\/matBlazor.js"
     },
     {
-      "hash": "sha256-NZe8hZ6qya3NqAR33vPW+1jEgdWmPkaY0FWc88xAsQo=",
+      "hash": "sha256-PGhlsSP01L9MaI3AeYGtKAqaLLRNdZmy1H+\/CGWzcOU=",
       "url": "_content\/WordReplacer.UI\/css\/app.css"
     },
     {
@@ -409,5 +409,5 @@
       "url": "_content\/WordReplacer.UI\/WordReplacer.UI.bundle.scp.css"
     }
   ],
-  "version": "HK81i7hu"
+  "version": "gxPcdCiD"
 };
