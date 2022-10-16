@@ -14,6 +14,9 @@ const offlineAssetsExclude = [ /^service-worker\.js$/ ];
 async function onInstall(event) {
     console.info('Service worker: Install');
 
+    // Avoid the need to close all tabs, browser and instances of the app.
+    self.skipWaiting();
+    
     // Fetch and cache all matching items from the assets manifest
     const assetsRequests = self.assetsManifest.assets
         .filter(asset => offlineAssetsInclude.some(pattern => pattern.test(asset.url)))
