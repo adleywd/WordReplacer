@@ -16,7 +16,7 @@ async function onInstall(event) {
 
     // Avoid the need to close all tabs, browser and instances of the app.
     self.skipWaiting();
-    
+
     // Fetch and cache all matching items from the assets manifest
     const assetsRequests = self.assetsManifest.assets
         .filter(asset => offlineAssetsInclude.some(pattern => pattern.test(asset.url)))
@@ -49,4 +49,4 @@ async function onFetch(event) {
 
     return cachedResponse || fetch(event.request);
 }
-/* Manifest version: kXFIgoq6 */
+/* Manifest version: pUMrtpZU */
