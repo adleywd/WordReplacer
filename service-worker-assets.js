@@ -53,7 +53,7 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-wylgGxpOOPWxh+CL2GZhfFE9ihEc\/a+USB8XquzW\/eU=",
+      "hash": "sha256-XcQD0ZW3ZRhSnXZxYDm8ZpICQv\/bxR22MeTBBYNsOGs=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -289,15 +289,15 @@
       "url": "_framework\/WordReplacer.Services.dll"
     },
     {
-      "hash": "sha256-Lm\/YP0XWAOis0qmtixhOQvfztOPHOsszpDMVlwv8gjY=",
+      "hash": "sha256-OZrBni68RBqUtDkgH5\/Ya3QoAgwpe\/bCtPYJ5z+sGmA=",
       "url": "_framework\/WordReplacer.UI.dll"
     },
     {
-      "hash": "sha256-6VYnt8uAIp6EAfVs\/D4b8DsmPAvl1gS171mRImIGZDY=",
+      "hash": "sha256-GP0dKNOzBPQkrhKQU3+v3RL0OHz9b84Y8ShNu0NKROU=",
       "url": "_framework\/WordReplacer.WebApp.dll"
     },
     {
-      "hash": "sha256-ayB3xOyJ\/c0\/ekgPAp7uoa80aboD9BbLY9OlJ58PvCY=",
+      "hash": "sha256-gyb2XCLYcDsMjKdom4HAhI1VB8XssL0VyKh33sXN6qs=",
       "url": "_framework\/pt\/WordReplacer.UI.resources.dll"
     },
     {
@@ -421,5 +421,5 @@
       "url": "_content\/WordReplacer.UI\/WordReplacer.UI.bundle.scp.css"
     }
   ],
-  "version": "Wx+5yJzj"
+  "version": "t7UYzi0e"
 };

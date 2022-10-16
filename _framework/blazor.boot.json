@@ -65,8 +65,8 @@
       "WordReplacer.Enums.dll": "sha256-+VlfnBUHZymp3H5wZx8wSOb+rSj2Uz2XI0bSqDP414Q=",
       "WordReplacer.Models.dll": "sha256-BgINjtP5DVKaD6K2cbv1JkYzx33KiVngrDYKjOYRPV4=",
       "WordReplacer.Services.dll": "sha256-Pv8W7+FPdcFxJzwP7nGQVwOogwwY30EkePExqdzV5Xg=",
-      "WordReplacer.UI.dll": "sha256-Lm\/YP0XWAOis0qmtixhOQvfztOPHOsszpDMVlwv8gjY=",
-      "WordReplacer.WebApp.dll": "sha256-6VYnt8uAIp6EAfVs\/D4b8DsmPAvl1gS171mRImIGZDY="
+      "WordReplacer.UI.dll": "sha256-OZrBni68RBqUtDkgH5\/Ya3QoAgwpe\/bCtPYJ5z+sGmA=",
+      "WordReplacer.WebApp.dll": "sha256-GP0dKNOzBPQkrhKQU3+v3RL0OHz9b84Y8ShNu0NKROU="
     },
     "extensions": null,
     "lazyAssembly": null,
@@ -83,7 +83,7 @@
     },
     "satelliteResources": {
       "pt": {
-        "pt\/WordReplacer.UI.resources.dll": "sha256-ayB3xOyJ\/c0\/ekgPAp7uoa80aboD9BbLY9OlJ58PvCY="
+        "pt\/WordReplacer.UI.resources.dll": "sha256-gyb2XCLYcDsMjKdom4HAhI1VB8XssL0VyKh33sXN6qs="
       }
     }
   }
