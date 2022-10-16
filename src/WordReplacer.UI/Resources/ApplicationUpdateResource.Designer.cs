@@ -61,7 +61,7 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reload.
+        ///   Looks up a localized string similar to Update.
         /// </summary>
         internal static string btnReload {
             get {
@@ -70,7 +70,7 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New update is ready. Please refresh the page..
+        ///   Looks up a localized string similar to New update is ready..
         /// </summary>
         internal static string messageUpdateReady {
             get {
