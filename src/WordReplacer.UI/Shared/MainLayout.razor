@@ -93,13 +93,13 @@
         }
     }
 
-    void MenuButtonClicked()
+    private void MenuButtonClicked()
     {
         _navMenuOpened = !_navMenuOpened;
         StateHasChanged();
     }
 
-    readonly MatTheme _primaryTheme = new ()
+    private readonly MatTheme _primaryTheme = new ()
     {
         Primary = MatThemeColors.DeepPurple._700.Value,
         Secondary = MatThemeColors.DeepPurple._300.Value,

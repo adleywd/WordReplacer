@@ -1,7 +1,7 @@
 ﻿@inject IJSRuntime JsRuntime
 @inject IStringLocalizer<ApplicationUpdateResource> Localizer
 
-<MatSnackbar @bind-IsOpen="@_updateNotificationIsOpen" Leading="true">
+<MatSnackbar Id="snackbar_app_update" Leading="true">
     <MatSnackbarContent>@Localizer["messageUpdateReady"]</MatSnackbarContent>
     <MatSnackbarActions>
         <MatButton Raised="true" OnClick="ReloadPage">@Localizer["btnReload"]</MatButton>
@@ -11,27 +11,15 @@
 @code {
     private bool _updateNotificationIsOpen = false;
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    await RegisterForUpdateAvailableNotification();
-    //}
+    protected override async Task OnInitializedAsync()
+    {
+        await RegisterForUpdateAvailableNotification();
+    }
 
     private async Task RegisterForUpdateAvailableNotification()
     {
-        await JsRuntime.InvokeAsync<object>(
-            identifier: "registerForUpdateAvailableNotification",
-            DotNetObjectReference.Create(this),
-            nameof(OnUpdateAvailable));
-    }
-
-    [JSInvokable(nameof(OnUpdateAvailable))]
-    public Task OnUpdateAvailable()
-    {
-        _updateNotificationIsOpen = true;
-
-        StateHasChanged();
-
-        return Task.CompletedTask;
+        // Initialize the service-worker
+        await JsRuntime.InvokeVoidAsync("registerForUpdateAvailableNotification");
     }
 
     private async Task ReloadPage()
