@@ -3,7 +3,7 @@
   "config": [ ],
   "debugBuild": false,
   "entryAssembly": "WordReplacer.WebApp",
-  "icuDataMode": 0,
+  "icuDataMode": 1,
   "linkerEnabled": true,
   "resources": {
     "assembly": {
@@ -60,13 +60,13 @@
       "System.Text.RegularExpressions.dll": "sha256-jgf5g4fl6qvmBMvL86B+V\/Qne9CFvtfP1OlvLVNOF6w=",
       "System.Threading.dll": "sha256-FZxz2f0C\/\/87CCWiktrDH3igpvuIFYY3YbtX\/Y5WB88=",
       "System.Threading.Thread.dll": "sha256-FjCMed8gVUK2YRdU3C6MiFRh3JSIPGTcoaBNKVHDlkU=",
-      "WordReplacer.Common.dll": "sha256-VK34OZw1UcCXJfXlAJqLjrpHeRAvYlc3CkBf58N91O4=",
+      "WordReplacer.Common.dll": "sha256-PQ9oCmW5WIYSUtu+bHR0P6LNC+j2hcbZhDyusorCqfI=",
       "WordReplacer.Dto.dll": "sha256-56aoKDNM7dFc8PdRcFjWqrphBLWBOrJe6e4rbl1pOSI=",
       "WordReplacer.Enums.dll": "sha256-+VlfnBUHZymp3H5wZx8wSOb+rSj2Uz2XI0bSqDP414Q=",
       "WordReplacer.Models.dll": "sha256-BgINjtP5DVKaD6K2cbv1JkYzx33KiVngrDYKjOYRPV4=",
-      "WordReplacer.Services.dll": "sha256-Pv8W7+FPdcFxJzwP7nGQVwOogwwY30EkePExqdzV5Xg=",
-      "WordReplacer.UI.dll": "sha256-OZrBni68RBqUtDkgH5\/Ya3QoAgwpe\/bCtPYJ5z+sGmA=",
-      "WordReplacer.WebApp.dll": "sha256-GP0dKNOzBPQkrhKQU3+v3RL0OHz9b84Y8ShNu0NKROU="
+      "WordReplacer.Services.dll": "sha256-tF\/CRbkF9Pd8d0tVz\/zReeU+0LZ44Uhvu4pobohxb1A=",
+      "WordReplacer.UI.dll": "sha256-qcXaQAHiKeSoqegAUm3Ygj5w3m\/BhD89cebZEKm7slQ=",
+      "WordReplacer.WebApp.dll": "sha256-5bkFZjbVF\/tx9+7sYqisTB3Rd1hppu2RRHK3ZVMchZA="
     },
     "extensions": null,
     "lazyAssembly": null,
