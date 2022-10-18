@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @using WordReplacer.UI.Components
 @using System.Globalization
+@using WordReplacer.Common
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject NavigationManager Navigation
 
 <MatThemeProvider Theme="@_primaryTheme">
     <MatAnchorUtils></MatAnchorUtils>
@@ -67,8 +69,6 @@
 
 @code
 {
-    private const string ChosenLanguageKey = "choose_language";
-
     // Navbar should start closed
     private bool _navMenuOpened = false;
 
@@ -82,7 +82,8 @@
         Thread.CurrentThread.CurrentUICulture = newCulture;
         CultureInfo.DefaultThreadCurrentCulture = newCulture;
         CultureInfo.DefaultThreadCurrentUICulture = newCulture;
-        await LocalStorage.SetItemAsStringAsync(ChosenLanguageKey, language);
+        await LocalStorage.SetItemAsStringAsync(AppSettings.LanguageStoreKey, language);
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 
     private void ModelDrawerHiddenChanged(bool hidden)
@@ -110,12 +111,15 @@
     {
         _selectedLanguage = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
-        if (await LocalStorage.ContainKeyAsync(ChosenLanguageKey))
+        if (await LocalStorage.ContainKeyAsync(AppSettings.LanguageStoreKey))
         {
-            _selectedLanguage = await LocalStorage.GetItemAsStringAsync(ChosenLanguageKey);
-            await ChangeUIToLanguage(_selectedLanguage);
+            _selectedLanguage = await LocalStorage.GetItemAsStringAsync(AppSettings.LanguageStoreKey);
         }
-        
+        else if(_selectedLanguage != "pt" && _selectedLanguage != "en")
+        {
+            _selectedLanguage = "en";
+        }
+
         await base.OnInitializedAsync();
     }
 }

@@ -1,7 +1,9 @@
+using System.Globalization;
 using Blazored.LocalStorage;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using WordReplacer.Common;
 using WordReplacer.Services;
 
 namespace WordReplacer.WebApp
@@ -33,7 +35,22 @@ namespace WordReplacer.WebApp
 
             builder.Services.AddLocalization();
 
-            await builder.Build().RunAsync().ConfigureAwait(false);
+            var host = builder.Build();
+
+            var localStorage = host.Services.GetRequiredService<ILocalStorageService>();
+            var languageStoreKey = AppSettings.LanguageStoreKey;
+
+            if (await localStorage.ContainKeyAsync(languageStoreKey))
+            {
+                var selectedLanguage = await localStorage.GetItemAsStringAsync(languageStoreKey);
+                var newCulture = new CultureInfo(selectedLanguage);
+                Thread.CurrentThread.CurrentCulture = newCulture;
+                Thread.CurrentThread.CurrentUICulture = newCulture;
+                CultureInfo.DefaultThreadCurrentCulture = newCulture;
+                CultureInfo.DefaultThreadCurrentUICulture = newCulture;
+            }
+            
+            await host.RunAsync().ConfigureAwait(false);
         }
     }
 }
