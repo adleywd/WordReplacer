@@ -53,7 +53,10 @@
                             string.Format(Localizer["inputTypeListLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])))
                     </label>
                     <br />
-                    <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())" />
+                    <MatRadioGroup @bind-Value="@_docParamsDto.Type" TValue="InputType">
+                        <MatRadioButton Value="@InputType.Text" TValue="InputType">@Localizer["inputTypeText"]</MatRadioButton>
+                        <MatRadioButton Value="@InputType.List" TValue="InputType">@Localizer["inputTypeList"]</MatRadioButton>
+                    </MatRadioGroup>
                 </div>
             </div>
             <div class="row">

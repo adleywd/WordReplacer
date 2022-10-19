@@ -30,11 +30,11 @@ public class DocumentServiceTest
             }
         };
 
-        List<CombinationsNode> nodes = new()
+        List<KeyValuePair<string, List<string>>> nodes = new()
         {
-            new CombinationsNode() { Key = "Student", Values = new List<string>() { "A1", "A2" } },
-            new CombinationsNode() { Key = "School", Values = new List<string>() { "E1" } },
-            new CombinationsNode() { Key = "Date", Values = new List<string>() { "D1", "D2" } }
+            new ("Student", new List<string>() { "A1", "A2" } ),
+            new ("School", new List<string>() { "E1" } ),
+            new ("Date", new List<string>() { "D1", "D2" } )
         };
 
         var result = new List<Dictionary<string, string>>();
@@ -46,7 +46,6 @@ public class DocumentServiceTest
         var serializedResult = JsonSerializer.Serialize(result);
         var serializedExpectedResult = JsonSerializer.Serialize(expectedListResult);
         serializedResult.ShouldBe(serializedExpectedResult);
-        // CompareListDictionaries(result, expectedListResult).ShouldBeTrue();
     }
     
 }
