@@ -1,7 +1,8 @@
 namespace WordReplacer.Common
 {
-    public static class AppSettings
+    public record AppSettings
     {
-        public const string LanguageStoreKey = "choose_language"; 
+        public string LanguageStoreKey { get; init; } = default!;
+        public string AppVersion { get; init; } = default!;
     }
 }

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using Blazored.LocalStorage;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Web;
@@ -33,16 +34,27 @@ namespace WordReplacer.WebApp
             
             builder.Services.AddTransient<IDocumentService, DocumentService>();
 
+            var appSettings = new AppSettings()
+            {
+                LanguageStoreKey = "choose_language",
+                AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)!
+            };
+
+            builder.Services.AddSingleton(appSettings);
+            
             builder.Services.AddLocalization();
 
             var host = builder.Build();
 
             var localStorage = host.Services.GetRequiredService<ILocalStorageService>();
-            var languageStoreKey = AppSettings.LanguageStoreKey;
+            var languageStoreKey = appSettings.LanguageStoreKey;
 
-            if (await localStorage.ContainKeyAsync(languageStoreKey))
+            if (await localStorage.ContainKeyAsync(languageStoreKey).ConfigureAwait(false))
             {
-                var selectedLanguage = await localStorage.GetItemAsStringAsync(languageStoreKey);
+                var selectedLanguage = await localStorage
+                    .GetItemAsStringAsync(languageStoreKey)
+                    .ConfigureAwait(false);
+
                 var newCulture = new CultureInfo(selectedLanguage);
                 Thread.CurrentThread.CurrentCulture = newCulture;
                 Thread.CurrentThread.CurrentUICulture = newCulture;
