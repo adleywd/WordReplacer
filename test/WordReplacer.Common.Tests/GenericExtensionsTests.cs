@@ -6,9 +6,9 @@ namespace WordReplacer.Common.Tests
     {
         public class DocumentServiceTests
         {
-            private class TestData : TheoryData<List<KeyValuePair<string, List<string>>>, List<Dictionary<string, string>>>
+            private class CombinationsTestData : TheoryData<List<KeyValuePair<string, List<string>>>, List<Dictionary<string, string>>>
             {
-                public TestData()
+                public CombinationsTestData()
                 {
                     Add(new List<KeyValuePair<string, List<string>>>()
                         {
@@ -99,7 +99,7 @@ namespace WordReplacer.Common.Tests
             }
 
             [Theory]
-            [ClassData(typeof(TestData))]
+            [ClassData(typeof(CombinationsTestData))]
             private void GetCombinations_WithValidNodeList_ShouldReturnListWithAllPossibleCombinationsInDict(List<KeyValuePair<string, List<string>>> inputs, List<Dictionary<string, string>> expectedListResult)
             {
                 // Arrange
