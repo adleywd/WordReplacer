@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{F798C5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReplacer.Services.Tests", "test\WordReplacer.Services.Tests\WordReplacer.Services.Tests.csproj", "{F0F7AF12-F84B-43B0-BFDF-FE2953AD468F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReplacer.Common.Tests", "test\WordReplacer.Common.Tests\WordReplacer.Common.Tests.csproj", "{E41E19A8-40FA-4213-9962-96B4619CAAC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{F0F7AF12-F84B-43B0-BFDF-FE2953AD468F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0F7AF12-F84B-43B0-BFDF-FE2953AD468F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0F7AF12-F84B-43B0-BFDF-FE2953AD468F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E41E19A8-40FA-4213-9962-96B4619CAAC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E41E19A8-40FA-4213-9962-96B4619CAAC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E41E19A8-40FA-4213-9962-96B4619CAAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E41E19A8-40FA-4213-9962-96B4619CAAC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{DADBB930-3083-48FC-AAF8-CA54094A04EB} = {9067E32C-E6D0-47F4-A830-657E5C12E9C3}
 		{A45935C2-7917-44EE-A907-284EE342122A} = {9067E32C-E6D0-47F4-A830-657E5C12E9C3}
 		{F0F7AF12-F84B-43B0-BFDF-FE2953AD468F} = {54DF99FE-BA4E-4B91-856B-09D31CA8DFB9}
+		{E41E19A8-40FA-4213-9962-96B4619CAAC4} = {54DF99FE-BA4E-4B91-856B-09D31CA8DFB9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E43599F9-603B-4906-8818-1AF40982C102}
