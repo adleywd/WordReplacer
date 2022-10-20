@@ -142,11 +142,29 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to List.
+        /// </summary>
+        public static string inputTypeList {
+            get {
+                return ResourceManager.GetString("inputTypeList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to I will replace {0} for multiple words (generate multiple files).
         /// </summary>
         public static string inputTypeListLabel {
             get {
                 return ResourceManager.GetString("inputTypeListLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text.
+        /// </summary>
+        public static string inputTypeText {
+            get {
+                return ResourceManager.GetString("inputTypeText", resourceCulture);
             }
         }
         

@@ -10,26 +10,27 @@ public static class GenericExtensions
     /// possible combinations of nodes that can be created by traversing the nodes in the list starting at the current node
     /// index, and using the current dictionary to store the values of the nodes that have been traversed
     /// </summary>
-    /// <param name="nodes">The list of nodes to be combined.</param>
+    /// <param name="nodes">The list of nodes(each KeyValuePair) to be combined.</param>
     /// <param name="currentNodeIdx">The index of the current node in the list of nodes.</param>
     /// <param name="resultList">The list of dictionaries that will be returned.</param>
     /// <param name="currentDict">This is the dictionary that will be added to the resultList.</param>
     public static void GetCombinations(
         this ICollection<Dictionary<string, string>> resultList,
-        IList<CombinationsNode> nodes,
+        List<KeyValuePair<string, List<string>>> nodes,
         int currentNodeIdx,
         IDictionary<string, string> currentDict)
     {
-        CombinationsNode currentNode = nodes[currentNodeIdx];
+        // CombinationsNode currentNode = nodes[currentNodeIdx];
+        var currentNode = nodes[currentNodeIdx];
         var isLastNode = currentNodeIdx == nodes.Count - 1;
 
-        foreach (var value in currentNode.Values)
+        foreach (var value in currentNode.Value)
         {
             // Since the same dictionary is used in the loops, sometimes the key will be already filled with older value.
             // To avoid the error of duplicated value inside a dictionary, the current key is removed.
             currentDict = currentDict.RemoveFromDictIfExists(currentNode.Key);
 
-            var isLastValue = value == currentNode.Values.Last();
+            var isLastValue = value == currentNode.Value.Last();
 
             // If LAST NODE but NOT LAST VALUE
             if (isLastNode && !isLastValue)
@@ -109,26 +110,6 @@ public static class GenericExtensions
         return dict;
     }
 
-
-    /// <summary>
-    /// It takes a dictionary of DocumentValues and returns a list of Nodes.
-    /// </summary>
-    /// <param name="dict">The dictionary to convert to a node.</param>
-    public static List<CombinationsNode> DictionaryToNode(this List<KeyValuePair<DocumentValue, DocumentValue>> dict)
-    {
-        dict.SanitizeValues();
-        
-        var result = dict.Select(
-                             d => new CombinationsNode(
-                                 d.Key.Text!,
-                                 d.Value.Text!.Split("\n")
-                                  .Where(s => !string.IsNullOrWhiteSpace(s))
-                                  .ToList())
-                         )
-                         .ToList();
-        return result;
-    }
-
     /// <summary>
     /// It takes a document and replace all the empty strings to \n
     /// </summary>
@@ -152,17 +133,6 @@ public static class GenericExtensions
     public static bool HasOnlyOneWord(this string originalValue)
     {
         var regex = new Regex(@"^\b[a-zA-Z0-9_’]+\b$", RegexOptions.IgnoreCase);
-
-        return regex.IsMatch(originalValue);
-    }
-    
-    /// <summary>
-    /// This function returns true if the string has multiple words, otherwise it returns false
-    /// </summary>
-    /// <param name="originalValue">The string to check for multiple words.</param>
-    public static bool HasMultipleWords(this string originalValue)
-    {
-        var regex = new Regex(@"^\s*\S+(?:\s+\S+)+\s*$", RegexOptions.IgnoreCase);
 
         return regex.IsMatch(originalValue);
     }

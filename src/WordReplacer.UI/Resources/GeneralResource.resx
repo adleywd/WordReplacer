@@ -183,4 +183,10 @@
   <data name="inputTypeTextLabel" xml:space="preserve">
     <value>I will replace {0} for another word</value>
   </data>
+  <data name="inputTypeText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="inputTypeList" xml:space="preserve">
+    <value>List</value>
+  </data>
 </root>
