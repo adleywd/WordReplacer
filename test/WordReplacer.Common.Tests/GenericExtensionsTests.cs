@@ -6,41 +6,107 @@ namespace WordReplacer.Common.Tests
     {
         public class DocumentServiceTests
         {
-            [Fact]
-            private void GetCombinations_WithValidNodeList_ShouldReturnListWithAllPossibleCombinationsInDict()
+            private class TestData : TheoryData<List<KeyValuePair<string, List<string>>>, List<Dictionary<string, string>>>
+            {
+                public TestData()
+                {
+                    Add(new List<KeyValuePair<string, List<string>>>()
+                        {
+                            new ("Student", new List<string>() { "A1", "A2" }),
+                            new ("School", new List<string>() { "E1" }),
+                            new ("Date", new List<string>() { "D1", "D2" })
+                        },
+                        new List<Dictionary<string, string>>()
+                        {
+                            new ()
+                            {
+                                { "Student", "A1" }, { "School", "E1" }, { "Date", "D1" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A1" }, { "School", "E1" }, { "Date", "D2" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A2" }, { "School", "E1" }, { "Date", "D1" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A2" }, { "School", "E1" }, { "Date", "D2" }
+                            }
+                        });
+
+                    Add(new List<KeyValuePair<string, List<string>>>()
+                        {
+                            new ("Student", new List<string>() { "A1", "A2" }),
+                            new ("School", new List<string>() { "E1" }),
+                            new ("Date", new List<string>() { "D1" })
+                        },
+                        new List<Dictionary<string, string>>()
+                        {
+                            new ()
+                            {
+                                { "Student", "A1" }, { "School", "E1" }, { "Date", "D1" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A2" }, { "School", "E1" }, { "Date", "D1" }
+                            },
+                        });
+
+                    Add(new List<KeyValuePair<string, List<string>>>()
+                        {
+                            new ("Student", new List<string>() { "A1", "A2" }),
+                            new ("School", new List<string>() { "E1" , "E2" }),
+                            new ("Date", new List<string>() { "D1", "D2" })
+                        },
+                        new List<Dictionary<string, string>>()
+                        {
+                            new ()
+                            {
+                                { "Student", "A1" }, { "School", "E1" }, { "Date", "D1" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A1" }, { "School", "E1" }, { "Date", "D2" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A1" }, { "School", "E2" }, { "Date", "D1" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A1" }, { "School", "E2" }, { "Date", "D2" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A2" }, { "School", "E1" }, { "Date", "D1" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A2" }, { "School", "E1" }, { "Date", "D2" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A2" }, { "School", "E2" }, { "Date", "D1" }
+                            },
+                            new ()
+                            {
+                                { "Student", "A2" }, { "School", "E2" }, { "Date", "D2" }
+                            }
+                        });
+                }
+            }
+
+            [Theory]
+            [ClassData(typeof(TestData))]
+            private void GetCombinations_WithValidNodeList_ShouldReturnListWithAllPossibleCombinationsInDict(List<KeyValuePair<string, List<string>>> inputs, List<Dictionary<string, string>> expectedListResult)
             {
                 // Arrange
-                var expectedListResult = new List<Dictionary<string, string>>
-        {
-            new Dictionary<string, string>
-            {
-                { "Student", "A1" }, { "School", "E1" }, { "Date", "D1" }
-            },
-            new Dictionary<string, string>
-            {
-                { "Student", "A1" }, { "School", "E1" }, { "Date", "D2" }
-            },
-            new Dictionary<string, string>
-            {
-                { "Student", "A2" }, { "School", "E1" }, { "Date", "D1" }
-            },
-            new Dictionary<string, string>
-            {
-                { "Student", "A2" }, { "School", "E1" }, { "Date", "D2" }
-            }
-        };
-
-                List<KeyValuePair<string, List<string>>> nodes = new()
-        {
-            new KeyValuePair<string, List<string>>("Student", new List<string>() { "A1", "A2" } ),
-            new KeyValuePair<string, List<string>>("School", new List<string>() { "E1" } ),
-            new KeyValuePair<string, List<string>>("Date", new List<string>() { "D1", "D2" } )
-        };
-
                 var result = new List<Dictionary<string, string>>();
 
                 // Act
-                result.GetCombinations(nodes, 0, new Dictionary<string, string>());
+                result.GetCombinations(inputs, 0, new Dictionary<string, string>());
 
                 // Assert
                 (SerializeDictOrdered(result) == SerializeDictOrdered(expectedListResult)).ShouldBeTrue();
