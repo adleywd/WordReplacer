@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\AboutIt.razor" />
+      <_ContentIncludedByDefault Remove="PageContent\AboutItContent.razor" />
     </ItemGroup>
 
     <ItemGroup>
