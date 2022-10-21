@@ -1,5 +1,6 @@
 ﻿@inject IJSRuntime JsRuntime
 @inject IStringLocalizer<ApplicationUpdateResource> Localizer
+@inject NavigationManager Navigation
 
 <MatSnackbar Id="snackbar_app_update" Leading="true">
     <MatSnackbarContent>@Localizer["messageUpdateReady"]</MatSnackbarContent>
@@ -22,9 +23,9 @@
         await JsRuntime.InvokeVoidAsync("registerForUpdateAvailableNotification");
     }
 
-    private async Task ReloadPage()
+    private void ReloadPage()
     {
-        await JsRuntime.InvokeVoidAsync("reloadPage");
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 
 }
