@@ -18,13 +18,13 @@
                 @if (_selectedLanguage != "pt")
                 {
                     <MatIconButton OnClick="@(() => ChangeUIToLanguage("pt"))">
-                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-brazil.svg" />
-                </MatIconButton>
+                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-brazil.svg"/>
+                    </MatIconButton>
                 }
                 @if (_selectedLanguage != "en")
                 {
                     <MatIconButton OnClick="@(() => ChangeUIToLanguage("en"))">
-                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-united-states.svg" />
+                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-united-states.svg"/>
                     </MatIconButton>
                 }
                 <MatIconButton Link="https://github.com/adleywd" Target="_blank">
@@ -33,14 +33,14 @@
             </MatAppBarSection>
         </MatAppBarRow>
     </MatAppBar>
-    
-    <MatToastContainer />
+
+    <MatToastContainer/>
 
     <MatDrawerContainer Style="width: 100vw; height: 100vh;" Class="mat">
 
-        <MatHidden 
-            Breakpoint="@MatBreakpoint.SM" 
-            Direction="@MatHiddenDirection.Up" 
+        <MatHidden
+            Breakpoint="@MatBreakpoint.SM"
+            Direction="@MatHiddenDirection.Up"
             HiddenChanged="@ModelDrawerHiddenChanged">
             <ChildContent>
                 <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Modal" Style="background-color: #fafafa;">
@@ -59,11 +59,12 @@
 
         <MatDrawerContent Class="mdc-theme--background">
             <MatAppBarAdjust></MatAppBarAdjust>
+            <ApplicationUpdateComponent/>
             <div class="body-wrapper ps-3 pe-3 pt-2 pb-2">
                 @Body
             </div>
         </MatDrawerContent>
-        <ApplicationUpdateComponent/>
+        
     </MatDrawerContainer>
 </MatThemeProvider>
 

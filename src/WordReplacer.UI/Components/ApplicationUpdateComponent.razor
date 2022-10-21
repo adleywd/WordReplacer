@@ -1,29 +1,58 @@
 ﻿@inject IJSRuntime JsRuntime
 @inject IStringLocalizer<ApplicationUpdateResource> Localizer
 @inject NavigationManager Navigation
+@implements IDisposable
 
-<MatSnackbar Id="snackbar_app_update" Leading="true">
-    <MatSnackbarContent>@Localizer["messageUpdateReady"]</MatSnackbarContent>
-    <MatSnackbarActions>
-        <MatButton Raised="true" OnClick="ReloadPage">@Localizer["btnReload"]</MatButton>
-    </MatSnackbarActions>
-</MatSnackbar>
+@if (_showUpdateNotification)
+{
+    <MatPaper Class="text-center">
+        <div class="pt-1 pb-1">
+            <label>@Localizer["messageUpdateReady"]</label>
+            <MatButton OnClick="ReloadPage" Label="@Localizer["btnReload"]" Icon="@MatIconNames.Update"/>
+            <MatButton Class="float-end" OnClick="@(() => _showUpdateNotification = false)" Label="🗙" />
+        </div>
+    </MatPaper>
+}
 
 @code {
+    private bool _showUpdateNotification = false;
+
+    private DotNetObjectReference<ApplicationUpdateComponent>? _objRef;
+
     protected override async Task OnInitializedAsync()
     {
+        _objRef = DotNetObjectReference.Create(this);
+
         await RegisterForUpdateAvailableNotification();
     }
 
     private async Task RegisterForUpdateAvailableNotification()
     {
         // Initialize the service-worker
-        await JsRuntime.InvokeVoidAsync("registerForUpdateAvailableNotification");
+        await JsRuntime.InvokeVoidAsync(
+            "registerForUpdateAvailableNotification", 
+            _objRef,
+            nameof(OnUpdateReadyNotify));
     }
 
     private void ReloadPage()
     {
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+
+    [JSInvokable(nameof(OnUpdateReadyNotify))]
+    public Task OnUpdateReadyNotify()
+    {
+        _showUpdateNotification = true;
+
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _objRef?.Dispose();
     }
 
 }

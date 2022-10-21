@@ -20,21 +20,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
         <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.9" />
     </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\AboutIt.razor" />
-      <_ContentIncludedByDefault Remove="PageContent\AboutItContent.razor" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\FONT-LICENSE" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\font\css\open-iconic-bootstrap.min.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\font\fonts\open-iconic.eot" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\font\fonts\open-iconic.otf" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\font\fonts\open-iconic.svg" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\font\fonts\open-iconic.ttf" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\font\fonts\open-iconic.woff" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\ICON-LICENSE" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\README.md" />
-    </ItemGroup>
-
+    
     <ItemGroup>
       <Content Update="wwwroot\img\wr-logo-white-nobg-64x64.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
