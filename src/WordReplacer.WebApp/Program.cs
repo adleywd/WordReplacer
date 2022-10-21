@@ -4,7 +4,7 @@ using Blazored.LocalStorage;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using WordReplacer.Common;
+using WordReplacer.Models;
 using WordReplacer.Services;
 
 namespace WordReplacer.WebApp
