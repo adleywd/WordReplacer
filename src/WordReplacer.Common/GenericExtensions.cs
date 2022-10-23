@@ -113,7 +113,7 @@ public static class GenericExtensions
     /// <summary>
     /// It takes a document and replace all the empty strings to \n
     /// </summary>
-    /// <param name="document">The document to sanitize.</param>
+    /// <param name="documentValues">The document to sanitize.</param>
     public static void SanitizeValues(this List<KeyValuePair<DocumentValue, DocumentValue>> documentValues)
     {
         foreach (KeyValuePair<DocumentValue, DocumentValue> doc in documentValues
