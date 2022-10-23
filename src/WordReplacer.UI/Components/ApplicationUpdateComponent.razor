@@ -6,13 +6,15 @@
 @if (_showUpdateNotification)
 {
     <MatPaper Class="text-center">
-        <div class="row pt-1 pb-1">
-            <div class="col-11">
-                <label>@Localizer["messageUpdateReady"]</label>
-                <MatButton OnClick="ReloadPage" Label="@Localizer["btnReload"]" Icon="@MatIconNames.Update" />
-            </div>
-            <div class="col-1">
-                <MatButton Class="float-end" OnClick="@(() => _showUpdateNotification = false)" Label="🗙" />
+        <div class="container-fluid">
+            <div class="row pt-1 pb-1">
+                <div class="col-11">
+                    <label>@Localizer["messageUpdateReady"]</label>
+                    <MatButton OnClick="ReloadPage" Label="@Localizer["btnReload"]" Icon="@MatIconNames.Update" />
+                </div>
+                <div class="col-1">
+                    <MatButton Class="float-end" OnClick="@(() => _showUpdateNotification = false)" Label="🗙" />
+                </div>
             </div>
         </div>
     </MatPaper>
