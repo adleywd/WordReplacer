@@ -25,10 +25,10 @@
         });
 });
 
-window.registerForUpdateAvailableNotification = () => {
+window.registerForUpdateAvailableNotification = (applicationUpdateObjRef, methodName) => {
     window.updateAvailable.then(isUpdateAvailable => {
         if (isUpdateAvailable) {
-            document.getElementById('snackbar_app_update').classList.add('mdc-snackbar--open');
+            applicationUpdateObjRef.invokeMethodAsync(methodName).then();
         }
     });
 };

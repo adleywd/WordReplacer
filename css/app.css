@@ -1,6 +1,4 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
-html, body {
+﻿html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -74,23 +72,46 @@ a, .btn-link {
 }
 
 .fixed-bottom-right {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: auto;
-    z-index: 1030;
+    position: fixed !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    z-index: 1000 !important;
 }
 
 .fab {
-    z-index: 1000;
+    z-index: 1020 !important;
 }
 
 .primary-color {
     color: var(--mdc-theme-primary);
 }
 
+.secondary-color {
+    color: var(--mdc-theme-secondary);
+}
+
 .small-radius{
     border-radius: 3%;   
+}
+
+.app-fab--absolute {
+    position: fixed !important;
+    bottom: 1rem !important;
+    right: 1rem !important;
+    z-index: 1020 !important
+}
+
+.mdc-fab {
+    z-index: 1000 !important;
+}
+
+.mdc-fab::before {
+    z-index: 1000 !important;
+}
+
+.mdc-fab::after {
+    z-index: 1000 !important;
 }
 
 .fade-in {
@@ -99,14 +120,17 @@ a, .btn-link {
     animation-iteration-count: 1;
     animation-timing-function: ease-out;
     animation-duration: 200ms;
+    z-index: 1 !important;
 }
 
 @keyframes fadeInOpacity {
     0% {
         opacity: 0;
+        z-index: 1 !important;
     }
     100% {
         opacity: 1;
+        z-index: 1 !important;
     }
 }
 
