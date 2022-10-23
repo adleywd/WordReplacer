@@ -124,7 +124,7 @@
     <value>Texto a ser substituído</value>
   </data>
   <data name="buttonTextAddValues" xml:space="preserve">
-    <value>Adicionar Text</value>
+    <value>Adicionar Texto</value>
   </data>
   <data name="presetToolTip" xml:space="preserve">
     <value>Presets são pré-configurações que você pode utilizar para armazenar um conjunto de textos para substituir depois.</value>
@@ -154,7 +154,7 @@
     <value>Texto original</value>
   </data>
   <data name="originalDocumentHelperText" xml:space="preserve">
-    <value>Este é o text antigo</value>
+    <value>Este é o texto antigo</value>
   </data>
   <data name="newDocumentLabel" xml:space="preserve">
     <value>Novo texto para {0}</value>
@@ -182,5 +182,14 @@
   </data>
   <data name="inputTypeTextLabel" xml:space="preserve">
     <value>Eu vou substituir {0} por outra palavra/texto</value>
+  </data>
+  <data name="inputTypeText" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="inputTypeList" xml:space="preserve">
+    <value>Lista</value>
+  </data>
+  <data name="errorListEmptyToBeReplaced" xml:space="preserve">
+    <value>Não é possível substituir um texto por uma Lista de valores vazios. Para isto, utilize a opção Texto.</value>
   </data>
 </root>

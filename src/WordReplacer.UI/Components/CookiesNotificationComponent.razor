@@ -1,0 +1,42 @@
+﻿@inject IJSRuntime JsRuntime
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IStringLocalizer<CookiesNotificationResource> Localizer
+@inject NavigationManager Navigation
+@inject AppSettings AppSettings
+
+@if (_showCookieNotification)
+{
+    <MatPaper Class="text-center mb-1">
+        <div class="container-fluid">
+            <div class="pt-1 pb-1">
+                <span>
+                    @Localizer["cookiesExplanation"]
+                </span>
+                <br />
+                <span>
+                        @Localizer["cookiesAgreement"]
+                    <MatButton Outlined="true" OnClick="DismissCookieNotify" Label="Ok" />
+                </span>
+            </div>
+        </div>
+    </MatPaper>
+}
+
+@code {
+    private bool _showCookieNotification = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _showCookieNotification = !await LocalStorage.ContainKeyAsync(AppSettings.CookiesStorageKey);
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task DismissCookieNotify()
+    {
+        await LocalStorage.SetItemAsStringAsync(AppSettings.CookiesStorageKey, true.ToString());
+
+        _showCookieNotification = false;
+    }
+
+}

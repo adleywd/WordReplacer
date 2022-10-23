@@ -1,9 +1,8 @@
 ﻿@inject IStringLocalizer<NavMenuContentResource> Localizer
+@inject AppSettings AppSettings
 
 <MatNavMenu>
     <MatNavItem Href=""><MatIcon Icon="home"></MatIcon>&nbsp; @Localizer["home"] </MatNavItem>
-    @*<MatDivider></MatDivider>*@
-    @*<MatNavItem Href="about-it"><MatIcon Icon="table_chart"></MatIcon>&nbsp; About it </MatNavItem>*@
 </MatNavMenu>
 @if (_uiVersion is not null)
 {
@@ -15,7 +14,7 @@
 
     protected override Task OnInitializedAsync()
     {
-        _uiVersion = GetType().Assembly?.GetName().Version?.ToString(3);
+        _uiVersion = AppSettings.AppVersion;
         return base.OnInitializedAsync();
     }
 }

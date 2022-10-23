@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Packaging;
 using MatBlazor;
@@ -28,7 +29,13 @@ namespace WordReplacer.Services
         /// <inheritdoc />
         public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values)
         {
-            List<CombinationsNode> nodeList = values.DictionaryToNode();
+            List<KeyValuePair<string, List<string>>> nodeList = values.Select(inputTxt => 
+                                new KeyValuePair<string, List<string>> (inputTxt.Key.Text!, 
+                                inputTxt.Value.Text!.Split("\n")
+                                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                                    .ToList())
+                                ).ToList();
+
             var combinationsResult = new List<Dictionary<string, string>>();
             combinationsResult.GetCombinations(nodeList, 0, new Dictionary<string, string>());
             return combinationsResult;

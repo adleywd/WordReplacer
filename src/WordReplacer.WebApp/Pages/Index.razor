@@ -53,7 +53,10 @@
                             string.Format(Localizer["inputTypeListLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])))
                     </label>
                     <br />
-                    <MatRadioGroup @bind-Value="_docParamsDto.Type" Items="@(Enum.GetValues(typeof(InputType)).Cast<InputType>())" />
+                    <MatRadioGroup @bind-Value="@_docParamsDto.Type" TValue="InputType">
+                        <MatRadioButton Value="@InputType.Text" TValue="InputType">@Localizer["inputTypeText"]</MatRadioButton>
+                        <MatRadioButton Value="@InputType.List" TValue="InputType">@Localizer["inputTypeList"]</MatRadioButton>
+                    </MatRadioGroup>
                 </div>
             </div>
             <div class="row">
@@ -219,6 +222,12 @@
                     ));
             }
 
+            if(isThereAnyReplaceForMultipleLine && combinations.Count == 0)
+            {
+                Toaster.Add(Localizer["errorListEmptyToBeReplaced"], MatToastType.Danger);
+                return;
+            }
+
             PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine);
 
             await DelayDotNetToUpdateUIAsync();
@@ -246,15 +255,13 @@
                 Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream, _isMultipleWordsAtOnce);
 
                 // Get File Name
-                var fileName = _doc.File!.Name;
+                var fileName = GetFileName(isThereAnyReplaceForMultipleLine, combination.Values);
 
-                if (isThereAnyReplaceForMultipleLine)
-                {
-                    fileName = string.Join("_", combination.Values) + ".docx";
-                }
 
                 // Download the file
-                await DocumentService.DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document").ConfigureAwait(false);
+                await DocumentService
+                    .DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                    .ConfigureAwait(false);
 
                 // Dispose current replaced doc
                 await docReplaced.DisposeAsync();
@@ -297,16 +304,11 @@
         }
     }
 
-    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool multipleFiles)
+    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool hasMultipleFiles)
     {
         foreach (var combination in combinations)
         {
-            var fileName = _doc.File!.Name;
-
-            if (multipleFiles)
-            {
-                fileName = string.Join("_", combination.Values) + ".docx";
-            }
+            var fileName = GetFileName(hasMultipleFiles, combination.Values);
 
             var download = new Download
                 {
@@ -328,6 +330,18 @@
             }
 
         }
+    }
+
+    private string GetFileName(bool hasMultipleFiles, IEnumerable<string> combinationsValues)
+    {
+        var fileName = _doc.File!.Name;
+
+        if (hasMultipleFiles)
+        {
+            fileName = Helper.SanitizeFileName(string.Join("_", combinationsValues)) + ".docx";
+        }
+
+        return fileName;
     }
 
     // Delay the to UI (Javascript) to catch a breath to update UI

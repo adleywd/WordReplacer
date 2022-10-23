@@ -19,16 +19,10 @@
     </div>
 </div>
 
-<style>
-    .app-fab--absolute {
-                    position: fixed;
-                    bottom: 1rem;
-                    right: 1rem;
-                }
-</style>
-
-<div class="fade-in @showFabButton">
-    <MatFAB Class="app-fab--absolute fab" Icon="@MatIconNames.Save_alt" OnClick="Toggle"></MatFAB>
+<div>
+    <div class="fade-in fixed-bottom-right @showFabButton">
+        <MatFAB Class="app-fab--absolute fab" Icon="@MatIconNames.Save_alt" OnClick="Toggle"></MatFAB>
+    </div>
 </div>
 
 @code {

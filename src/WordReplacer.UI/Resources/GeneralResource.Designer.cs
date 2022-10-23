@@ -106,6 +106,15 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It is not possible to replace a text with an empty replacement List. To do this, use a Text option..
+        /// </summary>
+        public static string errorListEmptyToBeReplaced {
+            get {
+                return ResourceManager.GetString("errorListEmptyToBeReplaced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Newer text.
         /// </summary>
         public static string headerNewValues {
@@ -142,11 +151,29 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to List.
+        /// </summary>
+        public static string inputTypeList {
+            get {
+                return ResourceManager.GetString("inputTypeList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to I will replace {0} for multiple words (generate multiple files).
         /// </summary>
         public static string inputTypeListLabel {
             get {
                 return ResourceManager.GetString("inputTypeListLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text.
+        /// </summary>
+        public static string inputTypeText {
+            get {
+                return ResourceManager.GetString("inputTypeText", resourceCulture);
             }
         }
         

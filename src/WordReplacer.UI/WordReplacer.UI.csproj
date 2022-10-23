@@ -4,7 +4,6 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-	    <Version>1.0.12</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,11 +20,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
         <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.9" />
     </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\AboutIt.razor" />
-    </ItemGroup>
-
+    
     <ItemGroup>
       <Content Update="wwwroot\img\wr-logo-white-nobg-64x64.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -57,6 +52,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>ApplicationUpdateResource.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\CookiesNotificationResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>CookiesNotificationResource.resx</DependentUpon>
       </Compile>
       <Compile Update="Resources\DownloadDocumentListResource.Designer.cs">
         <DesignTime>True</DesignTime>
@@ -94,6 +94,10 @@
       <EmbeddedResource Update="Resources\ApplicationUpdateResource.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>ApplicationUpdateResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\CookiesNotificationResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>CookiesNotificationResource.Designer.cs</LastGenOutput>
       </EmbeddedResource>
       <EmbeddedResource Update="Resources\DownloadDocumentListResource.resx">
         <Generator>ResXFileCodeGenerator</Generator>
