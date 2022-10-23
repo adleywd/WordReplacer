@@ -11,20 +11,20 @@
         <MatAppBarRow>
             <MatAppBarSection>
                 <MatIconButton Icon="menu" OnClick="@((e) => MenuButtonClicked())"></MatIconButton>
-                <MatIcon><img style="width: 100%;" src="_content/WordReplacer.UI/img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo"/></MatIcon>
+                <MatIcon><img style="width: 100%;" src="_content/WordReplacer.UI/img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MatIcon>
                 <MatAppBarTitle Style="margin-left: 0;">Word Replacer</MatAppBarTitle>
             </MatAppBarSection>
             <MatAppBarSection Align="@MatAppBarSectionAlign.End">
                 @if (_selectedLanguage != "pt")
                 {
                     <MatIconButton OnClick="@(() => ChangeUIToLanguage("pt"))">
-                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-brazil.svg"/>
+                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-brazil.svg" />
                     </MatIconButton>
                 }
                 @if (_selectedLanguage != "en")
                 {
                     <MatIconButton OnClick="@(() => ChangeUIToLanguage("en"))">
-                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-united-states.svg"/>
+                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-united-states.svg" />
                     </MatIconButton>
                 }
                 <MatIconButton Link="https://github.com/adleywd" Target="_blank">
@@ -34,24 +34,23 @@
         </MatAppBarRow>
     </MatAppBar>
 
-    <MatToastContainer/>
+    <MatToastContainer />
 
     <MatDrawerContainer Style="width: 100vw; height: 100vh;" Class="mat">
 
-        <MatHidden
-            Breakpoint="@MatBreakpoint.SM"
-            Direction="@MatHiddenDirection.Up"
-            HiddenChanged="@ModelDrawerHiddenChanged">
+        <MatHidden Breakpoint="@MatBreakpoint.SM"
+                   Direction="@MatHiddenDirection.Up"
+                   HiddenChanged="@ModelDrawerHiddenChanged">
             <ChildContent>
                 <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Modal" Style="background-color: #fafafa;">
                     <MatAppBarAdjust></MatAppBarAdjust>
-                    <NavMenuContent/>
+                    <NavMenuContent />
                 </MatDrawer>
             </ChildContent>
             <ElseContent>
                 <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Dismissible" Style="background-color: #fafafa;">
                     <MatAppBarAdjust></MatAppBarAdjust>
-                    <NavMenuContent/>
+                    <NavMenuContent />
                 </MatDrawer>
             </ElseContent>
         </MatHidden>
@@ -59,12 +58,15 @@
 
         <MatDrawerContent Class="mdc-theme--background">
             <MatAppBarAdjust></MatAppBarAdjust>
-            <ApplicationUpdateComponent/>
+            <CookiesNotificationComponent />
+            <ApplicationUpdateComponent />
+
+
             <div class="body-wrapper ps-3 pe-3 pt-2 pb-2">
                 @Body
             </div>
         </MatDrawerContent>
-        
+
     </MatDrawerContainer>
 </MatThemeProvider>
 
@@ -101,12 +103,12 @@
         StateHasChanged();
     }
 
-    private readonly MatTheme _primaryTheme = new ()
-    {
-        Primary = MatThemeColors.DeepPurple._700.Value,
-        Secondary = MatThemeColors.DeepPurple._300.Value,
-        Background = MatThemeColors.Grey._200.Value
-    };
+    private readonly MatTheme _primaryTheme = new()
+        {
+            Primary = MatThemeColors.DeepPurple._700.Value,
+            Secondary = MatThemeColors.DeepPurple._300.Value,
+            Background = MatThemeColors.Grey._200.Value
+        };
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,7 +118,7 @@
         {
             _selectedLanguage = await LocalStorage.GetItemAsStringAsync(AppSettings.LanguageStoreKey);
         }
-        else if(_selectedLanguage != "pt" && _selectedLanguage != "en")
+        else if (_selectedLanguage != "pt" && _selectedLanguage != "en")
         {
             _selectedLanguage = "en";
         }

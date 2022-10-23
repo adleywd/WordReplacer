@@ -53,6 +53,11 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ApplicationUpdateResource.resx</DependentUpon>
       </Compile>
+      <Compile Update="Resources\CookiesNotificationResource.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>CookiesNotificationResource.resx</DependentUpon>
+      </Compile>
       <Compile Update="Resources\DownloadDocumentListResource.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -89,6 +94,10 @@
       <EmbeddedResource Update="Resources\ApplicationUpdateResource.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>ApplicationUpdateResource.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\CookiesNotificationResource.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>CookiesNotificationResource.Designer.cs</LastGenOutput>
       </EmbeddedResource>
       <EmbeddedResource Update="Resources\DownloadDocumentListResource.resx">
         <Generator>ResXFileCodeGenerator</Generator>

@@ -36,8 +36,9 @@ namespace WordReplacer.WebApp
 
             var appSettings = new AppSettings()
             {
+                AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)!,
                 LanguageStoreKey = "choose_language",
-                AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)!
+                CookiesStorageKey = "cookies_usage_accept"
             };
 
             builder.Services.AddSingleton(appSettings);
