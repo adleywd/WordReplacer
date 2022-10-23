@@ -222,6 +222,12 @@
                     ));
             }
 
+            if(isThereAnyReplaceForMultipleLine && combinations.Count == 0)
+            {
+                Toaster.Add(Localizer["errorListEmptyToBeReplaced"], MatToastType.Danger);
+                return;
+            }
+
             PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine);
 
             await DelayDotNetToUpdateUIAsync();

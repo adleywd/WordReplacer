@@ -189,4 +189,7 @@
   <data name="inputTypeList" xml:space="preserve">
     <value>Lista</value>
   </data>
+  <data name="errorListEmptyToBeReplaced" xml:space="preserve">
+    <value>Não é possível substituir um texto por uma Lista de valores vazios. Para isto, utilize a opção Texto.</value>
+  </data>
 </root>

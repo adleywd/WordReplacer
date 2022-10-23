@@ -106,6 +106,15 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to It is not possible to replace a text with an empty replacement List. To do this, use a Text option..
+        /// </summary>
+        public static string errorListEmptyToBeReplaced {
+            get {
+                return ResourceManager.GetString("errorListEmptyToBeReplaced", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Newer text.
         /// </summary>
         public static string headerNewValues {
