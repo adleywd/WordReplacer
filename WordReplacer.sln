@@ -6,11 +6,18 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{69F600AB-4F9C-486F-88B3-9740A3F74A6E}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9067E32C-E6D0-47F4-A830-657E5C12E9C3}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{54DF99FE-BA4E-4B91-856B-09D31CA8DFB9}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Build.props = test\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReplacer.WebApp", "src\WordReplacer.WebApp\WordReplacer.WebApp.csproj", "{9C6098E5-8961-4DCD-965E-0754B2A151B0}"
 EndProject
