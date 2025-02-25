@@ -29,7 +29,7 @@ namespace WordReplacer.Services
         /// <inheritdoc />
         public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values)
         {
-            List<KeyValuePair<string, List<string>>> nodeList = values.Select(inputTxt => 
+            var nodeList = values.Select(inputTxt => 
                                 new KeyValuePair<string, List<string>> (inputTxt.Key.Text!, 
                                 inputTxt.Value.Text!.Split("\n")
                                     .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -86,7 +86,6 @@ namespace WordReplacer.Services
                     // TODO: Add replace for header and footer in phrases
                 }
             }
-            wordDoc.Close();
 
             return newFile;
         }

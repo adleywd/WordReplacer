@@ -1,10 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-    </PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <ItemGroup>
       <Content Remove="C:\Users\Adley\.nuget\packages\matblazor\2.8.0\contentFiles\any\netstandard2.1\Properties\launchSettings.json" />
@@ -15,10 +9,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
-        <PackageReference Include="MatBlazor" Version="2.8.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
-        <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.9" />
+        <PackageReference Include="Blazored.LocalStorage" />
+        <PackageReference Include="MatBlazor" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+        <PackageReference Include="Microsoft.Extensions.Localization" />
     </ItemGroup>
     
     <ItemGroup>
