@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "WordReplacer.WebApp",
   "resources": {
-    "hash": "sha256-1aaLZt+rx6MuOvBVMHoNWzFzOEh1j1G3HDiPL4F90Rg=",
+    "hash": "sha256-XB3KOTs23GwiOHtbZeC5lTOQR96rtvra/mMkNMowcZY=",
     "fingerprinting": {
       "Blazored.LocalStorage.12n6dz54qr.wasm": "Blazored.LocalStorage.wasm",
       "DocumentFormat.OpenXml.iieooxmmui.wasm": "DocumentFormat.OpenXml.wasm",
@@ -60,15 +60,15 @@
       "System.Xml.Linq.hvxjxkvtb2.wasm": "System.Xml.Linq.wasm",
       "System.wznexm8bk2.wasm": "System.wasm",
       "System.Private.CoreLib.i85tvaecu6.wasm": "System.Private.CoreLib.wasm",
-      "WordReplacer.Common.z8ho6czj9n.wasm": "WordReplacer.Common.wasm",
-      "WordReplacer.Dto.pqyoxn302y.wasm": "WordReplacer.Dto.wasm",
-      "WordReplacer.Enums.yg260e9bh1.wasm": "WordReplacer.Enums.wasm",
-      "WordReplacer.Models.arja7hnpxq.wasm": "WordReplacer.Models.wasm",
-      "WordReplacer.Services.9ggp8sgn81.wasm": "WordReplacer.Services.wasm",
-      "WordReplacer.UI.mbz8xp7rhh.wasm": "WordReplacer.UI.wasm",
-      "WordReplacer.WebApp.48nzsw5bp4.wasm": "WordReplacer.WebApp.wasm",
-      "WordReplacer.UI.resources.zz5a9fwom1.wasm": "WordReplacer.UI.resources.wasm",
-      "WordReplacer.WebApp.resources.lw6n2nw6s6.wasm": "WordReplacer.WebApp.resources.wasm",
+      "WordReplacer.Common.2tfh9bqfzm.wasm": "WordReplacer.Common.wasm",
+      "WordReplacer.Dto.rgea9grrba.wasm": "WordReplacer.Dto.wasm",
+      "WordReplacer.Enums.cuv7ztpucq.wasm": "WordReplacer.Enums.wasm",
+      "WordReplacer.Models.9q1olvqj6c.wasm": "WordReplacer.Models.wasm",
+      "WordReplacer.Services.ynucp9esdf.wasm": "WordReplacer.Services.wasm",
+      "WordReplacer.UI.occlc0d7lu.wasm": "WordReplacer.UI.wasm",
+      "WordReplacer.WebApp.czvgcm7fsp.wasm": "WordReplacer.WebApp.wasm",
+      "WordReplacer.UI.resources.flye0pwiwm.wasm": "WordReplacer.UI.resources.wasm",
+      "WordReplacer.WebApp.resources.23hg9gbc3l.wasm": "WordReplacer.WebApp.resources.wasm",
       "dotnet.js": "dotnet.js",
       "dotnet.native.st0ovrfdhi.js": "dotnet.native.js",
       "dotnet.native.67rumul467.wasm": "dotnet.native.wasm",
@@ -147,18 +147,18 @@
       "System.Threading.mpkznl8soh.wasm": "sha256-ZkGWxzrDGOHI61/KiyUjX5Fo+fkOZx/wljiQTJPtQyU=",
       "System.Xml.Linq.hvxjxkvtb2.wasm": "sha256-wwxsYRpXsPfLkFVXXX9uditc29XXKjAFv10/9OYAhf8=",
       "System.wznexm8bk2.wasm": "sha256-/Imz/Enqa2AZc4T3k/CqtsM6674KRN9OUtvK4Nokhew=",
-      "WordReplacer.Common.z8ho6czj9n.wasm": "sha256-U9NNQzXyqkggwPiCfXbEZ/COyxEgGaLMTiPTGo3gSdI=",
-      "WordReplacer.Dto.pqyoxn302y.wasm": "sha256-4XJLtM0zhCAxGKYcEwYfyW2+ILiP/uogV1j+yMHcwug=",
-      "WordReplacer.Enums.yg260e9bh1.wasm": "sha256-/mVN/HpoBzOaB0QPYEtYaBAgqkEndvkl2qjDOSPb9oA=",
-      "WordReplacer.Models.arja7hnpxq.wasm": "sha256-eoL4V5T/VpjU+mYUhJ2lm72iwSpyFw1UVszvT2tDsjs=",
-      "WordReplacer.Services.9ggp8sgn81.wasm": "sha256-idctQmykNasZJdbBPVXzXVlPS6Dr+7YoS7SMCeQBROk=",
-      "WordReplacer.UI.mbz8xp7rhh.wasm": "sha256-0ln9yQWlVtEHRYC1ips7ypNmb9kcw7OVJb5f1I1786E=",
-      "WordReplacer.WebApp.48nzsw5bp4.wasm": "sha256-VIwsgni8GdNwK2xaEOhj+9JZdSxcodMRSzLXUzTO1GE="
+      "WordReplacer.Common.2tfh9bqfzm.wasm": "sha256-Rn+gIXfuZ1ItSBifIBFXjcAnmwyzSfmsy6qKn8LZBv8=",
+      "WordReplacer.Dto.rgea9grrba.wasm": "sha256-RT9dsmiUkoe1Qwp7jZAltBm1ZE+9asWyLTLGnVXjNgg=",
+      "WordReplacer.Enums.cuv7ztpucq.wasm": "sha256-DLwM4GzE6mHT5cll72pUHK+uZJezUSyRrzc1yajTPhU=",
+      "WordReplacer.Models.9q1olvqj6c.wasm": "sha256-wY9xqrrkqShpm/JY77YXgPrOcob6lK6eEWz4iUjkzvc=",
+      "WordReplacer.Services.ynucp9esdf.wasm": "sha256-PoPUXvG5Eg4Nf2rDDsSu8oSuzOajqOzUa/kc+lt2mzk=",
+      "WordReplacer.UI.occlc0d7lu.wasm": "sha256-OLL4fNzDPsHJOZd85yV9H6e2jd369AM1MY6RfKEpAuM=",
+      "WordReplacer.WebApp.czvgcm7fsp.wasm": "sha256-6NkYv9Fm3XU9CeBhADFuRAcMHq3wD8dFgSDuaPvuPh8="
     },
     "satelliteResources": {
       "pt": {
-        "WordReplacer.UI.resources.zz5a9fwom1.wasm": "sha256-34Gfi/M3ovoleS5yJkEshM8PnJzGiElnrT5fffpJMcY=",
-        "WordReplacer.WebApp.resources.lw6n2nw6s6.wasm": "sha256-tQCEvTSaHdRr6KN83Kp2bpAQJ34xJJmdYZFuBFCA9cA="
+        "WordReplacer.UI.resources.flye0pwiwm.wasm": "sha256-XdVA+MPmvI7sttz7N7dwORVZ2VGNvhVAt6H2EW42cY8=",
+        "WordReplacer.WebApp.resources.23hg9gbc3l.wasm": "sha256-flO0/c5J3eczCReTYi+TgyoOLzJ2CdA0LbO2nX4bFnY="
       }
     }
   },
