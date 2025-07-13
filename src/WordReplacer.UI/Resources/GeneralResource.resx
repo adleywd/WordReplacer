@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -157,7 +157,7 @@
     <value>This is the original text</value>
   </data>
   <data name="newDocumentLabel" xml:space="preserve">
-    <value>New value for {0}</value>
+    <value>New value for "{0}"</value>
   </data>
   <data name="newDocumentHelperText" xml:space="preserve">
     <value>This is will be the new text</value>
@@ -178,18 +178,24 @@
     <value>this word</value>
   </data>
   <data name="inputTypeListLabel" xml:space="preserve">
-    <value>I will replace {0} for multiple words (generate multiple files)</value>
+    <value>I will replace "{0}" for multiple words (generate multiple files)</value>
   </data>
   <data name="inputTypeTextLabel" xml:space="preserve">
-    <value>I will replace {0} for another word</value>
+    <value>I will replace "{0}" for another word</value>
   </data>
   <data name="inputTypeText" xml:space="preserve">
-    <value>Text</value>
+    <value>Single word/phrase</value>
   </data>
   <data name="inputTypeList" xml:space="preserve">
-    <value>List</value>
+    <value>Multiple words/phrases</value>
   </data>
   <data name="errorListEmptyToBeReplaced" xml:space="preserve">
     <value>It is not possible to replace a text with an empty replacement List. To do this, use a Text option.</value>
+  </data>
+  <data name="toasterFileError" xml:space="preserve">
+    <value>An error occurred while processing the file {0}.</value>
+  </data>
+  <data name="downloadsHeaderText" xml:space="preserve">
+    <value>Downloads</value>
   </data>
 </root>

@@ -1,11 +1,13 @@
-﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components
 @inject IMatToaster Toaster
 @inject IStringLocalizer<InputFileResource> Localizer
 
-<MatFileUpload OnChange="@FilesReady" Label="@Localizer["selectFileLabel"]" />
-@if (Document.File is not null)
+<MatFileUpload OnChange="@FilesReady" Label="@Localizer["selectFileLabel"]" AllowMultiple="true" />
+@if (Document.Files.Any())
 {
-    <div class="mt-1">@Localizer["selectedFileLabel"]<span class="text-info">@Document.File.Name</span></div>
+    <div class="mt-1">@(Document.Files.Count > 1 ? Localizer["selectedManyFileLabel"] : Localizer["selectedSingleFileLabel"])
+        <span class="text-info">@string.Join(", ", Document.Files.Select(f => f.Name))</span>
+        </div>
 }
 
 @code {
@@ -18,16 +20,16 @@
     
     private async Task FilesReady(IMatFileUploadEntry[] files)
     {
+        Document.Files.Clear();
         foreach (IMatFileUploadEntry file in files)
         {
             if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                Document.File = null;
                 Toaster.Add(Localizer["toasterWrongFileTypeDescription"], MatToastType.Warning, Localizer["toasterWrongFileTypeTitle"], MatIconNames.Block);
             }
             else
             {
-                Document.File = file;
+                Document.Files.Add(file);
             }
         }
 

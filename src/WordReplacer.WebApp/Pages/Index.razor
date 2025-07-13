@@ -1,16 +1,17 @@
-﻿@page "/"
-@using WordReplacer.Enums
-@using WordReplacer.Models
-@using Microsoft.AspNetCore.Components
+@page "/"
 @using WordReplacer.Common
 @using WordReplacer.Dto
-@inject IDocumentService DocumentService
-@inject IMatToaster Toaster
+@using WordReplacer.Enums
+@using WordReplacer.Models
+@using WordReplacer.Models.Enums
 @inject IStringLocalizer<GeneralResource> Localizer
+@inject IMatToaster Toaster
+@inject IDocumentService DocumentService
+@inject IJSRuntime JsRuntime
 
 <PageTitle>Word Replacer</PageTitle>
 <hr />
-<DownloadPopoutComponent @ref="_popupRef" HeaderText="Downloads">
+<DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]">
     <Content>
         <DownloadDocumentListComponent @bind-DownloadsDict="_downloads" />
     </Content>
@@ -113,7 +114,7 @@
             {
                 <MatProgressBar Class="mb-2" Indeterminate="false" Progress="_progressBarValue"></MatProgressBar>
             }
-            <MatButton Icon="@_btnReplaceIcon" Disabled="@(_doc.File is null || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
+            <MatButton Icon="@_btnReplaceIcon" Disabled="@(!_doc.Files.Any() || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
         }
 
     </EditForm>
@@ -228,71 +229,66 @@
                 return;
             }
 
-            PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine);
+            PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine, _doc.Files);
 
             await DelayDotNetToUpdateUIAsync();
 
             Toaster.Add(Localizer["InfoSiteFreezes"], MatToastType.Primary);
 
-            var originalFileInMemoryStream = new MemoryStream();
-            if (_doc.File is not null)
-            {
-                // Get the MemoryStream
-                originalFileInMemoryStream = await DocumentService.GetMemoryStream(_doc.File);
-
-                await DelayDotNetToUpdateUIAsync();
-            }
-
-            var progressSizePerFile = 1.0 / combinations.Count;
+            var progressSizePerFile = 1.0 / (combinations.Count * _doc.Files.Count);
 
             OpenDownloadPopup();
 
             await DelayDotNetToUpdateUIAsync();
 
-            foreach (Dictionary<string, string> combination in combinations)
+            foreach (var file in _doc.Files)
             {
-                // Replace
-                Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream, _isMultipleWordsAtOnce);
-
-                // Get File Name
-                var fileName = GetFileName(isThereAnyReplaceForMultipleLine, combination.Values);
-
-
-                // Download the file
-                await DocumentService
-                    .DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                    .ConfigureAwait(false);
-
-                // Dispose current replaced doc
-                await docReplaced.DisposeAsync();
-
-                var currentDownloadFile = _downloads
-                    .FirstOrDefault(d =>
-                        d.Value.FileName == fileName
-                        && d.Value.IsDownloadCompleted == false);
-
-                if (currentDownloadFile.Value is not null)
+                var originalFileInMemoryStream = await DocumentService.GetMemoryStream(file);
+    
+                foreach (Dictionary<string, string> combination in combinations)
                 {
-                    currentDownloadFile.Value.Progress = 1;
-                    currentDownloadFile.Value.IsProgressIndeterminate = false;
-                    currentDownloadFile.Value.IsDownloading = false;
-                    currentDownloadFile.Value.IsDownloadCompleted = true;
-                }
+                    var fileName = GetFileName(isThereAnyReplaceForMultipleLine || _doc.Files.Count > 1, combination.Values, file.Name);
+                    var currentDownloadFile = _downloads.FirstOrDefault(d => d.Value.FileName == fileName);
+                    try
+                    {
+                        // Replace
+                        Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream, _isMultipleWordsAtOnce);
 
-                // Update progress UI
-                if (combination != combinations.Last())
-                {
-                    _progressBarValue += progressSizePerFile;
-                    ReloadUI();
+                        // Download the file
+                        await DocumentService
+                            .DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                            .ConfigureAwait(false);
 
-                    await DelayDotNetToUpdateUIAsync();
+                        // Dispose current replaced doc
+                        await docReplaced.DisposeAsync();
+
+                        if (currentDownloadFile.Value is not null)
+                        {
+                            currentDownloadFile.Value.Status = DownloadStatus.Success;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (currentDownloadFile.Value is not null) 
+                        {
+                            currentDownloadFile.Value.Status = DownloadStatus.Error;
+                        }
+                        Console.WriteLine(ex.Message);
+                        Toaster.Add(string.Format(Localizer["toasterFileError"], fileName), MatToastType.Danger);
+                    }
+                    finally
+                    {
+                        // Update progress UI
+                        if (combination != combinations.Last() || file != _doc.Files.Last())
+                        {
+                            _progressBarValue += progressSizePerFile;
+                            ReloadUI();
+                            await DelayDotNetToUpdateUIAsync();
+                        }
+                    }
                 }
+                await originalFileInMemoryStream.DisposeAsync();
             }
-
-            await DelayDotNetToUpdateUIAsync();
-
-            // Dispose the input word file in memory stream
-            await originalFileInMemoryStream.DisposeAsync();
             SetDefaultUIAfterDownload();
         }
         catch (Exception ex)
@@ -304,44 +300,50 @@
         }
     }
 
-    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool hasMultipleFiles)
+    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool hasMultipleFiles, IReadOnlyList<IMatFileUploadEntry> docFiles)
     {
-        foreach (var combination in combinations)
+        foreach (var file in docFiles)
         {
-            var fileName = GetFileName(hasMultipleFiles, combination.Values);
+            foreach (var combination in combinations)
+            {
+                var fileName = GetFileName(hasMultipleFiles || docFiles.Count > 1, combination.Values, file.Name);
 
-            var download = new Download
+                var download = new Download
                 {
                     FileName = fileName,
                     Progress = 0.75,
-                    IsDownloading = true,
-                    IsDownloadCompleted = false,
+                    Status = DownloadStatus.InProgress,
                     IsProgressIndeterminate = true
                 };
-            if (_downloads.ContainsKey(fileName))
-            {
-                // update
-                _downloads[fileName] = download;
+                if (_downloads.ContainsKey(fileName))
+                {
+                    // update
+                    _downloads[fileName] = download;
+                }
+                else
+                {
+                    // add
+                    _downloads.Add(download.FileName, download);
+                }
             }
-            else
-            {
-                // add
-                _downloads.Add(download.FileName, download);
-            }
-
         }
     }
 
-    private string GetFileName(bool hasMultipleFiles, IEnumerable<string> combinationsValues)
+    private string GetFileName(bool hasMultipleFiles, IEnumerable<string> combinationsValues, string inputFileName)
     {
-        var fileName = _doc.File!.Name;
+        var fileName = inputFileName;
 
         if (hasMultipleFiles)
         {
-            fileName = Helper.SanitizeFileName(string.Join("_", combinationsValues)) + ".docx";
+            fileName = $"{GetFileNameWithoutExtension(fileName)}_{Helper.SanitizeFileName(string.Join("_", combinationsValues)) + ".docx"}";
         }
 
         return fileName;
+    }
+    
+    private string GetFileNameWithoutExtension(string fileName)
+    {
+        return Path.GetFileNameWithoutExtension(fileName);
     }
 
     // Delay the to UI (Javascript) to catch a breath to update UI

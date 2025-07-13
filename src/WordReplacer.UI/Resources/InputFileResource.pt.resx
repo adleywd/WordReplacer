@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
 		Microsoft ResX Schema
@@ -100,8 +100,11 @@
   <data name="selectFileLabel" xml:space="preserve">
     <value>Solte aqui um arquivo Word(.docx) ou clique para procurar</value>
   </data>
-  <data name="selectedFileLabel" xml:space="preserve">
-    <value>Arquivo selectionado:</value>
+  <data name="selectedManyFileLabel" xml:space="preserve">
+    <value>Arquivos selecionados: </value>
+  </data>
+  <data name="selectedSingleFileLabel" xml:space="preserve">
+    <value>Arquivo selecionado: </value>
   </data>
   <data name="toasterWrongFileTypeDescription" xml:space="preserve">
     <value>Apenas arquivos Word (.docx) são permitidos.</value>

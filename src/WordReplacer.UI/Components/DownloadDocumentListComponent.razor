@@ -1,6 +1,7 @@
-﻿@inject IStringLocalizer<DownloadDocumentListResource> Localizer
+@using WordReplacer.Models.Enums
+@inject IStringLocalizer<DownloadDocumentListResource> Localizer
 
-<div class="container overflow-auto" style="max-height: 150px;">
+<div class="container overflow-auto" style="max-height: 200px;">
     @if (Downloads is not null)
     {
         @if (Downloads.Count > 0)
@@ -12,13 +13,17 @@
                         @download.FileName
                     </div>
                     <div class="col-3">
-                        @if (download.IsDownloadCompleted)
+                        @if (download.Status == DownloadStatus.Success)
                         {
-                            <MatIcon Icon="done" Class="primary-color"/>
+                            <MatIcon Icon="done" Class="primary-color" />
+                        }
+                        else if (download.Status == DownloadStatus.Error)
+                        {
+                            <MatIcon Icon="clear" Class="error-color" />
                         }
                         else
                         {
-                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small"/>
+                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small" />
                         }
                     </div>
                 </div>
@@ -44,13 +49,17 @@
                         @download.FileName
                     </div>
                     <div class="col-3">
-                        @if (download.IsDownloadCompleted)
+                        @if (download.Status == DownloadStatus.Success)
                         {
-                            <MatIcon Icon="done" Class="primary-color"/>
+                            <MatIcon Icon="done" Class="primary-color" />
+                        }
+                        else if (download.Status == DownloadStatus.Error)
+                        {
+                            <MatIcon Icon="clear" Class="error-color" />
                         }
                         else
                         {
-                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small"/>
+                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small" />
                         }
                     </div>
                 </div>
