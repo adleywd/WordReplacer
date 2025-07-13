@@ -100,8 +100,11 @@
   <data name="selectFileLabel" xml:space="preserve">
     <value>Drop a Word(.docx) file or Browse here</value>
   </data>
-  <data name="selectedFileLabel" xml:space="preserve">
-    <value>Selected File:</value>
+  <data name="selectedManyFileLabel" xml:space="preserve">
+    <value>Selected Files: </value>
+  </data>
+  <data name="selectedSingleFileLabel" xml:space="preserve">
+    <value>Selected File: </value>
   </data>
   <data name="toasterWrongFileTypeDescription" xml:space="preserve">
     <value>Only Word documents (.docx) are allowed.</value>

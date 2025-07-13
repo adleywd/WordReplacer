@@ -127,7 +127,7 @@
     <value>Adicionar Texto</value>
   </data>
   <data name="presetToolTip" xml:space="preserve">
-    <value>Presets são pré-configurações que você pode utilizar para armazenar um conjunto de textos para substituir depois.</value>
+    <value>Presets são pré-configurações que você pode utilizar para armazenar um conjunto de textos para substituir depois. O preset será salvo SALVO APENAS no seu NAVEGADOR.</value>
   </data>
   <data name="presetLabel" xml:space="preserve">
     <value>Meus Presets:</value>
@@ -157,7 +157,7 @@
     <value>Este é o texto antigo</value>
   </data>
   <data name="newDocumentLabel" xml:space="preserve">
-    <value>Novo texto para {0}</value>
+    <value>Novo texto para "{0}"</value>
   </data>
   <data name="newDocumentHelperText" xml:space="preserve">
     <value>Este será o novo texto</value>
@@ -169,7 +169,7 @@
     <value>Algo deu errado, por favor tente novamente.</value>
   </data>
   <data name="btnReplaceTextReplacing" xml:space="preserve">
-    <value>Aguarde, subistituindo...</value>
+    <value>Aguarde, substituindo...</value>
   </data>
   <data name="btnReplaceTextDefault" xml:space="preserve">
     <value>Substituir e Baixar</value>
@@ -178,16 +178,16 @@
     <value>esta palavra</value>
   </data>
   <data name="inputTypeListLabel" xml:space="preserve">
-    <value>Eu vou substituir {0} por várias palavras/textos (gerar vários arquvios)</value>
+    <value>Eu vou substituir "{0}" por várias palavras/textos (gerar vários arquvios)</value>
   </data>
   <data name="inputTypeTextLabel" xml:space="preserve">
-    <value>Eu vou substituir {0} por outra palavra/texto</value>
+    <value>Eu vou substituir "{0}" por outra palavra/texto</value>
   </data>
   <data name="inputTypeText" xml:space="preserve">
-    <value>Texto</value>
+    <value>Única palavra/frase</value>
   </data>
   <data name="inputTypeList" xml:space="preserve">
-    <value>Lista</value>
+    <value>Múltiplas palavras/frases</value>
   </data>
   <data name="errorListEmptyToBeReplaced" xml:space="preserve">
     <value>Não é possível substituir um texto por uma Lista de valores vazios. Para isto, utilize a opção Texto.</value>
