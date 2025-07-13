@@ -96,6 +96,15 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloads.
+        /// </summary>
+        public static string downloadsHeaderText {
+            get {
+                return ResourceManager.GetString("downloadsHeaderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select a file and add some text to begin the replacement.
         /// </summary>
         public static string emptyValueListInfo {
@@ -254,6 +263,15 @@ namespace WordReplacer.UI.Resources {
         public static string thisWordDefaultValue {
             get {
                 return ResourceManager.GetString("thisWordDefaultValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing the file {0}..
+        /// </summary>
+        public static string toasterFileError {
+            get {
+                return ResourceManager.GetString("toasterFileError", resourceCulture);
             }
         }
         

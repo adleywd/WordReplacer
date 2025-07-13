@@ -1,16 +1,17 @@
 @page "/"
-@using WordReplacer.Enums
-@using WordReplacer.Models
-@using Microsoft.AspNetCore.Components
 @using WordReplacer.Common
 @using WordReplacer.Dto
-@inject IDocumentService DocumentService
-@inject IMatToaster Toaster
+@using WordReplacer.Enums
+@using WordReplacer.Models
+@using WordReplacer.Models.Enums
 @inject IStringLocalizer<GeneralResource> Localizer
+@inject IMatToaster Toaster
+@inject IDocumentService DocumentService
+@inject IJSRuntime JsRuntime
 
 <PageTitle>Word Replacer</PageTitle>
 <hr />
-<DownloadPopoutComponent @ref="_popupRef" HeaderText="Downloads">
+<DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]">
     <Content>
         <DownloadDocumentListComponent @bind-DownloadsDict="_downloads" />
     </Content>
@@ -243,43 +244,47 @@
             foreach (var file in _doc.Files)
             {
                 var originalFileInMemoryStream = await DocumentService.GetMemoryStream(file);
-
+    
                 foreach (Dictionary<string, string> combination in combinations)
                 {
-                    // Replace
-                    Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream, _isMultipleWordsAtOnce);
-
-                    // Get File Name
                     var fileName = GetFileName(isThereAnyReplaceForMultipleLine || _doc.Files.Count > 1, combination.Values, file.Name);
-
-                    // Download the file
-                    await DocumentService
-                        .DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                        .ConfigureAwait(false);
-
-                    // Dispose current replaced doc
-                    await docReplaced.DisposeAsync();
-
-                    var currentDownloadFile = _downloads
-                        .FirstOrDefault(d =>
-                            d.Value.FileName == fileName
-                            && d.Value.IsDownloadCompleted == false);
-
-                    if (currentDownloadFile.Value is not null)
+                    var currentDownloadFile = _downloads.FirstOrDefault(d => d.Value.FileName == fileName);
+                    try
                     {
-                        currentDownloadFile.Value.Progress = 1;
-                        currentDownloadFile.Value.IsProgressIndeterminate = false;
-                        currentDownloadFile.Value.IsDownloading = false;
-                        currentDownloadFile.Value.IsDownloadCompleted = true;
+                        // Replace
+                        Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream, _isMultipleWordsAtOnce);
+
+                        // Download the file
+                        await DocumentService
+                            .DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                            .ConfigureAwait(false);
+
+                        // Dispose current replaced doc
+                        await docReplaced.DisposeAsync();
+
+                        if (currentDownloadFile.Value is not null)
+                        {
+                            currentDownloadFile.Value.Status = DownloadStatus.Success;
+                        }
                     }
-
-                    // Update progress UI
-                    if (combination != combinations.Last() || file != _doc.Files.Last())
+                    catch (Exception ex)
                     {
-                        _progressBarValue += progressSizePerFile;
-                        ReloadUI();
-
-                        await DelayDotNetToUpdateUIAsync();
+                        if (currentDownloadFile.Value is not null) 
+                        {
+                            currentDownloadFile.Value.Status = DownloadStatus.Error;
+                        }
+                        Console.WriteLine(ex.Message);
+                        Toaster.Add(string.Format(Localizer["toasterFileError"], fileName), MatToastType.Danger);
+                    }
+                    finally
+                    {
+                        // Update progress UI
+                        if (combination != combinations.Last() || file != _doc.Files.Last())
+                        {
+                            _progressBarValue += progressSizePerFile;
+                            ReloadUI();
+                            await DelayDotNetToUpdateUIAsync();
+                        }
                     }
                 }
                 await originalFileInMemoryStream.DisposeAsync();
@@ -307,8 +312,7 @@
                 {
                     FileName = fileName,
                     Progress = 0.75,
-                    IsDownloading = true,
-                    IsDownloadCompleted = false,
+                    Status = DownloadStatus.InProgress,
                     IsProgressIndeterminate = true
                 };
                 if (_downloads.ContainsKey(fileName))

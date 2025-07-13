@@ -91,6 +91,10 @@ a, .btn-link {
     color: var(--mdc-theme-secondary);
 }
 
+.error-color {
+    color: #fc4d4d;
+}
+
 .small-radius{
     border-radius: 3%;   
 }

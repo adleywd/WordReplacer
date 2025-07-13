@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -191,5 +191,11 @@
   </data>
   <data name="errorListEmptyToBeReplaced" xml:space="preserve">
     <value>It is not possible to replace a text with an empty replacement List. To do this, use a Text option.</value>
+  </data>
+  <data name="toasterFileError" xml:space="preserve">
+    <value>An error occurred while processing the file {0}.</value>
+  </data>
+  <data name="downloadsHeaderText" xml:space="preserve">
+    <value>Downloads</value>
   </data>
 </root>
