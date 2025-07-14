@@ -1,0 +1,25 @@
+@using WordReplacer.Models
+<EditForm Model="Document" OnValidSubmit="OnReplace" class="col-12">
+    <DataAnnotationsValidator />
+    <ValuesInputComponent @bind-Document="Document" />
+    <hr />
+    @if (ShowReplaceButton)
+    {
+        @if (ShowProgressBar)
+        {
+            <MatProgressBar Class="mb-2" Indeterminate="false" Progress="@ProgressValue"></MatProgressBar>
+        }
+        <MatButton Icon="@ReplaceIcon" Disabled="@ReplaceDisabled" Raised="true">@ReplaceText</MatButton>
+    }
+</EditForm>
+
+@code {
+    [Parameter] public Document Document { get; set; }
+    [Parameter] public EventCallback OnReplace { get; set; }
+    [Parameter] public bool ShowReplaceButton { get; set; }
+    [Parameter] public bool ShowProgressBar { get; set; }
+    [Parameter] public double ProgressValue { get; set; }
+    [Parameter] public string ReplaceIcon { get; set; } = string.Empty;
+    [Parameter] public bool ReplaceDisabled { get; set; }
+    [Parameter] public string ReplaceText { get; set; } = string.Empty;
+}

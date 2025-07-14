@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WordReplacer.UI.Resources {
+namespace WordReplacer.WebApp.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace WordReplacer.UI.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.UI.Resources.PresetsResource", typeof(PresetsResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.WebApp.Resources.PresetsResource", typeof(PresetsResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

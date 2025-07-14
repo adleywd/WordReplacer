@@ -4,6 +4,7 @@
 @using WordReplacer.Enums
 @using WordReplacer.Models
 @using WordReplacer.Models.Enums
+@using WordReplacer.WebApp.Pages.IndexSections
 @inject IStringLocalizer<GeneralResource> Localizer
 @inject IMatToaster Toaster
 @inject IDocumentService DocumentService
@@ -19,58 +20,23 @@
 
 <div class="container-fluid">
     <MatPaper Elevation="6" Class="p-3" Rounded="true">
-        <div class="d-inline-block">
-            <MatTooltip Tooltip="@Localizer["presetToolTip"]"
-                TargetId="preset-text-id"
-                Position="MatTooltipPosition.Right">
-                    <i id="preset-text-id" class="fa fa-info-circle primary-color"></i>
-                    <span class="preset-text">@Localizer["presetLabel"]</span>
-            </MatTooltip>
-            <PresetsComponent @bind-Document="_doc" />
-        </div>
+        <PresetsSection TooltipText="@Localizer["presetToolTip"]"
+                        LabelText="@Localizer["presetLabel"]"
+                        Document="_doc"
+                        DocumentChanged="OnPresetDocumentChanged" />
     </MatPaper>
 
     <hr />
     <MatPaper Elevation="6" Class="p-3" Rounded="true">
-        <div class="row">
-            <div class="col-12 mt-3">
-                <InputFileComponent @bind-Document="_doc" />
-            </div>
-        </div>
-        <br />
-        <EditForm Model="_docParamsDto" OnValidSubmit="AddValues">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
-                    <MatTextField @bind-Value="_docParamsDto.Text"
-                                  OnInput="@(e => _docParamsDto.Text = e.Value?.ToString())"
-                                  HelperText="@Localizer["helperTextAddValues"]"
-                                  Label="@Localizer["labelTextAddValues"]"
-                                  FullWidth="true" />
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
-                    <label class="text-wrap text-break">
-                        @(_docParamsDto.Type == InputType.Text ?
-                            string.Format(Localizer["inputTypeTextLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])) :
-                            string.Format(Localizer["inputTypeListLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])))
-                    </label>
-                    <br />
-                    <MatRadioGroup @bind-Value="@_docParamsDto.Type" TValue="InputType">
-                        <MatRadioButton Value="@InputType.Text" TValue="InputType">@Localizer["inputTypeText"]</MatRadioButton>
-                        <MatRadioButton Value="@InputType.List" TValue="InputType">@Localizer["inputTypeList"]</MatRadioButton>
-                    </MatRadioGroup>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 mb-2 justify-content-center text-center">
-                    <MatButton Icon="@MatIconNames.Add"
-                               Style="width: 98%"
-                               Raised="true"
-                               Disabled="_docParamsDto.IsTextEmpty">
-                        @Localizer["buttonTextAddValues"]
-                    </MatButton>
-                </div>
-            </div>
-        </EditForm>
+        <InputSection Document="_doc"
+                      DocParamsDto="_docParamsDto"
+                      OnAddValues="AddValues"
+                      HelperText="@Localizer["helperTextAddValues"]"
+                      LabelText="@Localizer["labelTextAddValues"]"
+                      InputTypeLabel="@(_docParamsDto.Type == InputType.Text ? string.Format(Localizer["inputTypeTextLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])) : string.Format(Localizer["inputTypeListLabel"], _docParamsDto.Text.SetDefaultIfNullOrEmpty(Localizer["thisWordDefaultValue"])))"
+                      InputTypeText="@Localizer["inputTypeText"]"
+                      InputTypeList="@Localizer["inputTypeList"]"
+                      AddButtonText="@Localizer["buttonTextAddValues"]"/>
     </MatPaper>
     <hr />
 
@@ -405,4 +371,9 @@
         return base.OnInitializedAsync();
     }
 
+    private async Task OnPresetDocumentChanged(Document updatedDoc)
+    {
+        _doc.DocumentValues = updatedDoc.DocumentValues;
+        StateHasChanged();
+    }
 }

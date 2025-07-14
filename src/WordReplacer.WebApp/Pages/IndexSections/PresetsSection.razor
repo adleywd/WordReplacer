@@ -1,0 +1,23 @@
+@using WordReplacer.Models
+@using Microsoft.Extensions.Localization
+<div class="d-inline-block">
+    <MatTooltip Tooltip="@TooltipText"
+                TargetId="preset-text-id"
+                Position="MatTooltipPosition.Right">
+        <i id="preset-text-id" class="fa fa-info-circle primary-color"></i>
+        <span class="preset-text">@LabelText</span>
+    </MatTooltip>
+    <PresetsComponent Document="Document" DocumentChanged="DocumentChanged" />
+</div>
+
+@code {
+    [Parameter] public string TooltipText { get; set; } = string.Empty;
+    [Parameter] public string LabelText { get; set; } = string.Empty;
+    [Parameter] public Document Document { get; set; }
+    [Parameter] public EventCallback<Document> DocumentChanged { get; set; }
+
+    private async Task OnDocumentChanged(Document updatedDoc)
+    {
+        await DocumentChanged.InvokeAsync(updatedDoc);
+    }
+}

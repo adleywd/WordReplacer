@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WordReplacer.UI.Resources {
+namespace WordReplacer.WebApp.Resources {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace WordReplacer.UI.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ValuesInputResource {
+    internal class ApplicationUpdateResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ValuesInputResource() {
+        internal ApplicationUpdateResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace WordReplacer.UI.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.UI.Resources.ValuesInputResource", typeof(ValuesInputResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.WebApp.Resources.ApplicationUpdateResource", typeof(ApplicationUpdateResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,20 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create file for each line in replace area.
+        ///   Looks up a localized string similar to Update.
         /// </summary>
-        internal static string slideToggleReplaceForEachLineLabel {
+        internal static string btnReload {
             get {
-                return ResourceManager.GetString("slideToggleReplaceForEachLineLabel", resourceCulture);
+                return ResourceManager.GetString("btnReload", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} will be replaced for {1}.
+        ///   Looks up a localized string similar to New update is ready..
         /// </summary>
-        internal static string tooltipReplaceText {
+        internal static string messageUpdateReady {
             get {
-                return ResourceManager.GetString("tooltipReplaceText", resourceCulture);
+                return ResourceManager.GetString("messageUpdateReady", resourceCulture);
             }
         }
     }

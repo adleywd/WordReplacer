@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@using WordReplacer.UI.Components
+@using WordReplacer.WebApp.Components
 @using System.Globalization
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject NavigationManager Navigation
@@ -11,20 +11,20 @@
         <MatAppBarRow>
             <MatAppBarSection>
                 <MatIconButton Icon="menu" OnClick="@((e) => MenuButtonClicked())"></MatIconButton>
-                <MatIcon><img style="width: 100%;" src="_content/WordReplacer.UI/img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MatIcon>
+                <MatIcon><img style="width: 100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MatIcon>
                 <MatAppBarTitle Style="margin-left: 0;">Word Replacer</MatAppBarTitle>
             </MatAppBarSection>
             <MatAppBarSection Align="@MatAppBarSectionAlign.End">
                 @if (_selectedLanguage != "pt")
                 {
                     <MatIconButton OnClick="@(() => ChangeUIToLanguage("pt"))">
-                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-brazil.svg" />
+                        <img class="text-centered-in-btn" src="img/flag-brazil.svg" />
                     </MatIconButton>
                 }
                 @if (_selectedLanguage != "en")
                 {
                     <MatIconButton OnClick="@(() => ChangeUIToLanguage("en"))">
-                        <img class="text-centered-in-btn" src="_content/WordReplacer.UI/img/flag-united-states.svg" />
+                        <img class="text-centered-in-btn" src="img/flag-united-states.svg" />
                     </MatIconButton>
                 }
                 <MatIconButton Link="https://github.com/adleywd" Target="_blank">

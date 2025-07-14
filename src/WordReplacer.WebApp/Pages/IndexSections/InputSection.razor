@@ -1,0 +1,53 @@
+@using WordReplacer.Dto
+@using WordReplacer.Models
+@using WordReplacer.Enums
+@using Microsoft.Extensions.Localization
+<div class="row">
+    <div class="col-12 mt-3">
+        <InputFileComponent @bind-Document="Document" />
+    </div>
+</div>
+<br />
+<EditForm Model="DocParamsDto" OnValidSubmit="OnAddValues">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+            <MatTextField @bind-Value="DocParamsDto.Text"
+                          OnInput="@(e => DocParamsDto.Text = e.Value?.ToString())"
+                          HelperText="@HelperText"
+                          Label="@LabelText"
+                          FullWidth="true" />
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+            <label class="text-wrap text-break">
+                @InputTypeLabel
+            </label>
+            <br />
+            <MatRadioGroup @bind-Value="DocParamsDto.Type" TValue="InputType">
+                <MatRadioButton Value="@InputType.Text" TValue="InputType">@InputTypeText</MatRadioButton>
+                <MatRadioButton Value="@InputType.List" TValue="InputType">@InputTypeList</MatRadioButton>
+            </MatRadioGroup>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 mb-2 justify-content-center text-center">
+            <MatButton Icon="@MatIconNames.Add"
+                       Style="width: 98%"
+                       Raised="true"
+                       Disabled="string.IsNullOrWhiteSpace(DocParamsDto?.Text)">
+                @AddButtonText
+            </MatButton>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public Document Document { get; set; }
+    [Parameter] public DocumentParamsDto DocParamsDto { get; set; }
+    [Parameter] public EventCallback OnAddValues { get; set; }
+    [Parameter] public string HelperText { get; set; } = string.Empty;
+    [Parameter] public string LabelText { get; set; } = string.Empty;
+    [Parameter] public string InputTypeLabel { get; set; } = string.Empty;
+    [Parameter] public string InputTypeText { get; set; } = string.Empty;
+    [Parameter] public string InputTypeList { get; set; } = string.Empty;
+    [Parameter] public string AddButtonText { get; set; } = string.Empty;
+}

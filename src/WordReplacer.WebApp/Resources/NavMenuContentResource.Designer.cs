@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WordReplacer.UI.Resources {
+namespace WordReplacer.WebApp.Resources {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace WordReplacer.UI.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class CookiesNotificationResource {
+    internal class NavMenuContentResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal CookiesNotificationResource() {
+        internal NavMenuContentResource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace WordReplacer.UI.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.UI.Resources.CookiesNotificationResource", typeof(CookiesNotificationResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WordReplacer.WebApp.Resources.NavMenuContentResource", typeof(NavMenuContentResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,11 @@ namespace WordReplacer.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to By using this application you allow it to use cookies..
+        ///   Looks up a localized string similar to Home.
         /// </summary>
-        internal static string cookiesAgreement {
+        internal static string home {
             get {
-                return ResourceManager.GetString("cookiesAgreement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This app runs only in your browser, not on any server. That&apos;s why we need to use cookies..
-        /// </summary>
-        internal static string cookiesExplanation {
-            get {
-                return ResourceManager.GetString("cookiesExplanation", resourceCulture);
+                return ResourceManager.GetString("home", resourceCulture);
             }
         }
     }

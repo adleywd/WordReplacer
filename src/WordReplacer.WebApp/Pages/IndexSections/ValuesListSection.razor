@@ -1,0 +1,43 @@
+@using WordReplacer.Models
+@using MatBlazor
+
+@if (HasValues)
+{
+    <div class="row">
+        <MatHidden BreakPoint="@BreakPoint" Direction="@HiddenDirection">
+            <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                <h3>@OriginalValuesHeader</h3>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 mt-2">
+                <h3>@NewValuesHeader</h3>
+            </div>
+        </MatHidden>
+        <div class="col-lg-3 col-md-12 col-sm-12 mt-2">
+            <MatButton Class="float-end"
+                   Icon="@DeleteIcon"
+                   Type="button"
+                   OnClickStopPropagation="true"
+                   OnClick="OnRemoveAll">
+                @RemoveAllText
+            </MatButton>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info justify-content-center">
+        <p class="text-center justify-content-center">@EmptyListInfo</p>
+    </div>
+}
+
+@code {
+    [Parameter] public bool HasValues { get; set; }
+    [Parameter] public MatBlazor.MatBreakpoint BreakPoint { get; set; }
+    [Parameter] public MatBlazor.MatHiddenDirection HiddenDirection { get; set; }
+    [Parameter] public string OriginalValuesHeader { get; set; } = string.Empty;
+    [Parameter] public string NewValuesHeader { get; set; } = string.Empty;
+    [Parameter] public string DeleteIcon { get; set; } = string.Empty;
+    [Parameter] public EventCallback OnRemoveAll { get; set; }
+    [Parameter] public string RemoveAllText { get; set; } = string.Empty;
+    [Parameter] public string EmptyListInfo { get; set; } = string.Empty;
+}

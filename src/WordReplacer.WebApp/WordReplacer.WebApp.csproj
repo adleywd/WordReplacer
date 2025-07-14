@@ -7,6 +7,19 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Content Remove="C:\Users\Adley\.nuget\packages\matblazor\2.8.0\contentFiles\any\netstandard2.1\Properties\launchSettings.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Blazored.LocalStorage" />
+		<PackageReference Include="MatBlazor" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+	</ItemGroup>
+	
+	<ItemGroup>
 		<PackageReference Include="DocumentFormat.OpenXml" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
@@ -21,7 +34,6 @@
 		<ProjectReference Include="..\WordReplacer.Dto\WordReplacer.Dto.csproj" />
 		<ProjectReference Include="..\WordReplacer.Enums\WordReplacer.Enums.csproj" />
 		<ProjectReference Include="..\WordReplacer.Models\WordReplacer.Models.csproj" />
-		<ProjectReference Include="..\WordReplacer.UI\WordReplacer.UI.csproj" />
 		<ProjectReference Include="..\WordReplacer.Services\WordReplacer.Services.csproj" />
 	</ItemGroup>
 
@@ -56,6 +68,158 @@
 		<Content Update="wwwroot\service-worker-registration.js">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Update="wwwroot\js\app.js">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\img\icon-192.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\img\icon-512.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\img\wr-logo-white-nobg-64x64.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\img\wr-logo-white-nobg.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\css\app.css">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="Components\ApplicationUpdateComponent.razor" />
+	  <AdditionalFiles Include="Components\CookiesNotificationComponent.razor" />
+	  <AdditionalFiles Include="Components\DownloadDocumentListComponent.razor" />
+	  <AdditionalFiles Include="Components\DownloadPopoutComponent.razor" />
+	  <AdditionalFiles Include="Components\InputFileComponent.razor" />
+	  <AdditionalFiles Include="Components\PresetsComponent.razor" />
+	  <AdditionalFiles Include="Components\SnackbarComponent.razor" />
+	  <AdditionalFiles Include="Components\ValuesInputComponent.razor" />
+	  <AdditionalFiles Include="Shared\MainLayout.razor" />
+	  <AdditionalFiles Include="Shared\NavMenuContent.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\ApplicationUpdateResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ApplicationUpdateResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\CookiesNotificationResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>CookiesNotificationResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\DownloadDocumentListResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>DownloadDocumentListResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\GeneralResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>GeneralResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\InputFileResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>InputFileResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\NavMenuContentResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>NavMenuContentResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\PresetsResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>PresetsResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\ValuesInputResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ValuesInputResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\ApplicationUpdateResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ApplicationUpdateResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\CookiesNotificationResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>CookiesNotificationResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\DownloadDocumentListResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>DownloadDocumentListResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\GeneralResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>GeneralResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\InputFileResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>InputFileResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\NavMenuContentResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>NavMenuContentResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\PresetsResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>PresetsResource.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\ValuesInputResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ValuesInputResource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\ApplicationUpdateResource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ApplicationUpdateResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\CookiesNotificationResource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>CookiesNotificationResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\DownloadDocumentListResource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>DownloadDocumentListResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\GeneralResource.pt.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\GeneralResource.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>GeneralResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\InputFileResource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>InputFileResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\NavMenuContentResource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>NavMenuContentResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\PresetsResource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>PresetsResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\ValuesInputResource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ValuesInputResource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

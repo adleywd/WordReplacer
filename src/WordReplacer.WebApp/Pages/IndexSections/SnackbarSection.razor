@@ -1,0 +1,14 @@
+<SnackbarComponent @bind-IsSnackbarOpen="IsOpen"
+                   @bind-Timeout="Timeout"
+                   @bind-HasCloseButton="HasCloseButton">
+    <Content>
+        @Content
+    </Content>
+</SnackbarComponent>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public int Timeout { get; set; }
+    [Parameter] public bool HasCloseButton { get; set; }
+    [Parameter] public string Content { get; set; } = string.Empty;
+}
