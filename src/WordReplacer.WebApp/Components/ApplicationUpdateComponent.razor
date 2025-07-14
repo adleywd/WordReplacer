@@ -1,23 +1,27 @@
-﻿@inject IJSRuntime JsRuntime
+@inject IJSRuntime JsRuntime
 @inject IStringLocalizer<ApplicationUpdateResource> Localizer
 @inject NavigationManager Navigation
 @implements IDisposable
 
 @if (_showUpdateNotification)
 {
-    <MatPaper Class="text-center">
+    <MudPaper Class="text-center">
         <div class="container-fluid">
             <div class="row pt-1 pb-1">
                 <div class="col-11">
                     <label>@Localizer["messageUpdateReady"]</label>
-                    <MatButton OnClick="ReloadPage" Label="@Localizer["btnReload"]" Icon="@MatIconNames.Update" />
+                    <MudButton OnClick="ReloadPage" StartIcon="@Icons.Material.Filled.Update">
+                        @Localizer["btnReload"]
+                    </MudButton>
                 </div>
                 <div class="col-1">
-                    <MatButton Class="float-end" OnClick="@(() => _showUpdateNotification = false)" Label="🗙" />
+                    <MudButton Class="float-end" OnClick="@(() => _showUpdateNotification = false)">
+                        🗙
+                    </MudButton>
                 </div>
             </div>
         </div>
-    </MatPaper>
+    </MudPaper>
 }
 
 @code {
@@ -60,5 +64,4 @@
     {
         _objRef?.Dispose();
     }
-
 }

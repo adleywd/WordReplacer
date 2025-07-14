@@ -1,5 +1,6 @@
 @using WordReplacer.Models.Enums
 @inject IStringLocalizer<DownloadDocumentListResource> Localizer
+@using MudBlazor
 
 <div class="container overflow-auto" style="max-height: 200px;">
     @if (Downloads is not null)
@@ -15,15 +16,15 @@
                     <div class="col-3">
                         @if (download.Status == DownloadStatus.Success)
                         {
-                            <MatIcon Icon="done" Class="primary-color" />
+                            <MudIcon Icon="@Icons.Material.Filled.Done" Class="primary-color" />
                         }
                         else if (download.Status == DownloadStatus.Error)
                         {
-                            <MatIcon Icon="clear" Class="error-color" />
+                            <MudIcon Icon="@Icons.Material.Filled.Clear" Class="error-color" />
                         }
                         else
                         {
-                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small" />
+                            <MudProgressCircular Indeterminate="@download.IsProgressIndeterminate" Value="@download.Progress" Size="Size.Small" />
                         }
                     </div>
                 </div>
@@ -51,15 +52,15 @@
                     <div class="col-3">
                         @if (download.Status == DownloadStatus.Success)
                         {
-                            <MatIcon Icon="done" Class="primary-color" />
+                            <MudIcon Icon="@Icons.Material.Filled.Done" Class="primary-color" />
                         }
                         else if (download.Status == DownloadStatus.Error)
                         {
-                            <MatIcon Icon="clear" Class="error-color" />
+                            <MudIcon Icon="@Icons.Material.Filled.Clear" Class="error-color" />
                         }
                         else
                         {
-                            <MatProgressCircle Indeterminate="@download.IsProgressIndeterminate" Progress="@download.Progress" Size="MatProgressCircleSize.Small" />
+                            <MudProgressCircular Indeterminate="@download.IsProgressIndeterminate" Value="@download.Progress" Size="Size.Small" />
                         }
                     </div>
                 </div>

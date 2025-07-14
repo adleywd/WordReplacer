@@ -1,4 +1,5 @@
-﻿@{
+@using RenderFragment = Microsoft.AspNetCore.Blazor.RenderFragment
+@{
     var showDownloadPopupClass = IsDownloadsListVisible ? "d-block" : "d-none";
     var showFabButton = !IsDownloadsListVisible ? "d-block" : "d-none";
 }
@@ -21,7 +22,7 @@
 
 <div>
     <div class="fade-in fixed-bottom-right @showFabButton">
-        <MatFAB Class="app-fab--absolute fab" Icon="@MatIconNames.Save_alt" OnClick="Toggle"></MatFAB>
+        <MudFab Class="app-fab--absolute fab" Icon="@Icons.Material.Filled.SaveAlt" OnClick="Toggle"></MudFab>
     </div>
 </div>
 

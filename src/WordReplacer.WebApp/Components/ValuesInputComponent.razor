@@ -1,90 +1,82 @@
-﻿@using Microsoft.AspNetCore.Components
 @using WordReplacer.Common
 @using WordReplacer.Enums
+@using InputType = WordReplacer.Enums.InputType
 @inject IStringLocalizer<ValuesInputResource> Localizer
 
-<MatAccordion Multi="true">
+<MudExpansionPanels MultiExpansion="true">
     @for (var i = 0; i < Document.DocumentValues.Count; i ++)
     {
         var docValue = Document.DocumentValues[i];
 
         @if (docValue.Value.ShouldReplaceForEachLine)
         {
-            <MatTooltip Tooltip="@string.Format(Localizer["tooltipReplaceText"], docValue.Key.Text, docValue.Value.Text!.Replace("\n", " & "))"
-                        Wrap="true"
-                        Position="MatTooltipPosition.Top"
-                        TargetId="@docValue.Key.HtmlId">
-            </MatTooltip>
+            <MudTooltip Text="@string.Format(Localizer["tooltipReplaceText"], docValue.Key.Text, docValue.Value.Text!.Replace("\n", " & "))" Placement="Placement.Start">
+                <span id="@docValue.Key.HtmlId"></span>
+            </MudTooltip>
         }
         else
         {
-            <MatTooltip Tooltip="@string.Format(Localizer["tooltipReplaceText"], docValue.Key.Text, docValue.Value.Text)"
-                        Wrap="true"
-                        Position="MatTooltipPosition.Top"
-                        TargetId="@docValue.Key.HtmlId">
-            </MatTooltip>
+            <MudTooltip Text="@string.Format(Localizer["tooltipReplaceText"], docValue.Key.Text, docValue.Value.Text)" Placement="Placement.Start">
+                <span id="@docValue.Key.HtmlId"></span>
+            </MudTooltip>
         }
-        <MatExpansionPanel @bind-Expanded="docValue.Key.IsAccordionOpen">
-            <MatExpansionPanelSummary Style="height: auto;" Id="@docValue.Key.HtmlId">
-                <div class="row" style=" width: 100%;">
-                    <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
-                        <b class="text-decoration-underline">@docValue.Key.Text</b>
-                    </div>
-                    <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
-                        <span>
-                            <b class="text-decoration-underline">@docValue.Value.Text</b>
-                        </span>
+        <MudExpansionPanel @bind-Expanded="docValue.Key.IsAccordionOpen">
+            <!-- Summary/Header content -->
+            <div class="row" style=" width: 100%;">
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
+                    <b class="text-decoration-underline">@docValue.Key.Text</b>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2 text-wrap">
+                    <span>
+                        <b class="text-decoration-underline">@docValue.Value.Text</b>
+                    </span>
+                </div>
+            </div>
+            <!-- Details/Body content -->
+            @if (docValue.Value.Type == InputType.List)
+            {
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-sm-1"></div>
+                    <div class="col-lg-5 col-md-5 col-sm-12">
+                        <MudSwitch @bind-Value="docValue.Value.ShouldReplaceForEachLine" Color="Color.Primary" />
+                        <span class="ms-1">@Localizer["slideToggleReplaceForEachLineLabel"]</span>
                     </div>
                 </div>
-            </MatExpansionPanelSummary>
-            <MatExpansionPanelDetails>
-
-                @if (docValue.Value.Type == InputType.List)
+            }
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                    <MudTextField @bind-Value="docValue.Key.Text"
+                                  HelperText="@docValue.Key.HelperText"
+                                  Label="@docValue.Key.Label"
+                                  FullWidth="true"
+                                  Disabled="true"/>
+                </div>
+                @if (docValue.Value.Type is InputType.Text or InputType.List)
                 {
-                    <div class="row">
-                        <div class="col-lg-5 col-md-5 col-sm-1"></div>
-                        <div class="col-lg-5 col-md-5 col-sm-12">
-                            <MatSlideToggle @bind-Value="docValue.Value.ShouldReplaceForEachLine"/>
-                            <span class="ms-1">@Localizer["slideToggleReplaceForEachLineLabel"]</span>
-                        </div>
+                    <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
+                        <MudTextField @bind-Value="docValue.Value.Text"
+                                      HelperText="@docValue.Value.HelperText"
+                                      Label="@docValue.Value.Label"
+                                      Lines="@(docValue.Value.Type.IsTextArea() ? 3 : 1)"
+                                      FullWidth="true"
+                                      Disabled="docValue.Value.IsOldValue"
+                                      Style="background: white;" />
                     </div>
                 }
-                <div class="row">
-                    <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                        <MatTextField @bind-Value="docValue.Key.Text"
-                                      Label="@docValue.Key.Label"
-                                      OnInput="@(e => docValue.Key.Text = e.Value?.ToString())"
-                                      HelperText="@docValue.Key.HelperText"
-                                      FullWidth="true"
-                                      Disabled="true"/>
-                    </div>
-                    @if (docValue.Value.Type is InputType.Text or InputType.List)
-                    {
-                        <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
-                            <MatTextField @bind-Value="docValue.Value.Text"
-                                          OnInput="@(e => docValue.Value.Text = e.Value?.ToString())"
-                                          HelperText="@docValue.Value.HelperText"
-                                          Label="@docValue.Value.Label"
-                                          TextArea="@docValue.Value.Type.IsTextArea()"
-                                          FullWidth="true"
-                                          Style="background: white;"/>
-                        </div>
-                    }
-                    <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
-                        @{var index = i-1;}
-                        <MatButton Outlined="true"
-                                   Icon="@MatIconNames.Delete"
-                                   OnClickStopPropagation="true"
-                                   Type="button"
+                <div class="col-lg-2 col-md-2 col-sm-12 mt-2">
+                    @{var index = i-1;}
+                    <MudButton Variant="Variant.Outlined"
+                               StartIcon="@Icons.Material.Filled.Delete"
+                               OnClick:StopPropagation="true"
+                               Type="button"
                                OnClick="() => RemoveItemsFromDict(docValue)">
-                            Remove
-                        </MatButton>
-                    </div>
+                        Remove
+                    </MudButton>
                 </div>
-            </MatExpansionPanelDetails>
-        </MatExpansionPanel>
+            </div>
+        </MudExpansionPanel>
     }
-</MatAccordion>
+</MudExpansionPanels>
 
 @code
 {

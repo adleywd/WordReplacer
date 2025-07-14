@@ -1,12 +1,10 @@
-﻿@inject IJSRuntime JsRuntime
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject IStringLocalizer<CookiesNotificationResource> Localizer
-@inject NavigationManager Navigation
 @inject AppSettings AppSettings
 
 @if (_showCookieNotification)
 {
-    <MatPaper Class="text-center mb-1">
+    <MudPaper Class="text-center mb-1">
         <div class="container-fluid">
             <div class="pt-1 pb-1">
                 <span>
@@ -14,12 +12,14 @@
                 </span>
                 <br />
                 <span>
-                        @Localizer["cookiesAgreement"]
-                    <MatButton Outlined="true" OnClick="DismissCookieNotify" Label="Ok" />
+                    @Localizer["cookiesAgreement"]
+                    <MudButton Variant="Variant.Outlined" OnClick="DismissCookieNotify">
+                        Ok
+                    </MudButton>
                 </span>
             </div>
         </div>
-    </MatPaper>
+    </MudPaper>
 }
 
 @code {

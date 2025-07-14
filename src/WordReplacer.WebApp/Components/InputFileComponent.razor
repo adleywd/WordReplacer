@@ -1,13 +1,15 @@
-@using Microsoft.AspNetCore.Components
-@inject IMatToaster Toaster
+@inject ISnackbar Snackbar
 @inject IStringLocalizer<InputFileResource> Localizer
 
-<MatFileUpload OnChange="@FilesReady" Label="@Localizer["selectFileLabel"]" AllowMultiple="true" />
+<MudPaper Class="p-2">
+    <InputFile OnChange="@FilesReady" multiple />
+    <MudText Class="mt-2" Typo="Typo.body2">@Localizer["selectFileLabel"]</MudText>
+</MudPaper>
 @if (Document.Files.Any())
 {
     <div class="mt-1">@(Document.Files.Count > 1 ? Localizer["selectedManyFileLabel"] : Localizer["selectedSingleFileLabel"])
         <span class="text-info">@string.Join(", ", Document.Files.Select(f => f.Name))</span>
-        </div>
+    </div>
 }
 
 @code {
@@ -18,14 +20,17 @@
     [Parameter]
     public EventCallback<Document> DocumentChanged { get; set; }
     
-    private async Task FilesReady(IMatFileUploadEntry[] files)
+    private async Task FilesReady(InputFileChangeEventArgs e)
     {
         Document.Files.Clear();
-        foreach (IMatFileUploadEntry file in files)
+        foreach (IBrowserFile file in e.GetMultipleFiles())
         {
-            if (file.Type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            if (file.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                Toaster.Add(Localizer["toasterWrongFileTypeDescription"], MatToastType.Warning, Localizer["toasterWrongFileTypeTitle"], MatIconNames.Block);
+                Snackbar.Add(Localizer["toasterWrongFileTypeDescription"], Severity.Warning, options =>
+                {
+                    options.Icon = Icons.Material.Filled.Block;
+                });
             }
             else
             {

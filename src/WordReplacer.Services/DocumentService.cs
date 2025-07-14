@@ -1,8 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using DocumentFormat.OpenXml.Packaging;
-using MatBlazor;
+﻿using DocumentFormat.OpenXml.Packaging;
 using Microsoft.JSInterop;
 using WordReplacer.Common;
 using WordReplacer.Models;
@@ -42,7 +38,7 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
-        public async Task<MemoryStream> GetMemoryStream(IMatFileUploadEntry? file)
+        public async Task<MemoryStream> GetMemoryStream(FileUploadDto file)
         {
             if (file is null)
             {
@@ -50,7 +46,8 @@ namespace WordReplacer.Services
             }
 
             var stream = new MemoryStream();
-            await file.WriteToStreamAsync(stream).ConfigureAwait(false);
+            // TODO: Review
+            // await file.WriteToStreamAsync(stream).ConfigureAwait(false);
             return stream;
         }
 

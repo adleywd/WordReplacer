@@ -1,13 +1,14 @@
-@page "/"
+@page "/old"
+@using MudBlazor
 @using WordReplacer.Common
 @using WordReplacer.Dto
-@using WordReplacer.Enums
-@using WordReplacer.Models
 @using WordReplacer.Models.Enums
 @using WordReplacer.WebApp.Pages.IndexSections
+@using WordReplacer.WebApp.Services
+@using InputType = WordReplacer.Enums.InputType
 @inject IStringLocalizer<GeneralResource> Localizer
-@inject IMatToaster Toaster
-@inject IDocumentService DocumentService
+@inject ISnackbar Snackbar
+@inject IDocumentProcessingService DocumentProcessingService
 @inject IJSRuntime JsRuntime
 
 <PageTitle>Word Replacer</PageTitle>
@@ -19,15 +20,15 @@
 </DownloadPopoutComponent>
 
 <div class="container-fluid">
-    <MatPaper Elevation="6" Class="p-3" Rounded="true">
+    <MudPaper Elevation="6" Class="p-3" Rounded="true">
         <PresetsSection TooltipText="@Localizer["presetToolTip"]"
                         LabelText="@Localizer["presetLabel"]"
                         Document="_doc"
                         DocumentChanged="OnPresetDocumentChanged" />
-    </MatPaper>
+    </MudPaper>
 
     <hr />
-    <MatPaper Elevation="6" Class="p-3" Rounded="true">
+    <MudPaper Elevation="6" Class="p-3" Rounded="true">
         <InputSection Document="_doc"
                       DocParamsDto="_docParamsDto"
                       OnAddValues="AddValues"
@@ -37,29 +38,29 @@
                       InputTypeText="@Localizer["inputTypeText"]"
                       InputTypeList="@Localizer["inputTypeList"]"
                       AddButtonText="@Localizer["buttonTextAddValues"]"/>
-    </MatPaper>
+    </MudPaper>
     <hr />
 
     @if (_doc.DocumentValues.Count > 0)
     {
         <div class="row">
-            <MatHidden BreakPoint="@MatBreakpoint.SM" Direction="@MatHiddenDirection.Down">
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
                 <div class="col-lg-5 col-md-5 col-sm-12 mt-2">
                     <h3>@Localizer["headerOriginalValues"]</h3>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 mt-2">
                     <h3>@Localizer["headerNewValues"]</h3>
                 </div>
-            </MatHidden>
+            </MudHidden>
 
             <div class="col-lg-3 col-md-12 col-sm-12 mt-2">
-                <MatButton Class="float-end"
-                       Icon="@MatIconNames.Delete_forever"
+                <MudButton Class="float-end"
+                       StartIcon="@Icons.Material.Filled.DeleteForever"
                        Type="button"
-                       OnClickStopPropagation="true"
+                       OnClick:stopPropagation="true"
                        OnClick="@(() => { _doc.DocumentValues = new (); })">
                     @Localizer["btnRemoveAll"]
-                </MatButton>
+                </MudButton>
             </div>
         </div>
     }
@@ -78,9 +79,9 @@
         {
             @if (_progressBar)
             {
-                <MatProgressBar Class="mb-2" Indeterminate="false" Progress="_progressBarValue"></MatProgressBar>
+                <MudProgressLinear Class="mb-2" Indeterminate="false" Value="@_progressBarValue"></MudProgressLinear>
             }
-            <MatButton Icon="@_btnReplaceIcon" Disabled="@(!_doc.Files.Any() || _progressBar)" Raised="true">@_btnReplaceText</MatButton>
+            <MudButton StartIcon="@_btnReplaceIcon" Disabled="@(!_doc.Files.Any() || _progressBar)" Variant="Variant.Filled">@_btnReplaceText</MudButton>
         }
 
     </EditForm>
@@ -101,7 +102,6 @@
 
     private Document _doc = new();
     private readonly DocumentParamsDto _docParamsDto = new();
-    private readonly bool _isMultipleWordsAtOnce = true;
 
     // SnackBar configs
     private bool _snackBarIsOpen;
@@ -115,158 +115,54 @@
 
     // Submit btn configs
     private string _btnReplaceText = string.Empty;
-    private string _btnReplaceIcon = MatIconNames.Find_replace;
+    private string _btnReplaceIcon = Icons.Material.Filled.FindReplace;
 
     private void OpenDownloadPopup()
     {
         _popupRef?.Show();
     }
-    private void CloseDownloadPopup()
-    {
-        _popupRef?.Close();
-    }
-
-
 
     private void AddValues()
     {
-
-        if (_doc.DocumentValues.Select(d => d.Key.Text).Any(text => text == _docParamsDto.Text))
-        {
-            Toaster.Add(string.Format(Localizer["valueAlreadyAddedError"], _docParamsDto.Text), MatToastType.Danger, @Localizer["valueAlreadyAddedErrorTitle"]);
-            return;
-        }
-        var oldValue = new DocumentValue()
-            {
-                Label = Localizer["originalDocumentLabel"],
-                HtmlId = Guid.NewGuid().ToString(),
-                IsOldValue = true,
-                Text = _docParamsDto.Text,
-                HelperText = Localizer["originalDocumentHelperText"],
-                Type = InputType.Text,
-                IsAccordionOpen = true
-            };
-        var newValue = new DocumentValue()
-            {
-                Label = string.Format(Localizer["newDocumentLabel"], _docParamsDto.Text),
-                HtmlId = Guid.NewGuid().ToString(),
-                IsOldValue = false,
-                Text = string.Empty,
-                HelperText = Localizer["newDocumentHelperText"],
-                Type = _docParamsDto.Type,
-                IsAccordionOpen = true,
-                ShouldReplaceForEachLine = _docParamsDto.Type == InputType.List
-            };
-        _doc.DocumentValues.Add(new KeyValuePair<DocumentValue, DocumentValue>(oldValue, newValue));
-        _docParamsDto.Text = string.Empty; // Cleat add values text
+        DocumentProcessingService.AddValues(_doc, _docParamsDto);
     }
 
     private async Task HandleSubmitAsync()
     {
-        try
-        {
-            PrepareUIToReplaceAndDownload();
-
-            // TODO: Validate textarea with empty values. It is not working.
-            _doc.DocumentValues.SanitizeValues();
-
-            var combinations = new List<Dictionary<string, string>>();
-
-            var isThereAnyReplaceForMultipleLine = _doc.DocumentValues.Any(d => d.Value.ShouldReplaceForEachLine);
-
-            if (isThereAnyReplaceForMultipleLine)
+        await DocumentProcessingService.HandleSubmitAsync(
+            _doc,
+            async () => PrepareUIToReplaceAndDownload(),
+            async (combinations, hasMultipleFiles, docFiles) => PrepareDownloadUI(combinations, hasMultipleFiles, docFiles),
+            async () => await DelayDotNetToUpdateUIAsync().ConfigureAwait(true),
+            // (message, type) => Snackbar.Add(message, Severity.Normal),
+            OpenDownloadPopup,
+            async () => SetDefaultUIAfterDownload(),
+            async () => SetDefaultUIAfterError(),
+            (value) =>
             {
-                // Get all possible combinations
-                combinations = DocumentService.GetAllCombinations(_doc.DocumentValues);
-            }
-            else
+                _progressBarValue += value;
+                ReloadUI();
+            },
+            (fileName) =>
             {
-                // Add the single combination to the combination list
-                combinations.Add(_doc.DocumentValues
-                                     .ToDictionary(
-                                         d => d.Key.Text!,
-                                         d => d.Value.Text!
-                    ));
-            }
-
-            if(isThereAnyReplaceForMultipleLine && combinations.Count == 0)
-            {
-                Toaster.Add(Localizer["errorListEmptyToBeReplaced"], MatToastType.Danger);
-                return;
-            }
-
-            PrepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine, _doc.Files);
-
-            await DelayDotNetToUpdateUIAsync();
-
-            Toaster.Add(Localizer["InfoSiteFreezes"], MatToastType.Primary);
-
-            var progressSizePerFile = 1.0 / (combinations.Count * _doc.Files.Count);
-
-            OpenDownloadPopup();
-
-            await DelayDotNetToUpdateUIAsync();
-
-            foreach (var file in _doc.Files)
-            {
-                var originalFileInMemoryStream = await DocumentService.GetMemoryStream(file);
-    
-                foreach (Dictionary<string, string> combination in combinations)
+                if (_downloads.TryGetValue(fileName, out var download))
                 {
-                    var fileName = GetFileName(isThereAnyReplaceForMultipleLine || _doc.Files.Count > 1, combination.Values, file.Name);
-                    var currentDownloadFile = _downloads.FirstOrDefault(d => d.Value.FileName == fileName);
-                    try
-                    {
-                        // Replace
-                        Stream docReplaced = DocumentService.Replace(combination, originalFileInMemoryStream, _isMultipleWordsAtOnce);
-
-                        // Download the file
-                        await DocumentService
-                            .DownloadFile(fileName, docReplaced, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                            .ConfigureAwait(false);
-
-                        // Dispose current replaced doc
-                        await docReplaced.DisposeAsync();
-
-                        if (currentDownloadFile.Value is not null)
-                        {
-                            currentDownloadFile.Value.Status = DownloadStatus.Success;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        if (currentDownloadFile.Value is not null) 
-                        {
-                            currentDownloadFile.Value.Status = DownloadStatus.Error;
-                        }
-                        Console.WriteLine(ex.Message);
-                        Toaster.Add(string.Format(Localizer["toasterFileError"], fileName), MatToastType.Danger);
-                    }
-                    finally
-                    {
-                        // Update progress UI
-                        if (combination != combinations.Last() || file != _doc.Files.Last())
-                        {
-                            _progressBarValue += progressSizePerFile;
-                            ReloadUI();
-                            await DelayDotNetToUpdateUIAsync();
-                        }
-                    }
+                    download.Status = DownloadStatus.Success;
+                    ReloadUI();
                 }
-                await originalFileInMemoryStream.DisposeAsync();
+            },
+            (fileName) =>
+            {
+                if (_downloads.TryGetValue(fileName, out var download))
+                {
+                    download.Status = DownloadStatus.Error;
+                    ReloadUI();
+                }
             }
-            SetDefaultUIAfterDownload();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            Toaster.Add(Localizer["toasterGenericError"], MatToastType.Danger);
-            SetDefaultUIAfterError();
-            ReloadUI();
-        }
+        ).ConfigureAwait(true);
     }
 
-    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool hasMultipleFiles, IReadOnlyList<IMatFileUploadEntry> docFiles)
+    private void PrepareDownloadUI(List<Dictionary<string, string>> combinations, bool hasMultipleFiles, IReadOnlyList<FileUploadDto> docFiles)
     {
         foreach (var file in docFiles)
         {
@@ -283,12 +179,10 @@
                 };
                 if (_downloads.ContainsKey(fileName))
                 {
-                    // update
                     _downloads[fileName] = download;
                 }
                 else
                 {
-                    // add
                     _downloads.Add(download.FileName, download);
                 }
             }
@@ -301,28 +195,22 @@
 
         if (hasMultipleFiles)
         {
-            fileName = $"{GetFileNameWithoutExtension(fileName)}_{Helper.SanitizeFileName(string.Join("_", combinationsValues)) + ".docx"}";
+            fileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{Helper.SanitizeFileName(string.Join("_", combinationsValues)) + ".docx"}";
         }
 
         return fileName;
     }
-    
-    private string GetFileNameWithoutExtension(string fileName)
-    {
-        return Path.GetFileNameWithoutExtension(fileName);
-    }
 
-    // Delay the to UI (Javascript) to catch a breath to update UI
     private static async Task DelayDotNetToUpdateUIAsync(int timeInMs = 100)
     {
-        await Task.Delay(timeInMs);
+        await Task.Delay(timeInMs).ConfigureAwait(true);
     }
 
     private void PrepareUIToReplaceAndDownload()
     {
         _progressBar = true;
         _btnReplaceText = Localizer["btnReplaceTextReplacing"];
-        _btnReplaceIcon = MatIconNames.Hourglass_empty;
+        _btnReplaceIcon = Icons.Material.Filled.HourglassEmpty;
     }
 
     private void SetDefaultUIAfterDownload()
@@ -342,21 +230,7 @@
     private void SetDefaultValuesForBtnReplace()
     {
         _btnReplaceText = Localizer["btnReplaceTextDefault"];
-        _btnReplaceIcon = MatIconNames.Find_replace;
-    }
-
-    private void DisplaySnackBar(string textMessage, bool hasCloseButton = true, int timeout = 100)
-    {
-        if (_snackBarIsOpen)
-        {
-            _snackBarIsOpen = false;
-        }
-
-        _snackBarIsOpen = true;
-        _snackBarContent = textMessage;
-        _snackBarHasCloseButton = hasCloseButton;
-        _snackBarTimeout = timeout;
-        ReloadUI();
+        _btnReplaceIcon = Icons.Material.Filled.FindReplace;
     }
 
     private void ReloadUI()
@@ -364,16 +238,16 @@
         InvokeAsync(StateHasChanged);
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         _btnReplaceText = Localizer["btnReplaceTextDefault"];
 
-        return base.OnInitializedAsync();
+        await base.OnInitializedAsync().ConfigureAwait(true);
     }
 
     private async Task OnPresetDocumentChanged(Document updatedDoc)
     {
         _doc.DocumentValues = updatedDoc.DocumentValues;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged).ConfigureAwait(true);
     }
 }

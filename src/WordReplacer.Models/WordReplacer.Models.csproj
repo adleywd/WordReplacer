@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="MatBlazor" />
+      <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     </ItemGroup>
 
 </Project>

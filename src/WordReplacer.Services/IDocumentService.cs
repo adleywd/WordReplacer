@@ -20,7 +20,7 @@ public interface IDocumentService
     /// This function returns a `MemoryStream` of the file uploaded by the user
     /// </summary>
     /// <param name="file">The file to get the memory stream for.</param>
-    public Task<MemoryStream> GetMemoryStream(IMatFileUploadEntry? file);
+    public Task<MemoryStream> GetMemoryStream(FileUploadDto file);
 
     /// <summary>
     /// It downloads a file using JS Invocation.

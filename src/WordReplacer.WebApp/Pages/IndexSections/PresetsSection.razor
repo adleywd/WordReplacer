@@ -1,14 +1,10 @@
-@using WordReplacer.Models
-@using Microsoft.Extensions.Localization
-<div class="d-inline-block">
-    <MatTooltip Tooltip="@TooltipText"
-                TargetId="preset-text-id"
-                Position="MatTooltipPosition.Right">
+<MudTooltip Text="@TooltipText" Color="Color.Primary" Placement="Placement.Top">
+    <MudButton>
         <i id="preset-text-id" class="fa fa-info-circle primary-color"></i>
         <span class="preset-text">@LabelText</span>
-    </MatTooltip>
-    <PresetsComponent Document="Document" DocumentChanged="DocumentChanged" />
-</div>
+    </MudButton>
+</MudTooltip>
+<PresetsComponent Document="Document" DocumentChanged="DocumentChanged" />
 
 @code {
     [Parameter] public string TooltipText { get; set; } = string.Empty;

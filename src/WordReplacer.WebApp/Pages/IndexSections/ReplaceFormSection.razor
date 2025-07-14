@@ -1,4 +1,3 @@
-@using WordReplacer.Models
 <EditForm Model="Document" OnValidSubmit="OnReplace" class="col-12">
     <DataAnnotationsValidator />
     <ValuesInputComponent @bind-Document="Document" />
@@ -7,9 +6,9 @@
     {
         @if (ShowProgressBar)
         {
-            <MatProgressBar Class="mb-2" Indeterminate="false" Progress="@ProgressValue"></MatProgressBar>
+            <MudProgressLinear Class="mb-2" Indeterminate="false" Value="@ProgressValue"></MudProgressLinear>
         }
-        <MatButton Icon="@ReplaceIcon" Disabled="@ReplaceDisabled" Raised="true">@ReplaceText</MatButton>
+        <MudButton StartIcon="@ReplaceIcon" Disabled="@ReplaceDisabled" Variant="Variant.Filled">@ReplaceText</MudButton>
     }
 </EditForm>
 

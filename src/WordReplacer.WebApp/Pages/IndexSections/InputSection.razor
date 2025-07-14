@@ -1,7 +1,8 @@
 @using WordReplacer.Dto
-@using WordReplacer.Models
 @using WordReplacer.Enums
-@using Microsoft.Extensions.Localization
+@using InputType = WordReplacer.Enums.InputType
+@using MudBlazor
+
 <div class="row">
     <div class="col-12 mt-3">
         <InputFileComponent @bind-Document="Document" />
@@ -11,8 +12,7 @@
 <EditForm Model="DocParamsDto" OnValidSubmit="OnAddValues">
     <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
-            <MatTextField @bind-Value="DocParamsDto.Text"
-                          OnInput="@(e => DocParamsDto.Text = e.Value?.ToString())"
+            <MudTextField @bind-Value="DocParamsDto.Text"
                           HelperText="@HelperText"
                           Label="@LabelText"
                           FullWidth="true" />
@@ -22,20 +22,20 @@
                 @InputTypeLabel
             </label>
             <br />
-            <MatRadioGroup @bind-Value="DocParamsDto.Type" TValue="InputType">
-                <MatRadioButton Value="@InputType.Text" TValue="InputType">@InputTypeText</MatRadioButton>
-                <MatRadioButton Value="@InputType.List" TValue="InputType">@InputTypeList</MatRadioButton>
-            </MatRadioGroup>
+            <MudRadioGroup @bind-SelectedOption="DocParamsDto.Type" T="InputType">
+                <MudRadio Option="@InputType.Text" T="InputType">@InputTypeText</MudRadio>
+                <MudRadio Option="@InputType.List" T="InputType">@InputTypeList</MudRadio>
+            </MudRadioGroup>
         </div>
     </div>
     <div class="row">
         <div class="col-12 mb-2 justify-content-center text-center">
-            <MatButton Icon="@MatIconNames.Add"
+            <MudButton StartIcon="@Icons.Material.Filled.Add"
                        Style="width: 98%"
-                       Raised="true"
-                       Disabled="string.IsNullOrWhiteSpace(DocParamsDto?.Text)">
+                       Variant="Variant.Filled"
+                       Disabled="@string.IsNullOrWhiteSpace(DocParamsDto?.Text)">
                 @AddButtonText
-            </MatButton>
+            </MudButton>
         </div>
     </div>
 </EditForm>

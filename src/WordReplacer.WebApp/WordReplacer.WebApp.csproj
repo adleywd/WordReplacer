@@ -7,16 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Remove="C:\Users\Adley\.nuget\packages\matblazor\2.8.0\contentFiles\any\netstandard2.1\Properties\launchSettings.json" />
-	</ItemGroup>
-	<ItemGroup>
 		<SupportedPlatform Include="browser" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="Blazored.LocalStorage" />
-		<PackageReference Include="MatBlazor" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -24,6 +15,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Extensions.Localization" />
+		<PackageReference Include="Blazored.LocalStorage" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+		<PackageReference Include="MudBlazor" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -220,6 +214,10 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ValuesInputResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>

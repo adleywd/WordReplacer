@@ -1,15 +1,17 @@
-﻿<MatSnackbar @bind-IsOpen="@IsSnackbarOpen" Timeout="@Timeout" Leading="true">
-    <MatSnackbarContent>@Content</MatSnackbarContent>
-    @if (HasCloseButton)
-    {
-        <MatSnackbarActions>
-            <MatButton Raised="true" OnClick="@(() => IsSnackbarOpen = false)">Close</MatButton>
-        </MatSnackbarActions>
-    }
-</MatSnackbar>
+@using RenderFragment = Microsoft.AspNetCore.Blazor.RenderFragment
+@inject ISnackbar Snackbar
+
+<MudSnackbar Open="@IsSnackbarOpen" Timeout="@Timeout" AnchorOrigin="Origin.BottomCenter">
+    <ChildContent>
+        @Content
+        @if (HasCloseButton)
+        {
+            <MudButton Variant="Variant.Filled" Size="Size.Small" OnClick="@(() => IsSnackbarOpen = false)">Close</MudButton>
+        }
+    </ChildContent>
+</MudSnackbar>
 
 @code {
-    
     [Parameter] 
     public RenderFragment? Content { get; set; }
     
@@ -33,5 +35,4 @@
     
     [Parameter]
     public EventCallback<bool> HasCloseButtonChanged { get; set; }
-
 }
