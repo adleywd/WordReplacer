@@ -15,23 +15,36 @@
         <MudIcon><img style="width: 100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MudIcon>
         <MudText Typo="Typo.h6" Class="ml-3">Word Replacer</MudText>
         <MudSpacer />
-        <MudStack Justify="Justify.Center" Class="d-flex align-center justify-center"  Row="true">
+        <MudStack Justify="Justify.Center" Class="d-flex align-center justify-center" Row="true">
+            @if (!_isDarkMode)
+            {
+                <MudIconButton OnClick="@(() => OnSystemDarkModeChanged(true))" Title="Dark theme" Edge="Edge.End">
+                    <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.DarkMode"/>
+                </MudIconButton>
+            }
+            else
+            {
+                <MudIconButton OnClick="@(() => OnSystemDarkModeChanged(false))" Title="Light theme" Edge="Edge.End">
+                    <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.LightMode"/>
+                </MudIconButton>
+            }
+
             @if (_selectedLanguage != "pt")
             {
                 <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("pt"))" Title="Português" Edge="Edge.End">
-                    <img style="width: 24px; height: 24px;" src="img/flag-brazil.svg" alt="Lingua Portuguesa" />
+                    <img style="width: 24px; height: 24px;" src="img/flag-brazil.svg" alt="Lingua Portuguesa"/>
                 </MudIconButton>
             }
             @if (_selectedLanguage != "en")
             {
-                
-                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("en"))"  Title="English" Edge="Edge.End">
-                    <img style="width: 24px; height: 24px;" src="img/flag-united-states.svg" alt="English language" />
+
+                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("en"))" Title="English" Edge="Edge.End">
+                    <img style="width: 24px; height: 24px;" src="img/flag-united-states.svg" alt="English language"/>
                 </MudIconButton>
             }
-            
+
             <MudIconButton Href="https://github.com/adleywd/WordReplacer" Title="GitHub" Edge="Edge.End">
-                <MudIcon  Style="width: 24px; height: 24px;" Icon="@Icons.Custom.Brands.GitHub" />
+                <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Custom.Brands.GitHub"/>
             </MudIconButton>
         </MudStack>
     </MudAppBar>
