@@ -15,20 +15,25 @@
         <MudIcon><img style="width: 100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MudIcon>
         <MudText Typo="Typo.h6" Class="ml-3">Word Replacer</MudText>
         <MudSpacer />
-        @if (_selectedLanguage != "pt")
-        {
-            <MudIconButton HtmlTag="img"  OnClick="@(() => ChangeUIToLanguageAsync("pt"))"  Edge="Edge.End">
-                <img src="img/flag-brazil.svg" alt="brazil flag"/>
+        <MudStack Justify="Justify.Center" Class="d-flex align-center justify-center"  Row="true">
+            @if (_selectedLanguage != "pt")
+            {
+                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("pt"))" Title="Português" Edge="Edge.End">
+                    <img style="width: 24px; height: 24px;" src="img/flag-brazil.svg" alt="Lingua Portuguesa" />
+                </MudIconButton>
+            }
+            @if (_selectedLanguage != "en")
+            {
+                
+                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("en"))"  Title="English" Edge="Edge.End">
+                    <img style="width: 24px; height: 24px;" src="img/flag-united-states.svg" alt="English language" />
+                </MudIconButton>
+            }
+            
+            <MudIconButton Href="https://github.com/adleywd/WordReplacer" Title="GitHub" Edge="Edge.End">
+                <MudIcon  Style="width: 24px; height: 24px;" Icon="@Icons.Custom.Brands.GitHub" />
             </MudIconButton>
-        }
-        @if (_selectedLanguage != "en")
-        {
-            <MudIconButton HtmlTag="img"  OnClick="@(() => ChangeUIToLanguageAsync("en"))"  Edge="Edge.End">
-                <img class="text-centered-in-btn" src="img/flag-united-states.svg" alt="united states flag"/>
-            </MudIconButton>
-        }
-        
-        <MudIconButton Href="https://github.com/adleywd/WordReplacer" Icon="@Icons.Custom.Brands.GitHub" Title="GitHub" Edge="Edge.End" />
+        </MudStack>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
         <NavMenuContent/>
@@ -60,9 +65,9 @@
     {
         PaletteLight = new PaletteLight()
         {
-            Primary = Colors.Blue.Default,
-            Secondary = Colors.Green.Accent4,
-            AppbarBackground = Colors.Red.Default,
+            Primary = Colors.DeepPurple.Default,
+            Secondary = Colors.Pink.Accent4,
+            AppbarBackground = Colors.DeepPurple.Default,
         },
         PaletteDark = new PaletteDark()
         {
@@ -111,6 +116,7 @@
         if (firstRender)
         {
             ArgumentNullException.ThrowIfNull(_mudThemeProvider);
+            _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
             await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
             StateHasChanged();
         }

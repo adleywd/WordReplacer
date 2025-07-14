@@ -1,4 +1,5 @@
-﻿@inject ISnackbar Snackbar
+﻿@using WordReplacer.Dto
+@inject ISnackbar Snackbar
 
 <MudStack Style="width: 100%">
     <MudFileUpload T="IReadOnlyList<IBrowserFile>"
@@ -8,55 +9,47 @@
                    OnFilesChanged="OnInputFileChanged"
                    AppendMultipleFiles
                    Hidden="@false"
-                   InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                   InputStyle="opacity:0"
+                   InputClass="absolute mud-width-full mud-height-full overflow-auto z-10"
+                   InputStyle="opacity:0;"
                    tabindex="-1"
                    @ondrop="@ClearDragClass"
                    @ondragenter="@SetDragClass"
                    @ondragleave="@ClearDragClass"
                    @ondragend="@ClearDragClass">
         <ActivatorContent>
-            <MudPaper Height="300px"
+            <MudPaper Height="200px"
                       Outlined="true"
                       Class="@_dragClass">
-                <MudText Typo="Typo.h6">
-                    Drag and drop files here or click
+                <MudText Typo="Typo.h6" Class="d-flex align-center justify-center">
+                    Drag and drop files or click here
+                    &nbsp;
+                    <MudIcon Icon="@Icons.Custom.FileFormats.FileWord" Size="Size.Medium" Color="Color.Primary" Class="fa-align-justify justify-content-center cen"/>
                 </MudText>
                 @foreach (var file in _fileNames)
                 {
                     <MudChip T="string"
                              Color="Color.Dark"
-                             Text="@file"
-                             tabindex="-1" />
+                             Text="@file.Name"
+                             tabindex="-1"/>
                 }
             </MudPaper>
         </ActivatorContent>
     </MudFileUpload>
     <MudToolBar Gutters="@false"
                 Class="relative d-flex justify-end gap-4">
-        <MudButton Color="Color.Primary"
-                   OnClick="@OpenFilePickerAsync"
-                   Variant="Variant.Filled">
-            Open file picker
-        </MudButton>
-        <MudButton Color="Color.Primary"
-                   Disabled="@(!_fileNames.Any())"
-                   OnClick="@Upload"
-                   Variant="Variant.Filled">
-            Upload
-        </MudButton>
-        <MudButton Color="Color.Error"
-                   Disabled="@(!_fileNames.Any())"
+        <MudButton Color="Color.Warning"
+                   Disabled="@(_fileNames.Count == 0)"
                    OnClick="@ClearAsync"
-                   Variant="Variant.Filled">
-            Clear
+                   Variant="Variant.Filled"
+                   Style="align-content: center">
+            <MudIcon Icon="@Icons.Material.Outlined.Delete" /> Remove all files 
         </MudButton>
     </MudToolBar>
 </MudStack>
 @code {
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string _dragClass = DefaultDragClass;
-    private readonly List<string> _fileNames = new();
+    private readonly List<FileUploadDto> _fileNames = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
 
     private async Task ClearAsync()
@@ -69,14 +62,40 @@
     private Task OpenFilePickerAsync()
         => _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
 
-    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    private async Task  OnInputFileChanged(InputFileChangeEventArgs e)
     {
         ClearDragClass();
-        var files = e.GetMultipleFiles();
-        foreach (var file in files)
+        var browserFiles = e.GetMultipleFiles();
+        const int maxFileSize = 20 * 1024 * 1024; // 20MB
+        
+        foreach (var browserFile in browserFiles)
         {
-            _fileNames.Add(file.Name);
+            if (browserFile.Size > maxFileSize)
+            {
+                Snackbar.Add($"File {browserFile.Name} is too large. Max file size is {maxFileSize / 1024 / 1024}MB", Severity.Error);
+                return;
+            }
+            
+            if (browserFile.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                Snackbar.Add($"File {browserFile.Name} is not a word document", Severity.Error);
+                return;
+            }
+            
+            await using Stream stream = browserFile.OpenReadStream(maxAllowedSize: maxFileSize);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            
+            _fileNames.Add(new FileUploadDto
+            {
+                Name = browserFile.Name,
+                Type = browserFile.ContentType,
+                Size = browserFile.Size,
+                LastModified = browserFile.LastModified,
+                Content = memoryStream.ToArray()
+            });
         }
+   
     }
 
     private void Upload()

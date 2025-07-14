@@ -1,4 +1,5 @@
 ﻿using MatBlazor;
+using WordReplacer.Dto;
 using WordReplacer.Models;
 
 namespace WordReplacer.Services;

@@ -111,7 +111,7 @@ public class DocumentProcessingService : IDocumentProcessingService
             }
             // TODO MOVE IT OUT OF HERE
             var files = new List<FileUploadDto>();
-            files.AddRange(doc.Files.Select(f => new FileUploadDto { Name = f.Name, Size = f.Size, Type = f.ContentType, LastModified = f.LastModified}));
+            // files.AddRange(doc.Files.Select(f => new FileUploadDto { Name = f.Name, Size = f.Size, Type = f.ContentType, LastModified = f.LastModified}));
             
             await prepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine, files).ConfigureAwait(false);
             await delayDotNetToUpdateUIAsync().ConfigureAwait(false);
@@ -125,7 +125,7 @@ public class DocumentProcessingService : IDocumentProcessingService
 
             foreach (var file in files)
             {
-                var originalFileInMemoryStream = await _documentService.GetMemoryStream(file).ConfigureAwait(false);
+                MemoryStream originalFileInMemoryStream = await _documentService.GetMemoryStream(file).ConfigureAwait(false);
 
                 foreach (var combination in combinations)
                 {

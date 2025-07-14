@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using Microsoft.JSInterop;
 using WordReplacer.Common;
+using WordReplacer.Dto;
 using WordReplacer.Models;
 
 namespace WordReplacer.Services
@@ -40,15 +41,12 @@ namespace WordReplacer.Services
         /// <inheritdoc />
         public async Task<MemoryStream> GetMemoryStream(FileUploadDto file)
         {
-            if (file is null)
+            if (file?.Content == null)
             {
-                throw new ArgumentException("Cannot get a memory stream from a null/empty file");
+                throw new ArgumentException("Invalid file content");
             }
 
-            var stream = new MemoryStream();
-            // TODO: Review
-            // await file.WriteToStreamAsync(stream).ConfigureAwait(false);
-            return stream;
+            return await Task.FromResult(new MemoryStream(file.Content)).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
