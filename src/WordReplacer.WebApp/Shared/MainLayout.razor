@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @using System.Globalization
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject NavigationManager Navigation
@@ -12,7 +12,7 @@
 <MudLayout>
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudIcon><img style="width: 100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MudIcon>
+        <MudIcon Style="width:64px; height:64px;"><img style="width:100%; height:100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MudIcon>
         <MudText Typo="Typo.h6" Class="ml-3">Word Replacer</MudText>
         <MudSpacer />
         <MudStack Justify="Justify.Center" Class="d-flex align-center justify-center" Row="true">
@@ -52,7 +52,7 @@
         <NavMenuContent/>
     </MudDrawer>
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium">
+        <MudContainer MaxWidth="MaxWidth.Large">
             @Body
         </MudContainer>
     </MudMainContent>
@@ -84,7 +84,10 @@
         },
         PaletteDark = new PaletteDark()
         {
-            Primary = Colors.Blue.Lighten1
+            Primary = Colors.DeepPurple.Lighten5,
+            Secondary = Colors.Pink.Accent4,
+            AppbarBackground = Colors.DeepPurple.Default,
+            Info = Colors.Blue.Lighten2
         },
 
         LayoutProperties = new LayoutProperties()
