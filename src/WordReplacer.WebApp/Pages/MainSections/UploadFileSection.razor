@@ -35,7 +35,7 @@
     </MudFileUpload>
     @if (Files.Count > 0)
     {
-        <MudPaper Elevation="0" Class="p-2 mt-2 mb-1">
+        <MudPaper Elevation="0" Class="p-2 mt-2 mb-1 overflow-y-auto" MinHeight="40px"  MaxHeight="80px">
             @if(Files.Count > 1)
             {
                 <MudChip T="string"
@@ -46,14 +46,14 @@
                          tabindex="-1"
                          Style="cursor: pointer"/>
             }
-            @foreach (var file in Files)
+            @foreach (var file in Files.Values.OrderBy(f => f.Name))
             {
                 <MudChip
                     T="string"
-                    OnClick="@(() => RemoveSingleFileAsync(file.Value.Name))"
+                    OnClick="@(() => RemoveSingleFileAsync(file.Name))"
                     Icon="@Icons.Material.Outlined.Close"
                     Color="Color.Dark"
-                    Text="@file.Value.Name"
+                    Text="@file.Name"
                     tabindex="-1"
                     Style="cursor: pointer"/>
             }
@@ -83,19 +83,19 @@
             if (browserFile.Size > maxFileSize)
             {
                 Snackbar.Add($"File {browserFile.Name} is too large. Max file size is {maxFileSize / 1024 / 1024}MB", Severity.Error);
-                return;
+                continue;;
             }
 
             if (browserFile.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                Snackbar.Add($"File {browserFile.Name} is not a word document", Severity.Error);
-                return;
+                Snackbar.Add($"File {browserFile.Name} is not a Word document", Severity.Error);
+                continue;;
             }
 
+            // Ensure the latest uploaded files is used.
             if (Files.ContainsKey(browserFile.Name))
             {
-                Snackbar.Add($"File {browserFile.Name} already exists", Severity.Warning);
-                return;
+                Files.Remove(browserFile.Name);
             }
 
             await using Stream stream = browserFile.OpenReadStream(maxAllowedSize: maxFileSize);
@@ -126,7 +126,6 @@
     private async Task RemoveSingleFileAsync(string fileName)
     {
         Files.Remove(fileName);
-        Snackbar.Add($"{fileName} removed", Severity.Warning);
         await FilesChangesAsync();
     }
 
@@ -135,7 +134,6 @@
         await (_browserFiles?.ClearAsync() ?? Task.CompletedTask);
         Files.Clear();
         ClearDragClass();
-        Snackbar.Add("All selected files removed", Severity.Warning);
         await FilesChangesAsync();
     }
 
