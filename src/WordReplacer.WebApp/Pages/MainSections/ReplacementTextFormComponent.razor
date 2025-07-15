@@ -24,8 +24,10 @@
                             Label="@Localizer["labelTextAddValues"]"
                             @bind-Value="doc.Value.Text"
                             HelperText="@doc.Value.HelperText"
+                            HelperTextOnFocus="true"
                             Variant="Variant.Text"
-                            Immediate="true"/>
+                            Immediate="true"
+                            AutoGrow="true"/>
 
                         <!-- Add Button -->
                         <MudButton Variant="Variant.Outlined"
