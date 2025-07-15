@@ -69,6 +69,15 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        public static string btnRemoveReplacementLine {
+            get {
+                return ResourceManager.GetString("btnRemoveReplacementLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Replace and Download.
         /// </summary>
         public static string btnReplaceTextDefault {

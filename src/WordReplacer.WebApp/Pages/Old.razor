@@ -81,7 +81,7 @@
             {
                 <MudProgressLinear Class="mb-2" Indeterminate="false" Value="@_progressBarValue"></MudProgressLinear>
             }
-            <MudButton StartIcon="@_btnReplaceIcon" Disabled="@(!_doc.Files.Any() || _progressBar)" Variant="Variant.Filled">@_btnReplaceText</MudButton>
+            <MudButton StartIcon="@_btnReplaceIcon" Disabled="@(!_doc.FilesBrowser.Any() || _progressBar)" Variant="Variant.Filled">@_btnReplaceText</MudButton>
         }
 
     </EditForm>

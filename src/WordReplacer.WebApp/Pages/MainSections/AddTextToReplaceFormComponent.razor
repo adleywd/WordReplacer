@@ -1,11 +1,13 @@
-﻿@inject IStringLocalizer<GeneralResource> Localizer
+﻿@using WordReplacer.WebApp.Services
+@inject IStringLocalizer<GeneralResource> Localizer
 @inject ISnackbar Snackbar
+@inject IDocumentProcessingService DocumentProcessingService
 
 <MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
     <MudItem xs="12">
         <div class="d-flex align-center justify-space-between">
             <MudTextField 
-                @bind-Value="_textToReplace" 
+                @bind-Value="_textToBeReplaced" 
                 Label="@Localizer["labelTextAddValues"]"
                 Immediate="true"
                 Variant="Variant.Text"
@@ -13,11 +15,11 @@
             <MudButton
                 Variant="Variant.Filled"
                 StartIcon="@Icons.Material.Filled.Add"
-                OnClick="AddValueToReplace"
+                OnClick="AddValueToReplaceAsync"
                 Color="Color.Primary"
                 Size="Size.Large"
                 Class="ml-4"
-                Disabled="@(string.IsNullOrEmpty(_textToReplace))">
+                Disabled="@(string.IsNullOrEmpty(_textToBeReplaced))">
                 @Localizer["buttonTextAddValues"]
             </MudButton>
         </div>
@@ -25,31 +27,30 @@
 </MudGrid>
 
 @code {
-    [Parameter] public IList<string> TextsToBeReplaced { get; set; } = [];
-    [Parameter] public EventCallback OnAddValues { get; set; }
+    [Parameter] public required Document Document { get; set; }
+    [Parameter] public EventCallback<Document> DocumentChanged { get; set; }
+    
+    private string _textToBeReplaced = string.Empty;
 
-    private bool _addValueButtonDisabled = true;
-    private string _textToReplace = string.Empty;
-
-    private void AddValueToReplace()
+    private async Task AddValueToReplaceAsync()
     {
-        if (string.IsNullOrEmpty(_textToReplace))
+        if (string.IsNullOrEmpty(_textToBeReplaced))
         {
             Snackbar.Add("Text cannot be empty", Severity.Error);
             return;
         }
 
-        if (TextsToBeReplaced.Contains(_textToReplace))
+        if (Document.DocumentValues.Select(d => d.Key.Text).Contains(_textToBeReplaced))
         {
-            var text = $"\"{_textToReplace}\"";
+            var text = $"\"{_textToBeReplaced}\"";
             Snackbar.Add(string.Format(Localizer["valueAlreadyAddedError"], text), Severity.Error);
             return;
         }
 
-        TextsToBeReplaced.Add(_textToReplace);
-        OnAddValues.InvokeAsync(null);
-        _textToReplace = string.Empty;
+        DocumentProcessingService.AddValues(Document, _textToBeReplaced);
+        await DocumentChanged.InvokeAsync(Document);
         StateHasChanged();
+        _textToBeReplaced = string.Empty;
     }
 
     private void OnEnterPressed(KeyboardEventArgs e)
@@ -59,9 +60,9 @@
             return;
         }
         
-        if(!string.IsNullOrEmpty(_textToReplace))
+        if(!string.IsNullOrEmpty(_textToBeReplaced))
         {
-            AddValueToReplace();
+            AddValueToReplaceAsync();
         }
     }
 

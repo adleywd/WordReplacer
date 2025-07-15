@@ -73,6 +73,34 @@ public class DocumentProcessingService : IDocumentProcessingService
         docParamsDto.Text = string.Empty; // Clear add values text
     }
 
+    public void AddValues(Document doc, string text)
+    {
+        var oldValue = new DocumentValue()
+        {
+            Label = _generalLocalizer["originalDocumentLabel"],
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = true,
+            Text = text,
+            HelperText = _generalLocalizer["originalDocumentHelperText"],
+            Type = InputType.Text,
+            IsAccordionOpen = true
+        };
+
+        var newValue = new DocumentValue()
+        {
+            Label = string.Format(_generalLocalizer["newDocumentLabel"], text),
+            HtmlId = Guid.NewGuid().ToString(),
+            IsOldValue = false,
+            Text = string.Empty,
+            HelperText = _generalLocalizer["newDocumentHelperText"],
+            Type = InputType.List,
+            IsAccordionOpen = true,
+            ShouldReplaceForEachLine = true
+        };
+
+        doc.DocumentValues.Add(new KeyValuePair<DocumentValue, DocumentValue>(oldValue, newValue));
+    }
+
     /// <inheritdoc />
     public async Task HandleSubmitAsync(
         Document doc,
@@ -118,7 +146,7 @@ public class DocumentProcessingService : IDocumentProcessingService
 
             // toasterAction("The site may freeze for a few moments.", MatToastType.Primary);
 
-            var progressSizePerFile = 1.0 / (combinations.Count * doc.Files.Count);
+            var progressSizePerFile = 1.0 / (combinations.Count * doc.FilesBrowser.Count);
 
             openDownloadPopup();
             await delayDotNetToUpdateUIAsync().ConfigureAwait(false);
@@ -129,7 +157,7 @@ public class DocumentProcessingService : IDocumentProcessingService
 
                 foreach (var combination in combinations)
                 {
-                    var fileName = GetFileName(isThereAnyReplaceForMultipleLine || doc.Files.Count > 1, combination.Values, file.Name);
+                    var fileName = GetFileName(isThereAnyReplaceForMultipleLine || doc.FilesBrowser.Count > 1, combination.Values, file.Name);
                     try
                     {
                         Stream docReplaced = _documentService.Replace(combination, originalFileInMemoryStream, IsMultipleWordsAtOnce);

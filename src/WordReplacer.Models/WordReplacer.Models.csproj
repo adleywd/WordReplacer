@@ -5,6 +5,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\WordReplacer.Dto\WordReplacer.Dto.csproj" />
       <ProjectReference Include="..\WordReplacer.Enums\WordReplacer.Enums.csproj" />
     </ItemGroup>
 

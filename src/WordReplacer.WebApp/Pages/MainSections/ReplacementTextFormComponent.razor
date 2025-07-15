@@ -1,51 +1,60 @@
 ﻿@inject IStringLocalizer<GeneralResource> Localizer
 
-@if (TextsToReplace.Count > 0)
-{
-    foreach (var textToReplace in TextsToReplace)
+
+<MudPaper Class="p-4">
+    @if (Document.DocumentValues.Count > 0)
     {
-        <MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
-            <MudItem xs="12">
-                <div class="d-flex align-center justify-space-between p-1">
-                    <MudTextField
-                        T = "string"
-                        Label="@textToReplace"
-                        Disabled="true"
-                        Variant="Variant.Text"
-                        Class="mr-4"/>
-                    <MudTextField
-                        T = "string"
-                        Label="@Localizer["labelTextAddValues"]"
-                        Immediate="true"
-                        Variant="Variant.Text"/>
-                    <MudButton
-                        Variant="Variant.Filled"
-                        StartIcon="@Icons.Material.Filled.Add"
-                        Color="Color.Primary"
-                        Size="Size.Large"
-                        Class="ml-4"
-                        OnClick="AddMoreReplacementValues"
-                        Disabled="false">
-                        @Localizer["buttonTextAddValues"]
-                    </MudButton>
-                </div>
-            </MudItem>
-        </MudGrid>
-        <br />
+        @foreach (var doc in Document.DocumentValues)
+        {
+            <MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
+                <MudItem xs="12">
+                    <div class="d-flex align-center justify-space-between p-1">
+                        <!-- Text to Replace (readonly) -->
+                        <MudTextField
+                            T="string"
+                            Text="@doc.Key.Text"
+                            HelperText="@doc.Key.HelperText"
+                            Disabled="true"
+                            Variant="Variant.Text"
+                            Class="mr-4" />
+
+                        <!-- New Replacement Input -->
+                        <MudTextField
+                            T="string"
+                            Label="@Localizer["labelTextAddValues"]"
+                            @bind-Value="doc.Value.Text"
+                            HelperText="@doc.Value.HelperText"
+                            Variant="Variant.Text"
+                            Immediate="true"/>
+
+                        <!-- Add Button -->
+                        <MudButton Variant="Variant.Outlined"
+                                   StartIcon="@Icons.Material.Filled.Delete"
+                                   ButtonType="ButtonType.Button"
+                                   Color="Color.Error"
+                                   OnClick="() => RemoveItemsFromDictAsync(doc)">
+                            @Localizer["btnRemoveReplacementLine"]
+                        </MudButton>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        }
     }
-}
-else
-{
-    <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Info">
-        @Localizer["emptyValueListInfo"]
-    </MudAlert>
-}
+    else
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Info">
+            @Localizer["emptyValueListInfo"]
+        </MudAlert>
+    }
+</MudPaper>
 
 @code {
-    [Parameter] public required IList<string> TextsToReplace { get; set; }
-
-    private void AddMoreReplacementValues()
+    [Parameter] public required Document Document { get; set; }
+    [Parameter] public EventCallback<Document> DocumentChanged { get; set; }
+    
+    private async Task RemoveItemsFromDictAsync(KeyValuePair<DocumentValue, DocumentValue> doc)
     {
-
+        Document.DocumentValues.Remove(doc);
+        await DocumentChanged.InvokeAsync(Document);
     }
 }

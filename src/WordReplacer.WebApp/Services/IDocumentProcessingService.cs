@@ -16,6 +16,12 @@ public interface IDocumentProcessingService
     void AddValues(Document doc, DocumentParamsDto docParamsDto);
     
     /// <summary>
+    /// Add Values for replacing in document
+    /// </summary>
+    /// <param name="doc">The document.</param>
+    void AddValues(Document doc, string text);
+    
+    /// <summary>
     /// Handles the submit async.
     /// </summary>
     /// <param name="doc"></param>

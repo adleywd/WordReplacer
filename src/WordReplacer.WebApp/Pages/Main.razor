@@ -1,26 +1,26 @@
 @page "/"
 @using WordReplacer.Dto
 @using WordReplacer.WebApp.Pages.MainSections
+@using WordReplacer.WebApp.Services
+
 
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
         <UploadFileFormComponent Files="_files" FilesChanged="UpdateUI" />
         <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
-        <AddTextToReplaceFormComponent TextsToBeReplaced="_textToBeReplaced" OnAddValues="UpdateUI"/>
+        <AddTextToReplaceFormComponent @bind-Document="_doc"/>
     </MudContainer>
 </MudPaper>
 <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        <ReplacementTextFormComponent TextsToReplace="_textToBeReplaced" />
+        <ReplacementTextFormComponent @bind-Document="_doc" />
     </MudContainer>
 </MudPaper>
 @code {
     
     private readonly Dictionary<string, FileUploadDto> _files = [];
-    private readonly List<string> _textToBeReplaced = [];
     private Document _doc = new();
-    private DocumentParamsDto _docParamsDto = new();
     
     private void UpdateUI()
     {

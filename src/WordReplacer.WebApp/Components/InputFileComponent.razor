@@ -5,10 +5,10 @@
     <InputFile OnChange="@FilesReady" multiple />
     <MudText Class="mt-2" Typo="Typo.body2">@Localizer["selectFileLabel"]</MudText>
 </MudPaper>
-@if (Document.Files.Any())
+@if (Document.FilesBrowser.Any())
 {
-    <div class="mt-1">@(Document.Files.Count > 1 ? Localizer["selectedManyFileLabel"] : Localizer["selectedSingleFileLabel"])
-        <span class="text-info">@string.Join(", ", Document.Files.Select(f => f.Name))</span>
+    <div class="mt-1">@(Document.FilesBrowser.Count > 1 ? Localizer["selectedManyFileLabel"] : Localizer["selectedSingleFileLabel"])
+        <span class="text-info">@string.Join(", ", Document.FilesBrowser.Select(f => f.Name))</span>
     </div>
 }
 
@@ -22,7 +22,7 @@
     
     private async Task FilesReady(InputFileChangeEventArgs e)
     {
-        Document.Files.Clear();
+        Document.FilesBrowser.Clear();
         foreach (IBrowserFile file in e.GetMultipleFiles())
         {
             if (file.ContentType != "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
@@ -34,7 +34,7 @@
             }
             else
             {
-                Document.Files.Add(file);
+                Document.FilesBrowser.Add(file);
             }
         }
 

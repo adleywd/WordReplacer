@@ -198,4 +198,7 @@
   <data name="downloadsHeaderText" xml:space="preserve">
     <value>Downloads</value>
   </data>
+  <data name="btnRemoveReplacementLine" xml:space="preserve">
+    <value>Remove</value>
+  </data>
 </root>
