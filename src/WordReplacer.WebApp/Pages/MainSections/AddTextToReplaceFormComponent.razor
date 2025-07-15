@@ -8,7 +8,8 @@
                 @bind-Value="_textToReplace" 
                 Label="@Localizer["labelTextAddValues"]"
                 Immediate="true"
-                Variant="Variant.Text"/>
+                Variant="Variant.Text"
+                @onkeydown="OnEnterPressed"/>
             <MudButton
                 Variant="Variant.Filled"
                 StartIcon="@Icons.Material.Filled.Add"
@@ -30,7 +31,7 @@
     private bool _addValueButtonDisabled = true;
     private string _textToReplace = string.Empty;
 
-    private void AddValueToReplace(MouseEventArgs arg)
+    private void AddValueToReplace()
     {
         if (string.IsNullOrEmpty(_textToReplace))
         {
@@ -40,17 +41,28 @@
 
         if (TextsToBeReplaced.Contains(_textToReplace))
         {
-            Snackbar.Add(Localizer["valueAlreadyAddedError"], Severity.Error);
+            var text = $"\"{_textToReplace}\"";
+            Snackbar.Add(string.Format(Localizer["valueAlreadyAddedError"], text), Severity.Error);
             return;
         }
 
         TextsToBeReplaced.Add(_textToReplace);
         OnAddValues.InvokeAsync(null);
+        _textToReplace = string.Empty;
+        StateHasChanged();
     }
 
-    private void Callback(KeyboardEventArgs obj)
+    private void OnEnterPressed(KeyboardEventArgs e)
     {
+        if (e.Code is not ("Enter" or "NumpadEnter"))
+        {
+            return;
+        }
         
+        if(!string.IsNullOrEmpty(_textToReplace))
+        {
+            AddValueToReplace();
+        }
     }
 
 }

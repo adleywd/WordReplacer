@@ -1,25 +1,20 @@
 @page "/"
 @using WordReplacer.Dto
 @using WordReplacer.WebApp.Pages.MainSections
-@inject IStringLocalizer<GeneralResource> Localizer
 
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        
         <UploadFileFormComponent Files="_files" FilesChanged="UpdateUI" />
         <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
-        <ValuesToReplaceFormComponent TextsToBeReplaced="_textToBeReplaced" OnAddValues="UpdateUI"/>
+        <AddTextToReplaceFormComponent TextsToBeReplaced="_textToBeReplaced" OnAddValues="UpdateUI"/>
     </MudContainer>
 </MudPaper>
 <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Info">
-            @Localizer["emptyValueListInfo"]
-        </MudAlert>
+        <ReplacementTextFormComponent TextsToReplace="_textToBeReplaced" />
     </MudContainer>
 </MudPaper>
-
 @code {
     
     private readonly Dictionary<string, FileUploadDto> _files = [];

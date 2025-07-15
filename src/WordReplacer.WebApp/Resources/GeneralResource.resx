@@ -145,7 +145,7 @@
     <value>Select a file and add some text to begin the replacement</value>
   </data>
   <data name="valueAlreadyAddedError" xml:space="preserve">
-    <value>The word/text {0} has already been added.</value>
+    <value>The text {0} has already been added.</value>
   </data>
   <data name="valueAlreadyAddedErrorTitle" xml:space="preserve">
     <value>Duplicate original text</value>

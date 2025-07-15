@@ -285,7 +285,7 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The word/text {0} has already been added..
+        ///   Looks up a localized string similar to The text {0} has already been added..
         /// </summary>
         public static string valueAlreadyAddedError {
             get {
