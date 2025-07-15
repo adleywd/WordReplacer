@@ -1,32 +1,43 @@
 ﻿@inject IStringLocalizer<GeneralResource> Localizer
 @inject ISnackbar Snackbar
 
-<MudStack Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
-    <MudTextField @bind-Value="_textToReplace" Label="@Localizer["labelTextAddValues"]" Variant="Variant.Outlined" />
-    <MudButton 
-        Variant="Variant.Filled" 
-        StartIcon="@Icons.Material.Filled.Add" 
-        OnClick="AddValueToReplace"
-        Color="Color.Primary"
-        Disabled="@(string.IsNullOrEmpty(_textToReplace))">
-        @Localizer["buttonTextAddValues"]
-    </MudButton>
-</MudStack>
+<MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
+    <MudItem xs="12">
+        <div class="d-flex align-center justify-space-between">
+            <MudTextField 
+                @bind-Value="_textToReplace" 
+                Label="@Localizer["labelTextAddValues"]"
+                Immediate="true"
+                Variant="Variant.Text"/>
+            <MudButton
+                Variant="Variant.Filled"
+                StartIcon="@Icons.Material.Filled.Add"
+                OnClick="AddValueToReplace"
+                Color="Color.Primary"
+                Size="Size.Large"
+                Class="ml-4"
+                Disabled="@(string.IsNullOrEmpty(_textToReplace))">
+                @Localizer["buttonTextAddValues"]
+            </MudButton>
+        </div>
+    </MudItem>
+</MudGrid>
+
 @code {
     [Parameter] public IList<string> TextsToBeReplaced { get; set; } = [];
     [Parameter] public EventCallback OnAddValues { get; set; }
-    
+
+    private bool _addValueButtonDisabled = true;
     private string _textToReplace = string.Empty;
-    
+
     private void AddValueToReplace(MouseEventArgs arg)
     {
-        
         if (string.IsNullOrEmpty(_textToReplace))
         {
             Snackbar.Add("Text cannot be empty", Severity.Error);
             return;
         }
-        
+
         if (TextsToBeReplaced.Contains(_textToReplace))
         {
             Snackbar.Add(Localizer["valueAlreadyAddedError"], Severity.Error);
@@ -35,6 +46,11 @@
 
         TextsToBeReplaced.Add(_textToReplace);
         OnAddValues.InvokeAsync(null);
+    }
+
+    private void Callback(KeyboardEventArgs obj)
+    {
+        
     }
 
 }
