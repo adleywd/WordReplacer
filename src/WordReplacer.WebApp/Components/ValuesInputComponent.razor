@@ -1,7 +1,7 @@
 @using WordReplacer.Common
 @using WordReplacer.Enums
 @using InputType = WordReplacer.Enums.InputType
-@inject IStringLocalizer<ValuesInputResource> Localizer
+@inject IStringLocalizer<ReplacementTextResource> Localizer
 
 <MudExpansionPanels MultiExpansion="true">
     @for (var i = 0; i < Document.DocumentValues.Count; i ++)

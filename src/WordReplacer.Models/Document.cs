@@ -6,6 +6,6 @@ namespace WordReplacer.Models;
 public class Document
 {
     public List<KeyValuePair<DocumentValue, DocumentValue>> DocumentValues { get; set; } = [];
-    public Dictionary<string, FileUploadDto> FilesDto { get; set; } = [];
+    public IDictionary<string, FileUploadDto> Files { get; set; } = new Dictionary<string, FileUploadDto>();
     public List<IBrowserFile> FilesBrowser { get; } = [];
 }

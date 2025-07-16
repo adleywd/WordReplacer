@@ -131,10 +131,10 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>PresetsResource.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Resources\ValuesInputResource.Designer.cs">
+	  <Compile Update="Resources\ReplacementTextResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ValuesInputResource.resx</DependentUpon>
+	    <DependentUpon>ReplacementTextResource.resx</DependentUpon>
 	  </Compile>
 	  <Compile Update="Resources\ApplicationUpdateResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
@@ -210,7 +210,7 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>PresetsResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\ValuesInputResource.resx">
+	  <EmbeddedResource Update="Resources\ReplacementTextResource.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ValuesInputResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>

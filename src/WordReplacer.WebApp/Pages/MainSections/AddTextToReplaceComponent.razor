@@ -53,7 +53,7 @@
         _textToBeReplaced = string.Empty;
     }
 
-    private void OnEnterPressed(KeyboardEventArgs e)
+    private async Task OnEnterPressed(KeyboardEventArgs e)
     {
         if (e.Code is not ("Enter" or "NumpadEnter"))
         {
@@ -62,7 +62,7 @@
         
         if(!string.IsNullOrEmpty(_textToBeReplaced))
         {
-            AddValueToReplaceAsync();
+            await AddValueToReplaceAsync();
         }
     }
 

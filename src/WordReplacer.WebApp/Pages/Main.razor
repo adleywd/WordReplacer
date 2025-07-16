@@ -2,33 +2,37 @@
 @using WordReplacer.Dto
 @using WordReplacer.WebApp.Pages.MainSections
 @using WordReplacer.WebApp.Services
+@inject IStringLocalizer<GeneralResource> Localizer
+@inject IDocumentProcessingService DocumentProcessingService
 
 
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        <UploadFileFormComponent Files="_files" FilesChanged="UpdateUI" />
+        <UploadFileComponent @bind-Files="_doc.Files" />
         <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
-        <AddTextToReplaceFormComponent @bind-Document="_doc"/>
+        <AddTextToReplaceComponent @bind-Document="_doc"/>
     </MudContainer>
 </MudPaper>
 <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        <ReplacementTextFormComponent @bind-Document="_doc" />
+        <ReplacementTextComponent @bind-Document="_doc" />
+        <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary">
+                Clear all replacements
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@HandleWordReplacementAsync">
+                @Localizer["btnReplaceTextReplacing"]
+            </MudButton>
+        </MudStack>
     </MudContainer>
 </MudPaper>
 @code {
     
-    private readonly Dictionary<string, FileUploadDto> _files = [];
     private Document _doc = new();
     
-    private void UpdateUI()
+    private async Task HandleWordReplacementAsync()
     {
-        StateHasChanged();
-    }
-    
-    public void HandleWordReplacement()
-    {
-        
+        await DocumentProcessingService.ReplaceWordsAsync(_doc);
     }
 }

@@ -48,4 +48,6 @@ public interface IDocumentProcessingService
         Action<string> onDownloadSuccess,
         Action<string> onDownloadError
     );
+    
+    Task ReplaceWordsAsync(Document doc);
 }

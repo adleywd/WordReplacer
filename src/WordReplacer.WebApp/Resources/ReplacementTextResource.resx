@@ -103,4 +103,7 @@
   <data name="slideToggleReplaceForEachLineLabel" xml:space="preserve">
     <value>Create file for each line in replace area</value>
   </data>
+  <data name="accordionTitleReplaceText" xml:space="preserve">
+	  <value>will be replaced for</value>
+  </data>
 </root>

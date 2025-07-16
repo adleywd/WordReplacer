@@ -137,10 +137,11 @@ public class DocumentProcessingService : IDocumentProcessingService
                 // toasterAction("The list of values to be replaced cannot be empty.", MatToastType.Danger);
                 return;
             }
+
             // TODO MOVE IT OUT OF HERE
             var files = new List<FileUploadDto>();
             // files.AddRange(doc.Files.Select(f => new FileUploadDto { Name = f.Name, Size = f.Size, Type = f.ContentType, LastModified = f.LastModified}));
-            
+
             await prepareDownloadUI(combinations, isThereAnyReplaceForMultipleLine, files).ConfigureAwait(false);
             await delayDotNetToUpdateUIAsync().ConfigureAwait(false);
 
@@ -157,7 +158,10 @@ public class DocumentProcessingService : IDocumentProcessingService
 
                 foreach (var combination in combinations)
                 {
-                    var fileName = GetFileName(isThereAnyReplaceForMultipleLine || doc.FilesBrowser.Count > 1, combination.Values, file.Name);
+                    var fileName = GetFileName(
+                        isThereAnyReplaceForMultipleLine || doc.FilesBrowser.Count > 1,
+                        combination.Values,
+                        file.Name);
                     try
                     {
                         Stream docReplaced = _documentService.Replace(combination, originalFileInMemoryStream, IsMultipleWordsAtOnce);
@@ -193,6 +197,64 @@ public class DocumentProcessingService : IDocumentProcessingService
             // toasterAction("An unexpected error occurred.", MatToastType.Danger);
             await setDefaultUIAfterError().ConfigureAwait(false);
         }
+    }
+
+    public async Task ReplaceWordsAsync(Document doc)
+    {
+        try
+        {
+            doc.DocumentValues.SanitizeValues();
+
+            var combinations = _documentService.GetAllCombinations(doc.DocumentValues);
+
+            // TODO MOVE IT OUT OF HERE
+
+            var progressSizePerFile = 1.0 / (combinations.Count * doc.Files.Count);
+
+            foreach (var file in doc.Files)
+            {
+                MemoryStream originalFileInMemoryStream = await _documentService.GetMemoryStream(file.Value).ConfigureAwait(false);
+
+                foreach (var combination in combinations)
+                {
+                    var fileName = GetFileName(combination.Values, file.Value.Name);
+                    try
+                    {
+                        Stream docReplaced = _documentService.Replace(combination, originalFileInMemoryStream, IsMultipleWordsAtOnce);
+                        await _documentService.DownloadFile(
+                                fileName,
+                                docReplaced,
+                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                            .ConfigureAwait(false);
+                        await docReplaced.DisposeAsync().ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    finally
+                    {
+                        // updateProgressBar(progressSizePerFile);
+                        // await delayDotNetToUpdateUIAsync().ConfigureAwait(false);
+                    }
+                }
+
+                await originalFileInMemoryStream.DisposeAsync().ConfigureAwait(false);
+            }
+
+            // await setDefaultUIAfterDownload().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            // await setDefaultUIAfterError().ConfigureAwait(false);
+        }
+    }
+
+
+    private string GetFileName(IEnumerable<string> combinationsValues, string inputFileName)
+    {
+        return $"{GetFileNameWithoutExtension(inputFileName)}_{Helper.SanitizeFileName(string.Join("_", combinationsValues))}.docx";
     }
 
     private string GetFileName(bool hasMultipleFiles, IEnumerable<string> combinationsValues, string inputFileName)

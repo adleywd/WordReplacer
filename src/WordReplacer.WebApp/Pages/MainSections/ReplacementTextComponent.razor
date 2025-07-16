@@ -1,0 +1,80 @@
+﻿@using MarkupString = Microsoft.AspNetCore.Blazor.MarkupString
+@inject IStringLocalizer<GeneralResource> GeneralLocalizer
+@inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
+
+
+<MudPaper Class="p-4">
+    @if (Document.DocumentValues.Count > 0)
+    {
+        <MudExpansionPanels MultiExpansion="true" Elevation="10">
+            @foreach (KeyValuePair<DocumentValue, DocumentValue> doc in Document.DocumentValues)
+            {
+                <MudExpansionPanel @bind-Expanded="doc.Key.IsAccordionOpen">
+                    <TitleContent>
+                        <div class="d-flex align-content-center justify-content-center">
+                            <MudIcon Icon="@Icons.Material.Filled.FindReplace" class="mr-3"></MudIcon>
+                            <MudText>
+                                <u>@doc.Key.Text</u> @ReplacementTextLocalizer["accordionTitleReplaceText"] 
+                                <u>@(string.IsNullOrEmpty(doc.Value.Text) ? GeneralLocalizer["labelTextAddValues"] : doc.Value.Text)</u>
+                            </MudText>
+                        </div>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
+                            <MudItem xs="12">
+                                <div class="d-flex align-center justify-space-between p-1">
+                                    <!-- Text to Replace (readonly) -->
+                                    <MudTextField
+                                        T="string"
+                                        Text="@doc.Key.Text"
+                                        HelperText="@doc.Key.HelperText"
+                                        Disabled="true"
+                                        Variant="Variant.Text"
+                                        Class="mr-4"/>
+
+                                    <!-- New Replacement Input -->
+                                    <MudTextField
+                                        T="string"
+                                        Label="@GeneralLocalizer["labelTextAddValues"]"
+                                        @bind-Value="doc.Value.Text"
+                                        HelperText="@doc.Value.HelperText"
+                                        HelperTextOnFocus="false"
+                                        Variant="Variant.Text"
+                                        Lines="2"
+                                        Immediate="true"
+                                        AutoGrow="true"/>
+
+                                    <!-- Add Button -->
+                                    <MudButton Variant="Variant.Outlined"
+                                               StartIcon="@Icons.Material.Filled.Delete"
+                                               ButtonType="ButtonType.Button"
+                                               Color="Color.Error"
+                                               OnClick="() => RemoveItemsFromDictAsync(doc)">
+                                        @GeneralLocalizer["btnRemoveReplacementLine"]
+                                    </MudButton>
+                                </div>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Info">
+            @GeneralLocalizer["emptyValueListInfo"]
+        </MudAlert>
+    }
+</MudPaper>
+
+@code {
+    [Parameter] public required Document Document { get; set; }
+    [Parameter] public EventCallback<Document> DocumentChanged { get; set; }
+
+    private async Task RemoveItemsFromDictAsync(KeyValuePair<DocumentValue, DocumentValue> doc)
+    {
+        Document.DocumentValues.Remove(doc);
+        await DocumentChanged.InvokeAsync(Document);
+    }
+}

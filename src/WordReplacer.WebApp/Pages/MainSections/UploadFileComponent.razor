@@ -62,8 +62,8 @@
 </MudStack>
 
 @code {
-    [Parameter] public required Dictionary<string, FileUploadDto> Files { get; set; }
-    [Parameter] public EventCallback FilesChanged { get; set; }
+    [Parameter] public required IDictionary<string, FileUploadDto> Files { get; set; }
+    [Parameter] public EventCallback<IDictionary<string, FileUploadDto>> FilesChanged { get; set; }
     private const int MaxFileCount = 20;
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full d-flex align-items-center justify-center";
     private string _dragClass = DefaultDragClass;
@@ -139,7 +139,7 @@
 
     private async Task FilesChangesAsync()
     {
-        await FilesChanged.InvokeAsync(null);
+        await FilesChanged.InvokeAsync(Files);
         StateHasChanged();
     }
 
