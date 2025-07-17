@@ -1,32 +1,67 @@
 ﻿@inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
 
 <MudText>
-    <u>@DocumentValues.Key.Text</u> @ReplacementTextLocalizer["accordionTitleReplaceText"]
-    <u>
         @if (string.IsNullOrEmpty(DocumentValues.Value.Text))
         {
+            <u>@DocumentValues.Key.Text</u> 
+            <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
             <span>_</span>
+        }
+        else if (DocumentValues.Value.Delimiter == DelimiterType.None)
+        {
+            <u>@DocumentValues.Key.Text</u>
+            <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
+            <u>@DocumentValues.Value.Text</u>
+        }
+        else if (DocumentValues.Value.Delimiter != DelimiterType.None
+                 && DocumentValues.Value.Delimiter != DelimiterType.Custom    
+                 && DocumentValues.Value.Text.Contains(DocumentValues.Value.Delimiter.GetDelimiterString()))
+        {
+            var textValuesSplit = DocumentValues.Value.Text.Split(
+                [DocumentValues.Value.Delimiter.GetDelimiterString()], 
+                StringSplitOptions.None);
+            var index = 0;
+            var lastIndex = textValuesSplit.Length - 1;
+            foreach (var text in textValuesSplit)
+            {
+                <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
+                <u>@text</u>
+                @if (index != lastIndex)
+                {
+                    <br/>
+                }
+
+                index++;
+            }
+        }
+        else if (DocumentValues.Value.Delimiter == DelimiterType.Custom 
+                 && DocumentValues.Value.Text.Contains(DocumentValues.Value.CustomDelimiter))
+        {
+            var textValuesSplit = DocumentValues.Value.Text.Split(
+                [DocumentValues.Value.CustomDelimiter], 
+                StringSplitOptions.None);
+            
+            var index = 0;
+            var lastIndex = textValuesSplit.Length - 1;
+            foreach (var text in textValuesSplit)
+            {
+                <u>@DocumentValues.Key.Text</u>
+                <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
+                <u>@text</u>
+                @if (index != lastIndex)
+                {
+                    <br/>
+                }
+                
+                index++;
+            }
         }
         else
         {
-            if (DocumentValues.Value.Delimiter != DelimiterType.None && DocumentValues.Value.Text.Contains(DocumentValues.Value.Delimiter.GetDelimiterString()))
-            {
-                var textValuesSplit = DocumentValues.Value.Text.Split([DocumentValues.Value.Delimiter.GetDelimiterString()], StringSplitOptions.RemoveEmptyEntries);
-                var txtValueWithAnd = string.Join(" & ", textValuesSplit);
-                @txtValueWithAnd
-            }
-            else if (DocumentValues.Value.Delimiter == DelimiterType.Custom)
-            {
-                var textValuesSplit = DocumentValues.Value.Text.Split([DocumentValues.Value.CustomDelimiter], StringSplitOptions.RemoveEmptyEntries);
-                var txtValueWithAnd = string.Join(" & ", textValuesSplit);
-                @txtValueWithAnd
-            }
-            else
-            {
-                @DocumentValues.Value.Text
-            }
+            <u>@DocumentValues.Key.Text</u> 
+            <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
+            <u>@DocumentValues.Value.Text</u>
         }
-    </u>
 </MudText>
 
 @code {
