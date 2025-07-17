@@ -1,4 +1,5 @@
-﻿@using MarkupString = Microsoft.AspNetCore.Blazor.MarkupString
+@using MarkupString = Microsoft.AspNetCore.Blazor.MarkupString
+@using WordReplacer.Models
 @inject IStringLocalizer<GeneralResource> GeneralLocalizer
 @inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
 
@@ -23,9 +24,15 @@
                                     }
                                     else
                                     {
-                                        if (doc.Value.Text.Contains(doc.Value.Delimiter))
+                                        if (doc.Value.Delimiter != DelimiterType.None && doc.Value.Text.Contains(doc.Value.Delimiter.GetDelimiterString()))
                                         {
-                                            var textValuesSplit = doc.Value.Text.Split([doc.Value.Delimiter], StringSplitOptions.RemoveEmptyEntries);
+                                            var textValuesSplit = doc.Value.Text.Split([doc.Value.Delimiter.GetDelimiterString()], StringSplitOptions.RemoveEmptyEntries);
+                                            var txtValueWithAnd = string.Join(" & ", textValuesSplit);
+                                            @txtValueWithAnd
+                                        }
+                                        else if (doc.Value.Delimiter == DelimiterType.Custom)
+                                        {
+                                            var textValuesSplit = doc.Value.Text.Split([doc.Value.CustomDelimiter], StringSplitOptions.RemoveEmptyEntries);
                                             var txtValueWithAnd = string.Join(" & ", textValuesSplit);
                                             @txtValueWithAnd
                                         }
@@ -55,7 +62,7 @@
                                     <MudTextField
                                         T="string"
                                         Label="@string.Format(GeneralLocalizer["newDocumentLabel"], doc.Key.Text)"
-                                        Placeholder="doc.value.HelperText"
+                                        Placeholder="@doc.Value.HelperText"
                                         @bind-Value="doc.Value.Text"
                                         HelperText="@doc.Value.HelperText"
                                         HelperTextOnFocus="true"
@@ -65,23 +72,24 @@
                                         AutoGrow="true"
                                         Class="ml-4"/>
 
-                                    <!-- Remove value Button -->
-                                    <MudSelect @bind-Value="@doc.Value.Delimiter" 
+                                    <!-- Delimiter -->
+                                    <MudSelect @bind-Value="@doc.Value.Delimiter" T="DelimiterType"
                                                Label="Delimiter" 
                                                HelperTextOnFocus="true"
-                                               HelperText="This will be used to split the new replacement text"
+                                               HelperText="Split text by delimiter"
                                                Class="ml-4">
-                                        <MudSelectItem Value="@(@"\n")">Enter / Nova linha</MudSelectItem>
-                                        <MudSelectItem Value="@(";")">Ponto e vírgula (;)</MudSelectItem>
-                                        <MudSelectItem Value="@(":")">Dois pontos (:)</MudSelectItem>
-                                        <MudSelectItem Value="@(".")">Ponto final (.)</MudSelectItem>
-                                        <MudSelectItem Value="@("|")">Barra vertical (|)</MudSelectItem>
-                                        <MudSelectItem Value="@(",")">Vírgula (,)</MudSelectItem>
-                                        <MudSelectItem Value="@(@"\t")">Tabulação (Tab)</MudSelectItem>
-                                        <MudSelectItem Value="@("custom")">Outro (especificar)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.None">Sem delimitador</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.NewLine">Enter / Nova linha</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Semicolon">Ponto e vírgula (;)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Colon">Dois pontos (:)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Period">Ponto final (.)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Pipe">Barra vertical (|)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Comma">Vírgula (,)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Tab">Tabulação (Tab)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Custom">Outro (especificar)</MudSelectItem>
                                     </MudSelect>
                                     
-                                    @if(doc.Value.Delimiter == "custom")
+                                    @if(doc.Value.Delimiter == DelimiterType.Custom)
                                     {
                                         <MudTextField
                                             T="string"

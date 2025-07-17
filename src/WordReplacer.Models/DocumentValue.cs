@@ -1,4 +1,4 @@
-﻿using WordReplacer.Enums;
+using WordReplacer.Enums;
 
 namespace WordReplacer.Models;
 
@@ -10,7 +10,7 @@ public class DocumentValue
     public string? Label { get; set; } = string.Empty;
     public string HelperText { get; set; } = string.Empty;
     public string? Text { get; set; } = string.Empty;
-    public string Delimiter { get; set; } = @"\n";
+    public DelimiterType Delimiter { get; set; } = DelimiterType.None;
     public string CustomDelimiter { get; set; } = string.Empty;
     public InputType Type { get; set; }
     public bool ShouldReplaceForEachLine { get; set; }

@@ -20,7 +20,7 @@
         @if (ShouldDisplayReplacementButtons)
         {
             <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
-                <MudButton Variant="Variant.Outlined" Color="Color.Error">
+                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ClearReplacements">
                     Clear all replacements
                 </MudButton>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@HandleWordReplacementAsync">
@@ -32,7 +32,6 @@
     </MudContainer>
 </MudPaper>
 @code {
-    
     private Document _doc = new();
     
     private bool ShouldDisplayReplacementButtons => _doc.DocumentValues.Count > 0;
@@ -40,5 +39,11 @@
     private async Task HandleWordReplacementAsync()
     {
         await DocumentProcessingService.ReplaceWordsAsync(_doc);
+    }
+
+    private void ClearReplacements()
+    {
+        _doc.DocumentValues.Clear();
+        StateHasChanged();
     }
 }
