@@ -1,7 +1,6 @@
 @using MarkupString = Microsoft.AspNetCore.Blazor.MarkupString
 @using WordReplacer.Models
 @inject IStringLocalizer<GeneralResource> GeneralLocalizer
-@inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
 
 
 <MudPaper Class="p-4">
@@ -15,33 +14,7 @@
                         <div class="d-flex align-content-center justify-content-center">
                             <MudIcon Icon="@Icons.Material.Filled.FindReplace" class="mr-3"></MudIcon>
                             <MudText>
-                                <u>@doc.Key.Text</u> @ReplacementTextLocalizer["accordionTitleReplaceText"] 
-                                <u>
-                                    
-                                    @if (string.IsNullOrEmpty(doc.Value.Text))
-                                    {
-                                        <span>_</span>
-                                    }
-                                    else
-                                    {
-                                        if (doc.Value.Delimiter != DelimiterType.None && doc.Value.Text.Contains(doc.Value.Delimiter.GetDelimiterString()))
-                                        {
-                                            var textValuesSplit = doc.Value.Text.Split([doc.Value.Delimiter.GetDelimiterString()], StringSplitOptions.RemoveEmptyEntries);
-                                            var txtValueWithAnd = string.Join(" & ", textValuesSplit);
-                                            @txtValueWithAnd
-                                        }
-                                        else if (doc.Value.Delimiter == DelimiterType.Custom)
-                                        {
-                                            var textValuesSplit = doc.Value.Text.Split([doc.Value.CustomDelimiter], StringSplitOptions.RemoveEmptyEntries);
-                                            var txtValueWithAnd = string.Join(" & ", textValuesSplit);
-                                            @txtValueWithAnd
-                                        }
-                                        else
-                                        {
-                                            @doc.Value.Text
-                                        }
-                                    }
-                                </u>
+                                <ReplacementTextHeaderComponent DocumentValues="doc" />
                             </MudText>
                         </div>
                     </TitleContent>

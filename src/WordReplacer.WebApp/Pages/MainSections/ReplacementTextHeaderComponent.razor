@@ -1,0 +1,34 @@
+﻿@inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
+
+<MudText>
+    <u>@DocumentValues.Key.Text</u> @ReplacementTextLocalizer["accordionTitleReplaceText"]
+    <u>
+        @if (string.IsNullOrEmpty(DocumentValues.Value.Text))
+        {
+            <span>_</span>
+        }
+        else
+        {
+            if (DocumentValues.Value.Delimiter != DelimiterType.None && DocumentValues.Value.Text.Contains(DocumentValues.Value.Delimiter.GetDelimiterString()))
+            {
+                var textValuesSplit = DocumentValues.Value.Text.Split([DocumentValues.Value.Delimiter.GetDelimiterString()], StringSplitOptions.RemoveEmptyEntries);
+                var txtValueWithAnd = string.Join(" & ", textValuesSplit);
+                @txtValueWithAnd
+            }
+            else if (DocumentValues.Value.Delimiter == DelimiterType.Custom)
+            {
+                var textValuesSplit = DocumentValues.Value.Text.Split([DocumentValues.Value.CustomDelimiter], StringSplitOptions.RemoveEmptyEntries);
+                var txtValueWithAnd = string.Join(" & ", textValuesSplit);
+                @txtValueWithAnd
+            }
+            else
+            {
+                @DocumentValues.Value.Text
+            }
+        }
+    </u>
+</MudText>
+
+@code {
+    [Parameter] public KeyValuePair<DocumentValue, DocumentValue> DocumentValues { get; set; }
+}
