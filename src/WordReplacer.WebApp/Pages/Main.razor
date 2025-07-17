@@ -17,19 +17,25 @@
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
         <ReplacementTextComponent @bind-Document="_doc" />
-        <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary">
-                Clear all replacements
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@HandleWordReplacementAsync">
-                @Localizer["btnReplaceTextReplacing"]
-            </MudButton>
-        </MudStack>
+        @if (ShouldDisplayReplacementButtons)
+        {
+            <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
+                <MudButton Variant="Variant.Outlined" Color="Color.Error">
+                    Clear all replacements
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@HandleWordReplacementAsync">
+                    @Localizer["btnReplaceTextDefault"]
+                    @* @Localizer["btnReplaceTextReplacing"] *@
+                </MudButton>
+            </MudStack>
+        }
     </MudContainer>
 </MudPaper>
 @code {
     
     private Document _doc = new();
+    
+    private bool ShouldDisplayReplacementButtons => _doc.DocumentValues.Count > 0;
     
     private async Task HandleWordReplacementAsync()
     {

@@ -10,6 +10,8 @@ public class DocumentValue
     public string? Label { get; set; } = string.Empty;
     public string HelperText { get; set; } = string.Empty;
     public string? Text { get; set; } = string.Empty;
+    public string Delimiter { get; set; } = @"\n";
+    public string CustomDelimiter { get; set; } = string.Empty;
     public InputType Type { get; set; }
     public bool ShouldReplaceForEachLine { get; set; }
     public bool IsAccordionOpen { get; set; } = true;

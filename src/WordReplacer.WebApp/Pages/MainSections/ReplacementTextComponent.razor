@@ -15,40 +15,93 @@
                             <MudIcon Icon="@Icons.Material.Filled.FindReplace" class="mr-3"></MudIcon>
                             <MudText>
                                 <u>@doc.Key.Text</u> @ReplacementTextLocalizer["accordionTitleReplaceText"] 
-                                <u>@(string.IsNullOrEmpty(doc.Value.Text) ? GeneralLocalizer["labelTextAddValues"] : doc.Value.Text)</u>
+                                <u>
+                                    
+                                    @if (string.IsNullOrEmpty(doc.Value.Text))
+                                    {
+                                        <span>_</span>
+                                    }
+                                    else
+                                    {
+                                        if (doc.Value.Text.Contains(doc.Value.Delimiter))
+                                        {
+                                            var textValuesSplit = doc.Value.Text.Split([doc.Value.Delimiter], StringSplitOptions.RemoveEmptyEntries);
+                                            var txtValueWithAnd = string.Join(" & ", textValuesSplit);
+                                            @txtValueWithAnd
+                                        }
+                                        else
+                                        {
+                                            @doc.Value.Text
+                                        }
+                                    }
+                                </u>
                             </MudText>
                         </div>
                     </TitleContent>
                     <ChildContent>
                         <MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
                             <MudItem xs="12">
-                                <div class="d-flex align-center justify-space-between p-1">
+                                <div class="d-flex align-center p-1">
                                     <!-- Text to Replace (readonly) -->
                                     <MudTextField
                                         T="string"
+                                        Label="@string.Format(GeneralLocalizer["headerOriginalValues"])"
                                         Text="@doc.Key.Text"
                                         HelperText="@doc.Key.HelperText"
                                         Disabled="true"
-                                        Variant="Variant.Text"
-                                        Class="mr-4"/>
+                                        Variant="Variant.Text"/>
 
                                     <!-- New Replacement Input -->
                                     <MudTextField
                                         T="string"
-                                        Label="@GeneralLocalizer["labelTextAddValues"]"
+                                        Label="@string.Format(GeneralLocalizer["newDocumentLabel"], doc.Key.Text)"
+                                        Placeholder="doc.value.HelperText"
                                         @bind-Value="doc.Value.Text"
                                         HelperText="@doc.Value.HelperText"
-                                        HelperTextOnFocus="false"
+                                        HelperTextOnFocus="true"
                                         Variant="Variant.Text"
-                                        Lines="2"
+                                        Lines="1"
                                         Immediate="true"
-                                        AutoGrow="true"/>
+                                        AutoGrow="true"
+                                        Class="ml-4"/>
 
-                                    <!-- Add Button -->
+                                    <!-- Remove value Button -->
+                                    <MudSelect @bind-Value="@doc.Value.Delimiter" 
+                                               Label="Delimiter" 
+                                               HelperTextOnFocus="true"
+                                               HelperText="This will be used to split the new replacement text"
+                                               Class="ml-4">
+                                        <MudSelectItem Value="@(@"\n")">Enter / Nova linha</MudSelectItem>
+                                        <MudSelectItem Value="@(";")">Ponto e vírgula (;)</MudSelectItem>
+                                        <MudSelectItem Value="@(":")">Dois pontos (:)</MudSelectItem>
+                                        <MudSelectItem Value="@(".")">Ponto final (.)</MudSelectItem>
+                                        <MudSelectItem Value="@("|")">Barra vertical (|)</MudSelectItem>
+                                        <MudSelectItem Value="@(",")">Vírgula (,)</MudSelectItem>
+                                        <MudSelectItem Value="@(@"\t")">Tabulação (Tab)</MudSelectItem>
+                                        <MudSelectItem Value="@("custom")">Outro (especificar)</MudSelectItem>
+                                    </MudSelect>
+                                    
+                                    @if(doc.Value.Delimiter == "custom")
+                                    {
+                                        <MudTextField
+                                            T="string"
+                                            Label="Custom Delimiter"
+                                            @bind-Value="doc.Value.CustomDelimiter"
+                                            HelperText="Choose your delimiter"
+                                            HelperTextOnFocus="true"
+                                            Variant="Variant.Text"
+                                            Lines="1"
+                                            Immediate="true"
+                                            AutoGrow="true"
+                                            Class="ml-4"/>
+                                    }
+                                    
+                                    <!-- Remove value Button -->
                                     <MudButton Variant="Variant.Outlined"
                                                StartIcon="@Icons.Material.Filled.Delete"
                                                ButtonType="ButtonType.Button"
                                                Color="Color.Error"
+                                               Class="ml-4"
                                                OnClick="() => RemoveItemsFromDictAsync(doc)">
                                         @GeneralLocalizer["btnRemoveReplacementLine"]
                                     </MudButton>
