@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Packaging;
 using Microsoft.JSInterop;
 using WordReplacer.Common;
 using WordReplacer.Dto;
@@ -26,12 +26,22 @@ namespace WordReplacer.Services
         /// <inheritdoc />
         public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values)
         {
-            var nodeList = values.Select(inputTxt => 
-                                new KeyValuePair<string, List<string>> (inputTxt.Key.Text!, 
-                                inputTxt.Value.Text!.Split("\n")
-                                    .Where(s => !string.IsNullOrWhiteSpace(s))
-                                    .ToList())
-                                ).ToList();
+            var nodeList = values.Select(inputTxt =>
+            {
+                var delimiter = inputTxt.Value.Delimiter;
+                var delimiterString = delimiter.GetDelimiterString(inputTxt.Value.CustomDelimiter);
+                List<string> splitValues;
+                if (delimiter == DelimiterType.None || string.IsNullOrEmpty(delimiterString))
+                {
+                    splitValues = new List<string> { inputTxt.Value.Text ?? string.Empty };
+                }
+                else
+                {
+                    splitValues = (inputTxt.Value.Text ?? string.Empty).Split(delimiterString, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+                splitValues = splitValues.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                return new KeyValuePair<string, List<string>>(inputTxt.Key.Text!, splitValues);
+            }).ToList();
 
             var combinationsResult = new List<Dictionary<string, string>>();
             combinationsResult.GetCombinations(nodeList, 0, new Dictionary<string, string>());

@@ -17,9 +17,9 @@
                  && DocumentValues.Value.Delimiter != DelimiterType.Custom    
                  && DocumentValues.Value.Text.Contains(DocumentValues.Value.Delimiter.GetDelimiterString()))
         {
-            var textValuesSplit = DocumentValues.Value.Text.Split(
+            var textValuesSplit = DocumentValues.Value.Text.Trim().Split(
                 [DocumentValues.Value.Delimiter.GetDelimiterString()], 
-                StringSplitOptions.None);
+                StringSplitOptions.RemoveEmptyEntries);
             var index = 0;
             var lastIndex = textValuesSplit.Length - 1;
             foreach (var text in textValuesSplit)
@@ -39,7 +39,7 @@
         {
             var textValuesSplit = DocumentValues.Value.Text.Split(
                 [DocumentValues.Value.CustomDelimiter], 
-                StringSplitOptions.None);
+                StringSplitOptions.RemoveEmptyEntries);
             
             var index = 0;
             var lastIndex = textValuesSplit.Length - 1;
