@@ -24,6 +24,7 @@
             var lastIndex = textValuesSplit.Length - 1;
             foreach (var text in textValuesSplit)
             {
+                <u>@DocumentValues.Key.Text</u>
                 <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
                 <u>@text</u>
                 @if (index != lastIndex)

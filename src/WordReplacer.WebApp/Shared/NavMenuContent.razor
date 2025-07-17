@@ -2,8 +2,8 @@
 @inject AppSettings AppSettings
 
 <MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All">@Localizer["home"]</MudNavLink>
-    <MudNavLink Href="/about"  Match="NavLinkMatch.Prefix">About</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.Home" Href="/"  Match="NavLinkMatch.All">@Localizer["home"]</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.Info" Href="/about"  Match="NavLinkMatch.Prefix">About</MudNavLink>
 </MudNavMenu>
 
 @if (_uiVersion is not null)

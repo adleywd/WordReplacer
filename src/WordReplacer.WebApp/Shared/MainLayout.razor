@@ -48,7 +48,7 @@
             </MudIconButton>
         </MudStack>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
+    <MudDrawer @bind-Open="@_drawerOpen" Variant="DrawerVariant.Responsive">
         <NavMenuContent/>
     </MudDrawer>
     <MudMainContent>
@@ -57,8 +57,6 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
-
-
 
 @code
 {

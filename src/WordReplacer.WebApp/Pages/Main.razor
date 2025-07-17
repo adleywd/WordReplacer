@@ -1,10 +1,10 @@
 @page "/"
-@using WordReplacer.Dto
 @using WordReplacer.WebApp.Pages.MainSections
 @using WordReplacer.WebApp.Services
 @inject IStringLocalizer<GeneralResource> Localizer
 @inject IDocumentProcessingService DocumentProcessingService
 
+@* <PresetsComponent @bind-Document="_doc" /> *@
 
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
@@ -23,9 +23,12 @@
                 <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ClearReplacements">
                     Clear all replacements
                 </MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@HandleWordReplacementAsync">
-                    @Localizer["btnReplaceTextDefault"]
-                    @* @Localizer["btnReplaceTextReplacing"] *@
+                <MudButton 
+                    Variant="Variant.Filled" 
+                    Color="Color.Primary"
+                    Disabled="@DoNotHaveFiles"
+                    OnClick="@HandleWordReplacementAsync">
+                        @ReplaceText()
                 </MudButton>
             </MudStack>
         }
@@ -33,8 +36,26 @@
 </MudPaper>
 @code {
     private Document _doc = new();
+
+    private bool DoNotHaveFiles => _doc.Files.Count == 0;
+    private bool _isProcessingReplacements = false;
     
     private bool ShouldDisplayReplacementButtons => _doc.DocumentValues.Count > 0;
+    
+    private string ReplaceText()
+    {
+        if (DoNotHaveFiles)
+        {
+            return "Add files to begin replacing";
+        }
+
+        if (_isProcessingReplacements)
+        {
+            return Localizer["btnReplaceTextReplacing"];
+        }
+        
+        return Localizer["btnReplaceTextDefault"];
+    } 
     
     private async Task HandleWordReplacementAsync()
     {
