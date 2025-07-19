@@ -28,24 +28,31 @@ namespace WordReplacer.Services
         {
             var nodeList = values.Select(inputTxt =>
             {
-                var delimiter = inputTxt.Value.Delimiter;
-                var delimiterString = delimiter.GetDelimiterString(inputTxt.Value.CustomDelimiter);
-                List<string> splitValues;
-                if (delimiter == DelimiterType.None || string.IsNullOrEmpty(delimiterString))
-                {
-                    splitValues = new List<string> { inputTxt.Value.Text ?? string.Empty };
-                }
-                else
-                {
-                    splitValues = (inputTxt.Value.Text ?? string.Empty).Split(delimiterString, StringSplitOptions.RemoveEmptyEntries).ToList();
-                }
-                splitValues = splitValues.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                var splitValues = SplitTextByDelimiter(inputTxt.Value.Text, inputTxt.Value.Delimiter, inputTxt.Value.CustomDelimiter);
                 return new KeyValuePair<string, List<string>>(inputTxt.Key.Text!, splitValues);
             }).ToList();
 
             var combinationsResult = new List<Dictionary<string, string>>();
             combinationsResult.GetCombinations(nodeList, 0, new Dictionary<string, string>());
             return combinationsResult;
+        }
+
+        /// <inheritdoc />
+        public List<string> SplitTextByDelimiter(string? text, DelimiterType delimiter, string? customDelimiter = null)
+        {
+            var delimiterString = delimiter.GetDelimiterString(customDelimiter);
+            List<string> splitValues;
+            
+            if (delimiter == DelimiterType.None || string.IsNullOrEmpty(delimiterString))
+            {
+                splitValues = new List<string> { text ?? string.Empty };
+            }
+            else
+            {
+                splitValues = (text ?? string.Empty).Split(delimiterString, StringSplitOptions.RemoveEmptyEntries).ToList();
+            }
+            
+            return splitValues.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
         }
 
         /// <inheritdoc />

@@ -1,4 +1,4 @@
-﻿using MatBlazor;
+using MatBlazor;
 using WordReplacer.Dto;
 using WordReplacer.Models;
 
@@ -16,6 +16,15 @@ public interface IDocumentService
     /// <param name="values">A List of Keys and values of DocumentValue objects. The key represents the Old Value and the
     /// value represents the New Value.</param>
     public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values);
+
+    /// <summary>
+    /// Splits text based on delimiter type and returns a list of non-empty values
+    /// </summary>
+    /// <param name="text">The text to split</param>
+    /// <param name="delimiter">The delimiter type</param>
+    /// <param name="customDelimiter">Custom delimiter string if DelimiterType.Custom is used</param>
+    /// <returns>List of split text values, excluding empty entries</returns>
+    public List<string> SplitTextByDelimiter(string? text, DelimiterType delimiter, string? customDelimiter = null);
 
     /// <summary>
     /// This function returns a `MemoryStream` of the file uploaded by the user
