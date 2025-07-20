@@ -1,38 +1,38 @@
-@using RenderFragment = Microsoft.AspNetCore.Blazor.RenderFragment
-@inject ISnackbar Snackbar
-
-<MudSnackbar Open="@IsSnackbarOpen" Timeout="@Timeout" AnchorOrigin="Origin.BottomCenter">
-    <ChildContent>
-        @Content
-        @if (HasCloseButton)
-        {
-            <MudButton Variant="Variant.Filled" Size="Size.Small" OnClick="@(() => IsSnackbarOpen = false)">Close</MudButton>
-        }
-    </ChildContent>
-</MudSnackbar>
-
-@code {
-    [Parameter] 
-    public RenderFragment? Content { get; set; }
-    
-    [Parameter] 
-    public EventCallback OnSnackBarUpdated { get; set; }
-    
-    [Parameter]
-    public bool IsSnackbarOpen { get; set; }
-    
-    [Parameter]
-    public EventCallback<bool> IsSnackbarOpenChanged { get; set; }
-    
-    [Parameter]
-    public int Timeout { get; set; }
-    
-    [Parameter]
-    public EventCallback<int> TimeoutChanged { get; set; }
-
-    [Parameter]
-    public bool HasCloseButton { get; set; }
-    
-    [Parameter]
-    public EventCallback<bool> HasCloseButtonChanged { get; set; }
-}
+@* @using MudBlazor *@
+@* @inject ISnackbar Snackbar *@
+@* *@
+@* <MudSnackbar Open="@IsSnackbarOpen" Timeout="@Timeout" AnchorOrigin="Origin.BottomCenter"> *@
+@*     <ChildContent> *@
+@*         @Content *@
+@*         @if (HasCloseButton) *@
+@*         { *@
+@*             <MudButton Variant="Variant.Filled" Size="Size.Small" OnClick="@(() => IsSnackbarOpen = false)">Close</MudButton> *@
+@*         } *@
+@*     </ChildContent> *@
+@* </MudSnackbar> *@
+@* *@
+@* @code { *@
+@*     [Parameter]  *@
+@*     public RenderFragment? Content { get; set; } *@
+@*      *@
+@*     [Parameter]  *@
+@*     public EventCallback OnSnackBarUpdated { get; set; } *@
+@*      *@
+@*     [Parameter] *@
+@*     public bool IsSnackbarOpen { get; set; } *@
+@*      *@
+@*     [Parameter] *@
+@*     public EventCallback<bool> IsSnackbarOpenChanged { get; set; } *@
+@*      *@
+@*     [Parameter] *@
+@*     public int Timeout { get; set; } *@
+@*      *@
+@*     [Parameter] *@
+@*     public EventCallback<int> TimeoutChanged { get; set; } *@
+@* *@
+@*     [Parameter] *@
+@*     public bool HasCloseButton { get; set; } *@
+@*      *@
+@*     [Parameter] *@
+@*     public EventCallback<bool> HasCloseButtonChanged { get; set; } *@
+@* } *@

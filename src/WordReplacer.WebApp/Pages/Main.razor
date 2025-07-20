@@ -1,47 +1,66 @@
 @page "/"
 @using WordReplacer.WebApp.Pages.MainSections
 @using WordReplacer.WebApp.Services
+@using WordReplacer.Models.Enums
 @inject IStringLocalizer<GeneralResource> Localizer
 @inject IDocumentProcessingService DocumentProcessingService
 
+<CookiesNotificationComponent/>
 @* <PresetsComponent @bind-Document="_doc" /> *@
+
+<DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]">
+        <DownloadDocumentListComponent @bind-DownloadsDict="_downloads"/>
+</DownloadPopoutComponent>
 
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        <UploadFileComponent @bind-Files="_doc.Files" />
-        <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
+        <UploadFileComponent @bind-Files="_doc.Files"/>
+        <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3"/>
         <AddTextToReplaceComponent @bind-Document="_doc"/>
     </MudContainer>
 </MudPaper>
-<MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3" />
+<MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3"/>
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        <ReplacementTextComponent @bind-Document="_doc" />
+        <ReplacementTextComponent @bind-Document="_doc"/>
+        @if (_isProcessingReplacements)
+        {
+            <MudStack Class="mt-3 mb-3">
+                <MudText Typo="Typo.body2">Processing files: @_completedFiles / @_totalFiles</MudText>
+                <MudProgressLinear Value="@((_completedFiles / (double)_totalFiles) * 100)" Color="Color.Primary" />
+            </MudStack>
+        }
         @if (ShouldDisplayReplacementButtons)
         {
             <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
                 <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ClearReplacements">
                     Clear all replacements
                 </MudButton>
-                <MudButton 
-                    Variant="Variant.Filled" 
+                <MudButton
+                    Variant="Variant.Filled"
                     Color="Color.Primary"
-                    Disabled="@DoNotHaveFiles"
+                    Disabled="@(DoNotHaveFiles || _isProcessingReplacements)"
                     OnClick="@HandleWordReplacementAsync">
-                        @ReplaceText()
+                    @ReplaceText()
                 </MudButton>
             </MudStack>
         }
     </MudContainer>
 </MudPaper>
+
 @code {
     private Document _doc = new();
+    private Dictionary<string, Download> _downloads = new();
+    private DownloadPopoutComponent? _popupRef = new();
 
     private bool DoNotHaveFiles => _doc.Files.Count == 0;
     private bool _isProcessingReplacements = false;
-    
+    private double _overallProgress = 0.0;
+    private int _totalFiles = 0;
+    private int _completedFiles = 0;
+
     private bool ShouldDisplayReplacementButtons => _doc.DocumentValues.Count > 0;
-    
+
     private string ReplaceText()
     {
         if (DoNotHaveFiles)
@@ -51,15 +70,71 @@
 
         if (_isProcessingReplacements)
         {
-            return Localizer["btnReplaceTextReplacing"];
+            return $"{Localizer["btnReplaceTextReplacing"]} ({_completedFiles}/{_totalFiles})";
         }
-        
+
         return Localizer["btnReplaceTextDefault"];
-    } 
-    
+    }
+
     private async Task HandleWordReplacementAsync()
     {
-        await DocumentProcessingService.ReplaceWordsAsync(_doc);
+        _isProcessingReplacements = true;
+        _overallProgress = 0.0;
+        _completedFiles = 0;
+        StateHasChanged();
+
+        await DocumentProcessingService.ReplaceWordsAsync(
+            _doc,
+            OnDownloadsInitialized,
+            OnProgressUpdate,
+            OnStatusUpdate,
+            OnProcessingCompleted
+        );
+    }
+
+    private void OnDownloadsInitialized(Dictionary<string, Download> downloads)
+    {
+        _downloads = downloads;
+        _totalFiles = downloads.Count;
+        _popupRef?.Show();
+        StateHasChanged();
+    }
+
+    private void OnProgressUpdate(string fileName, double progressIncrement)
+    {
+        _overallProgress += progressIncrement;
+        
+        if (_downloads.ContainsKey(fileName))
+        {
+            _downloads[fileName].Progress = 100.0; // Mark as complete
+            _downloads[fileName].IsProgressIndeterminate = false;
+        }
+        
+        _completedFiles++;
+        StateHasChanged();
+    }
+
+    private void OnStatusUpdate(string fileName, DownloadStatus status)
+    {
+        if (_downloads.ContainsKey(fileName))
+        {
+            _downloads[fileName].Status = status;
+            
+            if (status == DownloadStatus.InProgress)
+            {
+                _downloads[fileName].Progress = 0.0;
+                _downloads[fileName].IsProgressIndeterminate = true;
+            }
+        }
+        
+        StateHasChanged();
+    }
+
+    private void OnProcessingCompleted()
+    {
+        _isProcessingReplacements = false;
+        _overallProgress = 100.0;
+        StateHasChanged();
     }
 
     private void ClearReplacements()
@@ -67,4 +142,5 @@
         _doc.DocumentValues.Clear();
         StateHasChanged();
     }
+
 }

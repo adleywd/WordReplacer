@@ -1,0 +1,45 @@
+@using WordReplacer.Models.Enums
+@inject IStringLocalizer<DownloadDocumentListResource> Localizer
+@using MudBlazor
+
+<div style="max-height: 200px; overflow-y: auto;">
+@if (DownloadsDict is not null && DownloadsDict.Values.Count > 0)
+{
+    foreach (var download in DownloadsDict.Values)
+    {
+        <div class="download-list-row">
+            <MudIcon Icon="@Icons.Custom.FileFormats.FileWord" Color="Color.Primary"/>
+            <span class="download-list-filename">@download.FileName</span>
+            <span class="download-list-status">
+                @if (download.Status == DownloadStatus.Success)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Done" Color="Color.Success"/>
+                }
+                else if (download.Status == DownloadStatus.Error)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Clear" Color="Color.Error"/>
+                }
+                else
+                {
+                    <MudProgressCircular Indeterminate="@download.IsProgressIndeterminate" Value="@download.Progress" Size="Size.Small"/>
+                }
+            </span>
+        </div>
+    }
+}
+else
+{
+    <div class="download-list-row">
+        <span class="download-list-filename">@Localizer["noDownloadsYet"]</span>
+    </div>
+}
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<List<Download>> DownloadsChanged { get; set; }
+    [Parameter]
+    public Dictionary<string, Download>? DownloadsDict { get; set; }
+    [Parameter]
+    public EventCallback<Dictionary<string, Download>> DownloadsDictChanged { get; set; }
+}

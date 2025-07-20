@@ -1,0 +1,44 @@
+@using RenderFragment = Microsoft.AspNetCore.Components.RenderFragment
+@using MudBlazor
+
+<div style="position: fixed; bottom: 32px; right: 32px; z-index: 1056;">
+    @if (IsDownloadsListVisible)
+    {
+        <MudPaper Elevation="8"
+                  Class="downloads-popout mud-width-400 pa-0"
+                  Style="border-radius: 12px; overflow: hidden; min-width: 340px; max-width: 440px;">
+            <div class="downloads-popout-header px-4 py-2 mud-theme-primary" style="display: flex; align-items: center; justify-content: space-between; border-top-left-radius:12px; border-top-right-radius:12px;">
+                <MudText Typo="Typo.h6" Class="pl-1">@HeaderText</MudText>
+                @if (HasCloseButton)
+                {
+                    <button class="downloads-popout-close" @onclick="Close" aria-label="Close">
+                        <MudIcon Icon="@Icons.Material.Filled.Close" Size="Size.Medium" />
+                    </button>
+                }
+            </div>
+            <MudPaper Class="downloads-list-area pa-3 mud-theme-background" Elevation="0" Style="border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
+                @ChildContent
+            </MudPaper>
+        </MudPaper>
+    }
+    else
+    {
+        <MudFab StartIcon="@Icons.Material.Filled.SaveAlt"
+                Label="Downloads"
+                Color="Color.Primary"
+                OnClick="Show" />
+    }
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public bool IsDownloadsListVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] public string? HeaderText { get; set; }
+    [Parameter] public bool HasCloseButton { get; set; } = true;
+
+    public void Show() => IsDownloadsListVisible = true;
+    public void Close() => IsDownloadsListVisible = false;
+    public void ShowCloseButton() { HasCloseButton = true; }
+    public void HideCloseButton() { HasCloseButton = false; }
+}

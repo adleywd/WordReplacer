@@ -1,6 +1,7 @@
 using MatBlazor;
 using WordReplacer.Dto;
 using WordReplacer.Models;
+using WordReplacer.Models.Enums;
 
 namespace WordReplacer.WebApp.Services;
 
@@ -50,4 +51,11 @@ public interface IDocumentProcessingService
     );
     
     Task ReplaceWordsAsync(Document doc);
+    
+    Task ReplaceWordsAsync(
+        Document doc, 
+        Action<Dictionary<string, Download>> onDownloadsInitialized,
+        Action<string, double> onProgressUpdate,
+        Action<string, DownloadStatus> onStatusUpdate,
+        Action onCompleted);
 }

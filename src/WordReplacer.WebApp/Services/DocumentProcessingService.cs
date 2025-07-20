@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using WordReplacer.Common;
 using WordReplacer.Dto;
 using WordReplacer.Models;
+using WordReplacer.Models.Enums;
 using WordReplacer.Services;
 using WordReplacer.Enums;
 using WordReplacer.WebApp.Resources;
@@ -203,54 +204,180 @@ public class DocumentProcessingService : IDocumentProcessingService
     {
         try
         {
-            doc.DocumentValues.SanitizeValues();
+            var combinations = PrepareDocumentCombinations(doc);
+            await ProcessAllFilesAsync(doc, combinations).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            await HandleProcessingErrorAsync(ex).ConfigureAwait(false);
+        }
+    }
 
-            var combinations = _documentService.GetAllCombinations(doc.DocumentValues);
+    public async Task ReplaceWordsAsync(
+        Document doc, 
+        Action<Dictionary<string, Download>> onDownloadsInitialized,
+        Action<string, double> onProgressUpdate,
+        Action<string, DownloadStatus> onStatusUpdate,
+        Action onCompleted)
+    {
+        try
+        {
+            var combinations = PrepareDocumentCombinations(doc);
+            var downloads = InitializeDownloads(doc, combinations);
+            
+            onDownloadsInitialized(downloads);
+            
+            await ProcessAllFilesWithProgressAsync(doc, combinations, onProgressUpdate, onStatusUpdate).ConfigureAwait(false);
+            
+            onCompleted();
+        }
+        catch (Exception ex)
+        {
+            await HandleProcessingErrorAsync(ex).ConfigureAwait(false);
+            onCompleted();
+        }
+    }
 
-            // TODO MOVE IT OUT OF HERE
+    private List<Dictionary<string, string>> PrepareDocumentCombinations(Document doc)
+    {
+        doc.DocumentValues.SanitizeValues();
+        return _documentService.GetAllCombinations(doc.DocumentValues);
+    }
 
-            var progressSizePerFile = 1.0 / (combinations.Count * doc.Files.Count);
+    private async Task ProcessAllFilesAsync(Document doc, List<Dictionary<string, string>> combinations)
+    {
+        var progressSizePerFile = CalculateProgressSizePerFile(combinations.Count, doc.Files.Count);
 
-            foreach (var file in doc.Files)
-            {
-                MemoryStream originalFileInMemoryStream = await _documentService.GetMemoryStream(file.Value).ConfigureAwait(false);
+        foreach (var file in doc.Files)
+        {
+            await ProcessSingleFileAsync(file, combinations, progressSizePerFile).ConfigureAwait(false);
+        }
+    }
 
-                foreach (var combination in combinations)
-                {
-                    var fileName = GetFileName(combination.Values, file.Value.Name);
-                    try
-                    {
-                        Stream docReplaced = _documentService.Replace(combination, originalFileInMemoryStream, IsMultipleWordsAtOnce);
-                        await _documentService.DownloadFile(
-                                fileName,
-                                docReplaced,
-                                "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                            .ConfigureAwait(false);
-                        await docReplaced.DisposeAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    finally
-                    {
-                        // updateProgressBar(progressSizePerFile);
-                        // await delayDotNetToUpdateUIAsync().ConfigureAwait(false);
-                    }
-                }
+    private double CalculateProgressSizePerFile(int combinationsCount, int filesCount)
+    {
+        return 1.0 / (combinationsCount * filesCount);
+    }
 
-                await originalFileInMemoryStream.DisposeAsync().ConfigureAwait(false);
-            }
+    private async Task ProcessSingleFileAsync(KeyValuePair<string, FileUploadDto> file, List<Dictionary<string, string>> combinations, double progressSizePerFile)
+    {
+        using var originalFileInMemoryStream = await _documentService.GetMemoryStream(file.Value).ConfigureAwait(false);
 
-            // await setDefaultUIAfterDownload().ConfigureAwait(false);
+        foreach (var combination in combinations)
+        {
+            await ProcessCombinationAsync(file, combination, originalFileInMemoryStream, progressSizePerFile).ConfigureAwait(false);
+        }
+    }
+
+    private async Task ProcessCombinationAsync(KeyValuePair<string, FileUploadDto> file, Dictionary<string, string> combination, MemoryStream originalFileInMemoryStream, double progressSizePerFile)
+    {
+        var fileName = GetFileName(combination.Values, file.Value.Name);
+        
+        try
+        {
+            await ReplaceAndDownloadFileAsync(combination, originalFileInMemoryStream, fileName).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            // await setDefaultUIAfterError().ConfigureAwait(false);
+        }
+        finally
+        {
+            await UpdateProgressAsync(progressSizePerFile).ConfigureAwait(false);
         }
     }
 
+    private async Task ReplaceAndDownloadFileAsync(Dictionary<string, string> combination, MemoryStream originalFileInMemoryStream, string fileName)
+    {
+        using var docReplaced = _documentService.Replace(combination, originalFileInMemoryStream, IsMultipleWordsAtOnce);
+        
+        await _documentService.DownloadFile(
+            fileName,
+            docReplaced,
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            .ConfigureAwait(false);
+    }
+
+    private async Task UpdateProgressAsync(double progressSizePerFile)
+    {
+        // updateProgressBar(progressSizePerFile);
+        // await delayDotNetToUpdateUIAsync().ConfigureAwait(false);
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleProcessingErrorAsync(Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+        // await setDefaultUIAfterError().ConfigureAwait(false);
+        await Task.CompletedTask;
+    }
+
+    private Dictionary<string, Download> InitializeDownloads(Document doc, List<Dictionary<string, string>> combinations)
+    {
+        var downloads = new Dictionary<string, Download>();
+        foreach (var file in doc.Files)
+        {
+            foreach (var combination in combinations)
+            {
+                var fileName = GetFileName(combination.Values, file.Value.Name);
+                
+                if(downloads.ContainsKey(fileName))
+                {
+                    continue;
+                }
+                
+                downloads.Add(fileName, new Download 
+                { 
+                    FileName = fileName,
+                    Status = DownloadStatus.InProgress,
+                    Progress = 0.0,
+                    IsProgressIndeterminate = true
+                });
+            }
+        }
+        return downloads;
+    }
+
+    private async Task ProcessAllFilesWithProgressAsync(Document doc, List<Dictionary<string, string>> combinations, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate)
+    {
+        var progressSizePerFile = CalculateProgressSizePerFile(combinations.Count, doc.Files.Count);
+
+        foreach (var file in doc.Files)
+        {
+            await ProcessSingleFileWithProgressAsync(file, combinations, progressSizePerFile, onProgressUpdate, onStatusUpdate).ConfigureAwait(false);
+        }
+    }
+
+    private async Task ProcessSingleFileWithProgressAsync(KeyValuePair<string, FileUploadDto> file, List<Dictionary<string, string>> combinations, double progressSizePerFile, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate)
+    {
+        using var originalFileInMemoryStream = await _documentService.GetMemoryStream(file.Value).ConfigureAwait(false);
+
+        foreach (var combination in combinations)
+        {
+            await ProcessCombinationWithProgressAsync(file, combination, originalFileInMemoryStream, progressSizePerFile, onProgressUpdate, onStatusUpdate).ConfigureAwait(false);
+        }
+    }
+
+    private async Task ProcessCombinationWithProgressAsync(KeyValuePair<string, FileUploadDto> file, Dictionary<string, string> combination, MemoryStream originalFileInMemoryStream, double progressSizePerFile, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate)
+    {
+        var fileName = GetFileName(combination.Values, file.Value.Name);
+        
+        try
+        {
+            onStatusUpdate(fileName, DownloadStatus.InProgress);
+            await ReplaceAndDownloadFileAsync(combination, originalFileInMemoryStream, fileName).ConfigureAwait(false);
+            onStatusUpdate(fileName, DownloadStatus.Success);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            onStatusUpdate(fileName, DownloadStatus.Error);
+        }
+        finally
+        {
+            onProgressUpdate(fileName, progressSizePerFile);
+        }
+    }
 
     private string GetFileName(IEnumerable<string> combinationsValues, string inputFileName)
     {
