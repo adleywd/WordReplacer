@@ -83,14 +83,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AdditionalFiles Include="Components\ApplicationUpdateComponent.razor" />
 	  <AdditionalFiles Include="Components\CookiesNotificationComponent.razor" />
-	  <AdditionalFiles Include="Components\DownloadDocumentListComponent.razor" />
-	  <AdditionalFiles Include="Components\DownloadPopoutComponent.razor" />
-	  <AdditionalFiles Include="Components\InputFileComponent.razor" />
 	  <AdditionalFiles Include="Components\PresetsComponent.razor" />
-	  <AdditionalFiles Include="Components\SnackbarComponent.razor" />
-	  <AdditionalFiles Include="Components\ValuesInputComponent.razor" />
 	  <AdditionalFiles Include="Shared\MainLayout.razor" />
 	  <AdditionalFiles Include="Shared\NavMenuContent.razor" />
 	</ItemGroup>

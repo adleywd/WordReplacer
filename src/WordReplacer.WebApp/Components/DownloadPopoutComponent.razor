@@ -8,12 +8,17 @@
                   Class="downloads-popout mud-width-400 pa-0"
                   Style="border-radius: 12px; overflow: hidden; min-width: 340px; max-width: 440px;">
             <div class="downloads-popout-header px-4 py-2 mud-theme-primary" style="display: flex; align-items: center; justify-content: space-between; border-top-left-radius:12px; border-top-right-radius:12px;">
-                <MudText Typo="Typo.h6" Class="pl-1">@HeaderText</MudText>
+                <MudText Typo="Typo.subtitle1" Class="pl-1">@HeaderText</MudText>
                 @if (HasCloseButton)
                 {
-                    <button class="downloads-popout-close" @onclick="Close" aria-label="Close">
-                        <MudIcon Icon="@Icons.Material.Filled.Close" Size="Size.Medium" />
-                    </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="downloads-popout-close" @onclick="ClearDownloadsAsync" aria-label="Clear Downloads">
+                            <MudIcon Icon="@Icons.Material.Filled.DeleteSweep" Size="Size.Medium" />
+                        </button>
+                        <button class="downloads-popout-close" @onclick="Close" aria-label="Minimize">
+                            <MudIcon Icon="@Icons.Material.Filled.Clear" Size="Size.Medium" />
+                        </button>
+                    </div>
                 }
             </div>
             <MudPaper Class="downloads-list-area pa-3 mud-theme-background" Elevation="0" Style="border-bottom-left-radius:12px; border-bottom-right-radius:12px;">
@@ -24,7 +29,6 @@
     else
     {
         <MudFab StartIcon="@Icons.Material.Filled.SaveAlt"
-                Label="Downloads"
                 Color="Color.Primary"
                 OnClick="Show" />
     }
@@ -36,9 +40,15 @@
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
     [Parameter] public string? HeaderText { get; set; }
     [Parameter] public bool HasCloseButton { get; set; } = true;
+    [Parameter] public EventCallback ClearDownloadsRequested { get; set; }
 
     public void Show() => IsDownloadsListVisible = true;
     public void Close() => IsDownloadsListVisible = false;
-    public void ShowCloseButton() { HasCloseButton = true; }
-    public void HideCloseButton() { HasCloseButton = false; }
+    
+    private async Task ClearDownloadsAsync()
+    {
+        if (ClearDownloadsRequested.HasDelegate)
+            await ClearDownloadsRequested.InvokeAsync();
+    }
+    
 }

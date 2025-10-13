@@ -103,4 +103,7 @@
   <data name="cookiesAgreement" xml:space="preserve">
     <value>By using this application you allow it to use cookies.</value>
   </data>
+  <data name="btnCookieDismiss" xml:space="preserve">
+	  <value>Got it</value>
+  </data>
 </root>

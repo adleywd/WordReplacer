@@ -1,6 +1,7 @@
 @using WordReplacer.Models
 @using WordReplacer.WebApp.Services
 @inject IStringLocalizer<GeneralResource> GeneralLocalizer
+@inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
 
 
 <MudPaper Class="p-4">
@@ -28,6 +29,7 @@
                                         Label="@string.Format(GeneralLocalizer["headerOriginalValues"])"
                                         Text="@doc.Key.Text"
                                         HelperText="@doc.Key.HelperText"
+                                        HelperTextOnFocus="true"
                                         Disabled="true"
                                         Variant="Variant.Text"/>
 
@@ -38,7 +40,6 @@
                                         Placeholder="@doc.Value.HelperText"
                                         @bind-Value="doc.Value.Text"
                                         HelperText="@doc.Value.HelperText"
-                                        HelperTextOnFocus="true"
                                         Variant="Variant.Text"
                                         Lines="1"
                                         Immediate="true"
@@ -47,30 +48,29 @@
 
                                     <!-- Delimiter -->
                                     <MudSelect @bind-Value="@doc.Value.Delimiter" T="DelimiterType"
-                                               Label="Delimiter" 
-                                               HelperTextOnFocus="true"
-                                               HelperText="Split text by delimiter"
+                                               Label="@ReplacementTextLocalizer["delimiterLabel"]" 
+                                               HelperText="@ReplacementTextLocalizer["delimiterHelperText"]"
                                                Class="ml-4">
-                                        <MudSelectItem Value="@DelimiterType.None">Sem delimitador</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.NewLine">Enter / Nova linha</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.Semicolon">Ponto e vírgula (;)</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.Colon">Dois pontos (:)</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.Period">Ponto final (.)</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.Pipe">Barra vertical (|)</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.Comma">Vírgula (,)</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.Tab">Tabulação (Tab)</MudSelectItem>
-                                        <MudSelectItem Value="@DelimiterType.Custom">Outro (especificar)</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.None">@ReplacementTextLocalizer["delimiterNone"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.NewLine">@ReplacementTextLocalizer["delimiterNewLine"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Semicolon">@ReplacementTextLocalizer["delimiterSemicolon"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Colon">@ReplacementTextLocalizer["delimiterColon"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Period">@ReplacementTextLocalizer["delimiterPeriod"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Pipe">@ReplacementTextLocalizer["delimiterPipe"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Comma">@ReplacementTextLocalizer["delimiterComma"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Tab">@ReplacementTextLocalizer["delimiterTab"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Custom">@ReplacementTextLocalizer["delimiterCustom"]</MudSelectItem>
                                     </MudSelect>
                                     
                                     @if(doc.Value.Delimiter == DelimiterType.Custom)
                                     {
                                         <MudTextField
                                             T="string"
-                                            Label="Custom Delimiter"
+                                            Label="@ReplacementTextLocalizer["delimiterCustomLabel"]"
                                             @bind-Value="doc.Value.CustomDelimiter"
-                                            HelperText="Choose your delimiter"
-                                            HelperTextOnFocus="true"
+                                            HelperText="@ReplacementTextLocalizer["delimiterCustomHelperText"]"
                                             Variant="Variant.Text"
+                                            Placeholder="# or & or % etc"
                                             Lines="1"
                                             Immediate="true"
                                             AutoGrow="true"

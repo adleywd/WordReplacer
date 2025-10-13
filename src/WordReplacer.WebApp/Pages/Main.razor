@@ -1,14 +1,17 @@
 @page "/"
-@using WordReplacer.WebApp.Pages.MainSections
 @using WordReplacer.WebApp.Services
 @using WordReplacer.Models.Enums
 @inject IStringLocalizer<GeneralResource> Localizer
 @inject IDocumentProcessingService DocumentProcessingService
 
-<CookiesNotificationComponent/>
+<div class="mt-2 mb-5 p-2 text-center">
+    <CookiesNotificationComponent/>
+</div>
+
 @* <PresetsComponent @bind-Document="_doc" /> *@
 
-<DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]">
+<DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]"
+                        ClearDownloadsRequested="ClearDownloads">
         <DownloadDocumentListComponent @bind-DownloadsDict="_downloads"/>
 </DownloadPopoutComponent>
 
@@ -33,8 +36,8 @@
         @if (ShouldDisplayReplacementButtons)
         {
             <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
-                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="ClearReplacements">
-                    Clear all replacements
+                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="RemoveReplacements">
+                    @Localizer["btnRemoveAll"]
                 </MudButton>
                 <MudButton
                     Variant="Variant.Filled"
@@ -65,7 +68,7 @@
     {
         if (DoNotHaveFiles)
         {
-            return "Add files to begin replacing";
+            return Localizer["btnReplaceTextNoFileChosen"];
         }
 
         if (_isProcessingReplacements)
@@ -106,7 +109,7 @@
         
         if (_downloads.ContainsKey(fileName))
         {
-            _downloads[fileName].Progress = 100.0; // Mark as complete
+            _downloads[fileName].Progress = 100.0;
             _downloads[fileName].IsProgressIndeterminate = false;
         }
         
@@ -137,10 +140,15 @@
         StateHasChanged();
     }
 
-    private void ClearReplacements()
+    private void RemoveReplacements()
     {
         _doc.DocumentValues.Clear();
         StateHasChanged();
     }
 
+    private void ClearDownloads()
+    {
+        _downloads.Clear();
+        StateHasChanged();
+    }
 }

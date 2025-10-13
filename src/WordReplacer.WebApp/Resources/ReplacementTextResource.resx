@@ -98,12 +98,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="tooltipReplaceText" xml:space="preserve">
-    <value>{0} will be replaced for {1}</value>
+	  <value>{0} will be replaced with {1}</value>
   </data>
   <data name="slideToggleReplaceForEachLineLabel" xml:space="preserve">
     <value>Create file for each line in replace area</value>
   </data>
   <data name="accordionTitleReplaceText" xml:space="preserve">
-	  <value>will be replaced for</value>
+	  <value>will be replaced with</value>
+  </data>
+  <data name="delimiterLabel" xml:space="preserve">
+	  <value>Delimiter</value>
+  </data>
+  <data name="delimiterHelperText" xml:space="preserve">
+	  <value>Use a delimiter to split the input text. Each resulting section will generate a new file.</value>
+  </data>
+  <data name="delimiterNone" xml:space="preserve">
+	  <value>No delimiter</value>
+  </data>
+  <data name="delimiterNewLine" xml:space="preserve">
+	  <value>Enter / New line</value>
+  </data>
+  <data name="delimiterSemicolon" xml:space="preserve">
+	  <value>Semicolon (;)</value>
+  </data>
+  <data name="delimiterColon" xml:space="preserve">
+	  <value>Colon (:)</value>
+  </data>
+  <data name="delimiterPeriod" xml:space="preserve">
+	  <value>Period (.)</value>
+  </data>
+  <data name="delimiterComma" xml:space="preserve">
+	  <value>Comma (,)</value>
+  </data>
+  <data name="delimiterTab" xml:space="preserve">
+	  <value>Tab (\t))</value>
+  </data>
+  <data name="delimiterCustom" xml:space="preserve">
+	  <value>Custom (specify)</value>
+  </data>
+  <data name="delimiterPipe" xml:space="preserve">
+	  <value>Vertical bar (|)</value>
+  </data>
+  <data name="delimiterCustomLabel" xml:space="preserve">
+	  <value>Custom delimiter</value>
+  </data>
+  <data name="delimiterCustomHelperText" xml:space="preserve">
+	  <value>Choose your delimiter</value>
   </data>
 </root>

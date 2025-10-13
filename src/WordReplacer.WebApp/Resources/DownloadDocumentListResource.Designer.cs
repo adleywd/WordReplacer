@@ -60,7 +60,7 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No downloads yet..
+        ///   Looks up a localized string similar to No files..
         /// </summary>
         internal static string noDownloadsYet {
             get {

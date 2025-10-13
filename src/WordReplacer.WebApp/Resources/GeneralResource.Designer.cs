@@ -60,7 +60,7 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove All.
+        ///   Looks up a localized string similar to Remove all replacements.
         /// </summary>
         public static string btnRemoveAll {
             get {
@@ -83,6 +83,15 @@ namespace WordReplacer.WebApp.Resources {
         public static string btnReplaceTextDefault {
             get {
                 return ResourceManager.GetString("btnReplaceTextDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add files to begin replacing.
+        /// </summary>
+        public static string btnReplaceTextNoFileChosen {
+            get {
+                return ResourceManager.GetString("btnReplaceTextNoFileChosen", resourceCulture);
             }
         }
         

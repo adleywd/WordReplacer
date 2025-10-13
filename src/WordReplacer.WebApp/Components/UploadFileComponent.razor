@@ -36,12 +36,12 @@
     @if (Files.Count > 0)
     {
         <MudPaper Elevation="0" Class="p-2 mt-2 mb-1 overflow-y-auto" MinHeight="40px"  MaxHeight="80px">
-            @if(Files.Count > 1)
+            @if(Files.Count > 0)
             {
                 <MudChip T="string"
                          Icon="@Icons.Material.Outlined.Close"
                          Color="Color.Error"
-                         Text="Remove all files"
+                         Text="@Localizer["btnRemoveAllFiles"]"
                          OnClick="@RemoveAllFilesAsync"
                          tabindex="-1"
                          Style="cursor: pointer"/>

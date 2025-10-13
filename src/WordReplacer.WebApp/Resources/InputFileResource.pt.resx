@@ -112,4 +112,7 @@
   <data name="toasterWrongFileTypeTitle" xml:space="preserve">
     <value>Tipo de arquivo errado</value>
   </data>
+  <data name="btnRemoveAllFiles" xml:space="preserve">
+	  <value>Remover todos arquivos</value>
+  </data>
 </root>
