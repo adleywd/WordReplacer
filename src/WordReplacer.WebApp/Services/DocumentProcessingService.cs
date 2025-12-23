@@ -76,6 +76,15 @@ public class DocumentProcessingService : IDocumentProcessingService
 
     public void AddValues(Document doc, string text)
     {
+        var delimiter = DelimiterType.None;
+        var customDelimiter = string.Empty;
+        
+        if (doc.DocumentValues.Count > 0)
+        {
+            delimiter = doc.DocumentValues.Last().Value.Delimiter;
+            customDelimiter = doc.DocumentValues.Last().Value.CustomDelimiter;
+        }
+        
         var oldValue = new DocumentValue()
         {
             Label = _generalLocalizer["originalDocumentLabel"],
@@ -95,6 +104,8 @@ public class DocumentProcessingService : IDocumentProcessingService
             Text = string.Empty,
             HelperText = _generalLocalizer["newDocumentHelperText"],
             Type = InputType.List,
+            Delimiter = delimiter,
+            CustomDelimiter = customDelimiter,
             IsAccordionOpen = true,
             ShouldReplaceForEachLine = true
         };
