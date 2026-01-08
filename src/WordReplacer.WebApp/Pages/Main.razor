@@ -4,10 +4,6 @@
 @inject IStringLocalizer<GeneralResource> Localizer
 @inject IDocumentProcessingService DocumentProcessingService
 
-<div class="mt-2 mb-5 p-2 text-center">
-    <CookiesNotificationComponent/>
-</div>
-
 @* <PresetsComponent @bind-Document="_doc" /> *@
 
 <DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]"
@@ -36,6 +32,10 @@
         @if (ShouldDisplayReplacementButtons)
         {
             <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
+                <MudSwitch @bind-Value="_shouldAddPrefixToFileName" 
+                             Dense="false" 
+                             Color="Color.Primary" 
+                             Label="Add original filename as prefix"/>
                 <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="RemoveReplacements">
                     @Localizer["btnRemoveAll"]
                 </MudButton>
@@ -44,7 +44,7 @@
                     Color="Color.Primary"
                     Disabled="@(DoNotHaveFiles || _isProcessingReplacements)"
                     OnClick="@HandleWordReplacementAsync">
-                    @ReplaceText()
+                    @ReplaceBtnText()
                 </MudButton>
             </MudStack>
         }
@@ -61,10 +61,11 @@
     private double _overallProgress = 0.0;
     private int _totalFiles = 0;
     private int _completedFiles = 0;
+    private bool _shouldAddPrefixToFileName = false; 
 
     private bool ShouldDisplayReplacementButtons => _doc.DocumentValues.Count > 0;
 
-    private string ReplaceText()
+    private string ReplaceBtnText()
     {
         if (DoNotHaveFiles)
         {
@@ -91,14 +92,15 @@
             OnDownloadsInitialized,
             OnProgressUpdate,
             OnStatusUpdate,
-            OnProcessingCompleted
+            OnProcessingCompleted,
+            _shouldAddPrefixToFileName
         );
     }
 
     private void OnDownloadsInitialized(Dictionary<string, Download> downloads)
     {
         _downloads = downloads;
-        _totalFiles = downloads.Count;
+        _totalFiles = downloads.Values.Sum(d => d.Count);
         _popupRef?.Show();
         StateHasChanged();
     }
@@ -109,8 +111,14 @@
         
         if (_downloads.ContainsKey(fileName))
         {
-            _downloads[fileName].Progress = 100.0;
-            _downloads[fileName].IsProgressIndeterminate = false;
+            var d = _downloads[fileName];
+            d.CompletedCount++;
+            d.Progress = (d.CompletedCount / (double)d.Count) * 100.0;
+            d.IsProgressIndeterminate = d.CompletedCount < d.Count;
+            if (!d.IsProgressIndeterminate)
+            {
+                d.Progress = 100.0;
+            }
         }
         
         _completedFiles++;
@@ -121,12 +129,36 @@
     {
         if (_downloads.ContainsKey(fileName))
         {
-            _downloads[fileName].Status = status;
-            
+            var d = _downloads[fileName];
+
             if (status == DownloadStatus.InProgress)
             {
-                _downloads[fileName].Progress = 0.0;
-                _downloads[fileName].IsProgressIndeterminate = true;
+                d.Status = status;
+                d.Progress = 0.0;
+                d.IsProgressIndeterminate = true;
+            }
+            else if (status == DownloadStatus.Error)
+            {
+                // mark as error immediately (one of the files failed)
+                d.Status = DownloadStatus.Error;
+                d.IsProgressIndeterminate = false;
+                d.Progress = (d.CompletedCount / (double)d.Count) * 100.0;
+            }
+            else if (status == DownloadStatus.Success)
+            {
+                // Only mark the grouped entry as success when all underlying files are done
+                if (d.CompletedCount >= d.Count - 1)
+                {
+                    d.Status = DownloadStatus.Success;
+                    d.IsProgressIndeterminate = false;
+                    d.Progress = 100.0;
+                }
+                else
+                {
+                    // keep as in-progress until all items finish
+                    d.Status = DownloadStatus.InProgress;
+                    d.IsProgressIndeterminate = true;
+                }
             }
         }
         

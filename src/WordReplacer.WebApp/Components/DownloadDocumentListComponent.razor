@@ -9,7 +9,7 @@
     {
         <div class="download-list-row">
             <MudIcon Icon="@Icons.Custom.FileFormats.FileWord" Color="Color.Primary"/>
-            <span class="download-list-filename">@download.FileName</span>
+            <span class="download-list-filename">@download.FileName@if(download.Count > 1){<text> (@download.Count file@(download.Count > 1 ? "s" : ""))</text>}</span>
             <span class="download-list-status">
                 @if (download.Status == DownloadStatus.Success)
                 {

@@ -58,5 +58,6 @@ public interface IDocumentProcessingService
         Action<Dictionary<string, Download>> onDownloadsInitialized,
         Action<string, double> onProgressUpdate,
         Action<string, DownloadStatus> onStatusUpdate,
-        Action onCompleted);
+        Action onCompleted,
+        bool shouldAddPrefixToFileName);
 }

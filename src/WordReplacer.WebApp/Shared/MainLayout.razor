@@ -18,13 +18,13 @@
         <MudStack Justify="Justify.Center" Class="d-flex align-center justify-center" Row="true">
             @if (!_isDarkMode)
             {
-                <MudIconButton OnClick="@(() => OnSystemDarkModeChanged(true))" Title="Dark theme" Edge="Edge.End">
+                <MudIconButton OnClick="@(() => ChangeThemeAsync(true))" Title="Dark theme" Edge="Edge.End">
                     <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.DarkMode"/>
                 </MudIconButton>
             }
             else
             {
-                <MudIconButton OnClick="@(() => OnSystemDarkModeChanged(false))" Title="Light theme" Edge="Edge.End">
+                <MudIconButton OnClick="@(() => ChangeThemeAsync(false))" Title="Light theme" Edge="Edge.End">
                     <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.LightMode"/>
                 </MudIconButton>
             }
@@ -53,6 +53,10 @@
     </MudDrawer>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large">
+            <div class="mt-2 mb-5 p-2 text-center">
+                <NotifyNewUpdateComponent/>
+                <CookiesNotificationComponent/>
+            </div>
             @Body
         </MudContainer>
     </MudMainContent>
@@ -66,6 +70,7 @@
     private string _selectedLanguage = "en";
 
     private bool _drawerOpen = false;
+    private bool _hasStoredThemePreference = false; // new: indicates whether the user previously saved a theme preference
     
     private void DrawerToggle()
     {
@@ -78,14 +83,37 @@
         {
             Primary = Colors.DeepPurple.Default,
             Secondary = Colors.Pink.Accent4,
+
+            Background = "#EEEEEE",        // Soft light gray
+            Surface = "#FFFFFF",           // Cards, dialogs
+            DrawerBackground = "#FFFFFF",
             AppbarBackground = Colors.DeepPurple.Default,
+
+            TextPrimary = "#212121",        // Material dark text
+            TextSecondary = "#5E35B1",      // DeepPurple 600
+            TextDisabled = "#9E9E9E",
+
+            Divider = "#D1C4E9",            // Very light purple divider
+
+            Info = Colors.Blue.Lighten2
         },
         PaletteDark = new PaletteDark()
         {
             Primary = Colors.DeepPurple.Lighten2,
             Secondary = Colors.Pink.Accent4,
+
+            Background = "#121212",      // Material standard dark background
+            Surface = "#1E1E1E",         // Cards, dialogs
+            DrawerBackground = "#1B1B1B",
             AppbarBackground = Colors.DeepPurple.Default,
-            Info = Colors.Blue.Lighten2
+
+            Info = Colors.Blue.Lighten2,
+
+            TextPrimary = "#EDE7F6",     // Soft purple-tinted white
+            TextSecondary = "#B39DDB",   // Muted DeepPurple
+            TextDisabled = "#7E7E7E",
+
+            Divider = "#2C2C2C",
         },
 
         LayoutProperties = new LayoutProperties()
@@ -107,6 +135,14 @@
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 
+    private async Task ChangeThemeAsync(bool isDark)
+    {
+        _isDarkMode = isDark;
+        _hasStoredThemePreference = true;
+        await LocalStorage.SetItemAsStringAsync(AppSettings.ThemeStoreKey, isDark ? "dark" : "light");
+        StateHasChanged();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         _selectedLanguage = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
@@ -122,6 +158,16 @@
             _selectedLanguage = "en";
         }
 
+        if (await LocalStorage.ContainKeyAsync(AppSettings.ThemeStoreKey))
+        {
+            var stored = await LocalStorage.GetItemAsStringAsync(AppSettings.ThemeStoreKey).ConfigureAwait(true);
+            if (!string.IsNullOrWhiteSpace(stored))
+            {
+                _hasStoredThemePreference = true;
+                _isDarkMode = string.Equals(stored, "dark", StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
         await base.OnInitializedAsync();
     }
     
@@ -130,16 +176,25 @@
         if (firstRender)
         {
             ArgumentNullException.ThrowIfNull(_mudThemeProvider);
-            _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
-            await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+            var systemDark = await _mudThemeProvider.GetSystemDarkModeAsync();
+
+            if (!_hasStoredThemePreference)
+            {
+                _isDarkMode = systemDark;
+                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+            }
+
             StateHasChanged();
         }
     }
 
     private Task OnSystemDarkModeChanged(bool newValue)
     {
-        _isDarkMode = newValue;
-        StateHasChanged();
+        if (!_hasStoredThemePreference)
+        {
+            _isDarkMode = newValue;
+            StateHasChanged();
+        }
         return Task.CompletedTask;
     }
 }

@@ -229,16 +229,17 @@ public class DocumentProcessingService : IDocumentProcessingService
         Action<Dictionary<string, Download>> onDownloadsInitialized,
         Action<string, double> onProgressUpdate,
         Action<string, DownloadStatus> onStatusUpdate,
-        Action onCompleted)
+        Action onCompleted,
+        bool shouldAddPrefixToFileName)
     {
         try
         {
             var combinations = PrepareDocumentCombinations(doc);
-            var downloads = InitializeDownloads(doc, combinations);
+            var downloads = InitializeDownloads(doc, combinations, shouldAddPrefixToFileName);
             
             onDownloadsInitialized(downloads);
             
-            await ProcessAllFilesWithProgressAsync(doc, combinations, onProgressUpdate, onStatusUpdate).ConfigureAwait(false);
+            await ProcessAllFilesWithProgressAsync(doc, combinations, onProgressUpdate, onStatusUpdate, shouldAddPrefixToFileName).ConfigureAwait(false);
             
             onCompleted();
         }
@@ -323,17 +324,19 @@ public class DocumentProcessingService : IDocumentProcessingService
         await Task.CompletedTask;
     }
 
-    private Dictionary<string, Download> InitializeDownloads(Document doc, List<Dictionary<string, string>> combinations)
+    private Dictionary<string, Download> InitializeDownloads(Document doc, List<Dictionary<string, string>> combinations, bool shouldAddPrefix)
     {
         var downloads = new Dictionary<string, Download>();
         foreach (var file in doc.Files)
         {
             foreach (var combination in combinations)
             {
-                var fileName = GetFileName(combination.Values, file.Value.Name);
+                var fileName = GetFileName(combination.Values, file.Value.Name, shouldAddPrefix);
                 
                 if(downloads.ContainsKey(fileName))
                 {
+                    // increase count to reflect multiple real files mapping to same display name
+                    downloads[fileName].Count++;
                     continue;
                 }
                 
@@ -342,36 +345,37 @@ public class DocumentProcessingService : IDocumentProcessingService
                     FileName = fileName,
                     Status = DownloadStatus.InProgress,
                     Progress = 0.0,
-                    IsProgressIndeterminate = true
+                    IsProgressIndeterminate = true,
+                    Count = 1
                 });
             }
         }
         return downloads;
     }
 
-    private async Task ProcessAllFilesWithProgressAsync(Document doc, List<Dictionary<string, string>> combinations, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate)
+    private async Task ProcessAllFilesWithProgressAsync(Document doc, List<Dictionary<string, string>> combinations, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate, bool shouldAddPrefix)
     {
         var progressSizePerFile = CalculateProgressSizePerFile(combinations.Count, doc.Files.Count);
 
         foreach (var file in doc.Files)
         {
-            await ProcessSingleFileWithProgressAsync(file, combinations, progressSizePerFile, onProgressUpdate, onStatusUpdate).ConfigureAwait(false);
+            await ProcessSingleFileWithProgressAsync(file, combinations, progressSizePerFile, onProgressUpdate, onStatusUpdate, shouldAddPrefix).ConfigureAwait(false);
         }
     }
 
-    private async Task ProcessSingleFileWithProgressAsync(KeyValuePair<string, FileUploadDto> file, List<Dictionary<string, string>> combinations, double progressSizePerFile, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate)
+    private async Task ProcessSingleFileWithProgressAsync(KeyValuePair<string, FileUploadDto> file, List<Dictionary<string, string>> combinations, double progressSizePerFile, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate, bool shouldAddPrefix)
     {
         using var originalFileInMemoryStream = await _documentService.GetMemoryStream(file.Value).ConfigureAwait(false);
 
         foreach (var combination in combinations)
         {
-            await ProcessCombinationWithProgressAsync(file, combination, originalFileInMemoryStream, progressSizePerFile, onProgressUpdate, onStatusUpdate).ConfigureAwait(false);
+            await ProcessCombinationWithProgressAsync(file, combination, originalFileInMemoryStream, progressSizePerFile, onProgressUpdate, onStatusUpdate, shouldAddPrefix).ConfigureAwait(false);
         }
     }
 
-    private async Task ProcessCombinationWithProgressAsync(KeyValuePair<string, FileUploadDto> file, Dictionary<string, string> combination, MemoryStream originalFileInMemoryStream, double progressSizePerFile, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate)
+    private async Task ProcessCombinationWithProgressAsync(KeyValuePair<string, FileUploadDto> file, Dictionary<string, string> combination, MemoryStream originalFileInMemoryStream, double progressSizePerFile, Action<string, double> onProgressUpdate, Action<string, DownloadStatus> onStatusUpdate, bool shouldAddPrefix)
     {
-        var fileName = GetFileName(combination.Values, file.Value.Name);
+        var fileName = GetFileName(combination.Values, file.Value.Name, shouldAddPrefix);
         
         try
         {
@@ -390,6 +394,19 @@ public class DocumentProcessingService : IDocumentProcessingService
         }
     }
 
+    private string GetFileName(IEnumerable<string> combinationsValues, string inputFileName, bool shouldAddPrefix)
+    {
+        var sanitizedPart = Helper.SanitizeFileName(string.Join("_", combinationsValues));
+
+        if (shouldAddPrefix)
+        {
+            return $"{GetFileNameWithoutExtension(inputFileName)}_{sanitizedPart}.docx";
+        }
+
+        return $"{sanitizedPart}.docx";
+    }
+
+    // existing overloads kept for other code paths
     private string GetFileName(IEnumerable<string> combinationsValues, string inputFileName)
     {
         return $"{GetFileNameWithoutExtension(inputFileName)}_{Helper.SanitizeFileName(string.Join("_", combinationsValues))}.docx";
@@ -411,3 +428,4 @@ public class DocumentProcessingService : IDocumentProcessingService
         return Path.GetFileNameWithoutExtension(fileName);
     }
 }
+
