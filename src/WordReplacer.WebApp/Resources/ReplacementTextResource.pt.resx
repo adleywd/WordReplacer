@@ -98,9 +98,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="tooltipReplaceText" xml:space="preserve">
-    <value>{0}  será substituído por {1}</value>
+	  <value>{0} será substituído por {1}</value>
   </data>
   <data name="slideToggleReplaceForEachLineLabel" xml:space="preserve">
     <value>Criar um arquivo para cada linha</value>
+  </data>
+  <data name="accordionTitleReplaceText" xml:space="preserve">
+	  <value>será substituído por</value>
+  </data>
+  <data name="delimiterHelperText" xml:space="preserve">
+	  <value>Divida o texto de entrada por um delimitador para gerar um novo arquivo para cada parte resultante.</value>
+  </data>
+  <data name="delimiterLabel" xml:space="preserve">
+	  <value>Delimitador</value>
+  </data>
+  <data name="delimiterColon" xml:space="preserve">
+	  <value>Dois pontos (:)</value>
+  </data>
+  <data name="delimiterNewLine" xml:space="preserve">
+	  <value>Enter / Nova linha</value>
+  </data>
+  <data name="delimiterNone" xml:space="preserve">
+	  <value>Sem delimitador</value>
+  </data>
+  <data name="delimiterSemicolon" xml:space="preserve">
+	  <value>Ponto e vírgula (;)</value>
+  </data>
+  <data name="delimiterPeriod" xml:space="preserve">
+	  <value>Ponto final (.)</value>
+  </data>
+  <data name="delimiterPipe" xml:space="preserve">
+	  <value>Barra vertical (|)</value>
+  </data>
+  <data name="delimiterComma" xml:space="preserve">
+	  <value>Vírgula (,)</value>
+  </data>
+  <data name="delimiterTab" xml:space="preserve">
+	  <value>Tab (\t)</value>
+  </data>
+  <data name="delimiterCustom" xml:space="preserve">
+	  <value>Outro (especificar)</value>
+  </data>
+  <data name="delimiterCustomLabel" xml:space="preserve">
+	  <value>Delimitador personalizado</value>
+  </data>
+  <data name="delimiterCustomHelperText" xml:space="preserve">
+	  <value>Escolha seu delimitador</value>
   </data>
 </root>

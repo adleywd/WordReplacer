@@ -1,0 +1,78 @@
+@inject IJSRuntime JsRuntime
+@inject IStringLocalizer<ApplicationUpdateResource> Localizer
+@inject NavigationManager Navigation
+@implements IDisposable
+
+@if (_showUpdateNotification)
+{
+    <MudPaper Class="px-2 py-1 mb-1">
+        <MudStack Row AlignItems="AlignItems.Center">
+
+            <!-- Espaço esquerdo -->
+            <MudStack Style="flex:1" />
+
+            <!-- Centro -->
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                <MudText Typo="Typo.body2">
+                    @Localizer["messageUpdateReady"]
+                </MudText>
+
+                <MudButton Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.Update"
+                           OnClick="ReloadPage">
+                    @Localizer["btnReload"]
+                </MudButton>
+            </MudStack>
+
+            <!-- Direita -->
+            <MudStack Style="flex:1" AlignItems="AlignItems.End">
+                <MudIconButton Size="Size.Small"
+                               Icon="@Icons.Material.Filled.Close"
+                               OnClick="@(() => _showUpdateNotification = false)" />
+            </MudStack>
+
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    private bool _showUpdateNotification = false;
+
+    private DotNetObjectReference<NotifyNewUpdateComponent>? _objRef;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _objRef = DotNetObjectReference.Create(this);
+
+        await RegisterForUpdateAvailableNotification();
+    }
+
+    private async Task RegisterForUpdateAvailableNotification()
+    {
+        // Initialize the service-worker
+        await JsRuntime.InvokeVoidAsync(
+            "registerForUpdateAvailableNotification",
+            _objRef,
+            nameof(OnUpdateReadyNotify));
+    }
+
+    private void ReloadPage()
+    {
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+
+    [JSInvokable(nameof(OnUpdateReadyNotify))]
+    public Task OnUpdateReadyNotify()
+    {
+        _showUpdateNotification = true;
+
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _objRef?.Dispose();
+    }
+}

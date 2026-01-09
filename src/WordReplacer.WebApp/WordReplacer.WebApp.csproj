@@ -1,22 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
 	<PropertyGroup>
-		<Version>1.2.0</Version>
+		<Version>2.0.0</Version>
 		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
 		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Remove="C:\Users\Adley\.nuget\packages\matblazor\2.8.0\contentFiles\any\netstandard2.1\Properties\launchSettings.json" />
-	</ItemGroup>
-	<ItemGroup>
 		<SupportedPlatform Include="browser" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="Blazored.LocalStorage" />
-		<PackageReference Include="MatBlazor" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -24,6 +15,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Extensions.Localization" />
+		<PackageReference Include="Blazored.LocalStorage" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+		<PackageReference Include="MudBlazor" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -59,6 +53,14 @@
 		<_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\ICON-LICENSE" />
 		<_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\README.md" />
 		<_ContentIncludedByDefault Remove="wwwroot\js\app.js" />
+		<_ContentIncludedByDefault Remove="Pages\OldSections\InputSection.razor" />
+		<_ContentIncludedByDefault Remove="Pages\OldSections\PresetsSection.razor" />
+		<_ContentIncludedByDefault Remove="Pages\OldSections\ReplaceFormSection.razor" />
+		<_ContentIncludedByDefault Remove="Pages\OldSections\SnackbarSection.razor" />
+		<_ContentIncludedByDefault Remove="Pages\OldSections\ValuesListSection.razor" />
+		<_ContentIncludedByDefault Remove="Components\Dialogs\AddPresetDialog.razor" />
+		<_ContentIncludedByDefault Remove="Components\Dialogs\DeletePresetDialog.razor" />
+		<_ContentIncludedByDefault Remove="Components\Dialogs\LoadPresetDialog.razor" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -89,14 +91,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AdditionalFiles Include="Components\ApplicationUpdateComponent.razor" />
 	  <AdditionalFiles Include="Components\CookiesNotificationComponent.razor" />
-	  <AdditionalFiles Include="Components\DownloadDocumentListComponent.razor" />
-	  <AdditionalFiles Include="Components\DownloadPopoutComponent.razor" />
-	  <AdditionalFiles Include="Components\InputFileComponent.razor" />
-	  <AdditionalFiles Include="Components\PresetsComponent.razor" />
-	  <AdditionalFiles Include="Components\SnackbarComponent.razor" />
-	  <AdditionalFiles Include="Components\ValuesInputComponent.razor" />
 	  <AdditionalFiles Include="Shared\MainLayout.razor" />
 	  <AdditionalFiles Include="Shared\NavMenuContent.razor" />
 	</ItemGroup>
@@ -137,10 +132,10 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>PresetsResource.resx</DependentUpon>
 	  </Compile>
-	  <Compile Update="Resources\ValuesInputResource.Designer.cs">
+	  <Compile Update="Resources\ReplacementTextResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>ValuesInputResource.resx</DependentUpon>
+	    <DependentUpon>ReplacementTextResource.resx</DependentUpon>
 	  </Compile>
 	  <Compile Update="Resources\ApplicationUpdateResource.Designer.cs">
 	    <DesignTime>True</DesignTime>
@@ -216,10 +211,14 @@
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>PresetsResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\ValuesInputResource.resx">
+	  <EmbeddedResource Update="Resources\ReplacementTextResource.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
 	    <LastGenOutput>ValuesInputResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>

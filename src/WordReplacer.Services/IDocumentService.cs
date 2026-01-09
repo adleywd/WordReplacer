@@ -1,4 +1,5 @@
-﻿using MatBlazor;
+using MatBlazor;
+using WordReplacer.Dto;
 using WordReplacer.Models;
 
 namespace WordReplacer.Services;
@@ -17,10 +18,19 @@ public interface IDocumentService
     public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values);
 
     /// <summary>
+    /// Splits text based on delimiter type and returns a list of non-empty values
+    /// </summary>
+    /// <param name="text">The text to split</param>
+    /// <param name="delimiter">The delimiter type</param>
+    /// <param name="customDelimiter">Custom delimiter string if DelimiterType.Custom is used</param>
+    /// <returns>List of split text values, excluding empty entries</returns>
+    public List<string> SplitTextByDelimiter(string? text, DelimiterType delimiter, string? customDelimiter = null);
+
+    /// <summary>
     /// This function returns a `MemoryStream` of the file uploaded by the user
     /// </summary>
     /// <param name="file">The file to get the memory stream for.</param>
-    public Task<MemoryStream> GetMemoryStream(IMatFileUploadEntry? file);
+    public Task<MemoryStream> GetMemoryStream(FileUploadDto file);
 
     /// <summary>
     /// It downloads a file using JS Invocation.

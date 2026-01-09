@@ -60,11 +60,20 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove All.
+        ///   Looks up a localized string similar to Remove all replacements.
         /// </summary>
         public static string btnRemoveAll {
             get {
                 return ResourceManager.GetString("btnRemoveAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        public static string btnRemoveReplacementLine {
+            get {
+                return ResourceManager.GetString("btnRemoveReplacementLine", resourceCulture);
             }
         }
         
@@ -74,6 +83,15 @@ namespace WordReplacer.WebApp.Resources {
         public static string btnReplaceTextDefault {
             get {
                 return ResourceManager.GetString("btnReplaceTextDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add files to begin replacing.
+        /// </summary>
+        public static string btnReplaceTextNoFileChosen {
+            get {
+                return ResourceManager.GetString("btnReplaceTextNoFileChosen", resourceCulture);
             }
         }
         
@@ -285,7 +303,7 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The word/text {0} has already been added..
+        ///   Looks up a localized string similar to The text {0} has already been added..
         /// </summary>
         public static string valueAlreadyAddedError {
             get {

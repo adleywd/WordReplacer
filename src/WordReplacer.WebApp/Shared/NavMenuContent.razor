@@ -1,9 +1,11 @@
 ﻿@inject IStringLocalizer<NavMenuContentResource> Localizer
 @inject AppSettings AppSettings
 
-<MatNavMenu>
-    <MatNavItem Href=""><MatIcon Icon="home"></MatIcon>&nbsp; @Localizer["home"] </MatNavItem>
-</MatNavMenu>
+<MudNavMenu>
+    <MudNavLink Icon="@Icons.Material.Filled.Home" Href="/"  Match="NavLinkMatch.All">@Localizer["home"]</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.Info" Href="/about"  Match="NavLinkMatch.Prefix">About</MudNavLink>
+</MudNavMenu>
+
 @if (_uiVersion is not null)
 {
     <span class="version-drawer-bottom">v@(_uiVersion)</span>

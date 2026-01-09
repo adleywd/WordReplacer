@@ -1,0 +1,115 @@
+@using WordReplacer.Models
+@using WordReplacer.WebApp.Services
+@inject IStringLocalizer<GeneralResource> GeneralLocalizer
+@inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
+
+
+<MudPaper Class="p-4">
+    @if (Document.DocumentValues.Count > 0)
+    {
+        <MudExpansionPanels MultiExpansion="true" Elevation="10">
+            @for (int i = Document.DocumentValues.Count - 1; i >= 0; i--)
+            {
+                var doc = Document.DocumentValues[i];
+                <MudExpansionPanel @bind-Expanded="doc.Key.IsAccordionOpen">
+                    <TitleContent>
+                        <div class="d-flex align-content-center justify-content-center">
+                            <MudIcon Icon="@Icons.Material.Filled.FindReplace" class="mr-3"></MudIcon>
+                            <MudText>
+                                <ReplacementTextHeaderComponent DocumentValues="doc"/>
+                            </MudText>
+                        </div>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
+                            <MudItem xs="12">
+                                <div class="d-flex align-center p-1">
+                                    <!-- Text to Replace (readonly) -->
+                                    <MudTextField
+                                        T="string"
+                                        Label="@string.Format(GeneralLocalizer["headerOriginalValues"])"
+                                        Text="@doc.Key.Text"
+                                        HelperText="@doc.Key.HelperText"
+                                        HelperTextOnFocus="true"
+                                        Disabled="true"
+                                        Variant="Variant.Text"/>
+
+                                    <!-- New Replacement Input -->
+                                    <MudTextField
+                                        T="string"
+                                        Label="@string.Format(GeneralLocalizer["newDocumentLabel"], doc.Key.Text)"
+                                        Placeholder="@doc.Value.HelperText"
+                                        @bind-Value="doc.Value.Text"
+                                        HelperText="@doc.Value.HelperText"
+                                        Variant="Variant.Text"
+                                        Lines="1"
+                                        Immediate="true"
+                                        AutoGrow="true"
+                                        Class="ml-4"/>
+
+                                    <!-- Delimiter -->
+                                    <MudSelect @bind-Value="@doc.Value.Delimiter" T="DelimiterType"
+                                               Label="@ReplacementTextLocalizer["delimiterLabel"]"
+                                               HelperText="@ReplacementTextLocalizer["delimiterHelperText"]"
+                                               Class="ml-4">
+                                        <MudSelectItem Value="@DelimiterType.None">@ReplacementTextLocalizer["delimiterNone"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.NewLine">@ReplacementTextLocalizer["delimiterNewLine"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Semicolon">@ReplacementTextLocalizer["delimiterSemicolon"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Colon">@ReplacementTextLocalizer["delimiterColon"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Period">@ReplacementTextLocalizer["delimiterPeriod"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Pipe">@ReplacementTextLocalizer["delimiterPipe"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Comma">@ReplacementTextLocalizer["delimiterComma"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Tab">@ReplacementTextLocalizer["delimiterTab"]</MudSelectItem>
+                                        <MudSelectItem Value="@DelimiterType.Custom">@ReplacementTextLocalizer["delimiterCustom"]</MudSelectItem>
+                                    </MudSelect>
+
+                                    @if (doc.Value.Delimiter == DelimiterType.Custom)
+                                    {
+                                        <MudTextField
+                                            T="string"
+                                            Label="@ReplacementTextLocalizer["delimiterCustomLabel"]"
+                                            @bind-Value="doc.Value.CustomDelimiter"
+                                            HelperText="@ReplacementTextLocalizer["delimiterCustomHelperText"]"
+                                            Variant="Variant.Text"
+                                            Placeholder="# or & or % etc"
+                                            Lines="1"
+                                            Immediate="true"
+                                            AutoGrow="true"
+                                            Class="ml-4"/>
+                                    }
+
+                                    <!-- Remove value Button -->
+                                    <MudButton Variant="Variant.Outlined"
+                                               StartIcon="@Icons.Material.Filled.Delete"
+                                               ButtonType="ButtonType.Button"
+                                               Color="Color.Error"
+                                               Class="ml-4"
+                                               OnClick="() => RemoveItemsFromDictAsync(doc)">
+                                        @GeneralLocalizer["btnRemoveReplacementLine"]
+                                    </MudButton>
+                                </div>
+                            </MudItem>
+                        </MudGrid>
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Info">
+            @GeneralLocalizer["emptyValueListInfo"]
+        </MudAlert>
+    }
+</MudPaper>
+
+@code {
+    [Parameter] public required Document Document { get; set; }
+    [Parameter] public EventCallback<Document> DocumentChanged { get; set; }
+
+    private async Task RemoveItemsFromDictAsync(KeyValuePair<DocumentValue, DocumentValue> doc)
+    {
+        Document.DocumentValues.Remove(doc);
+        await DocumentChanged.InvokeAsync(Document);
+    }
+}

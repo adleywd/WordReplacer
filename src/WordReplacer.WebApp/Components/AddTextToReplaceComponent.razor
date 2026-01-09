@@ -1,0 +1,69 @@
+﻿@using WordReplacer.WebApp.Services
+@inject IStringLocalizer<GeneralResource> Localizer
+@inject ISnackbar Snackbar
+@inject IDocumentProcessingService DocumentProcessingService
+
+<MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
+    <MudItem xs="12">
+        <div class="d-flex align-center justify-space-between">
+            <MudTextField 
+                @bind-Value="_textToBeReplaced" 
+                Label="@Localizer["labelTextAddValues"]"
+                Immediate="true"
+                Variant="Variant.Text"
+                @onkeydown="OnEnterPressed"/>
+            <MudButton
+                Variant="Variant.Filled"
+                StartIcon="@Icons.Material.Filled.Add"
+                OnClick="AddValueToReplaceAsync"
+                Color="Color.Primary"
+                Size="Size.Large"
+                Class="ml-4"
+                Disabled="@(string.IsNullOrEmpty(_textToBeReplaced))">
+                @Localizer["buttonTextAddValues"]
+            </MudButton>
+        </div>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public required Document Document { get; set; }
+    [Parameter] public EventCallback<Document> DocumentChanged { get; set; }
+    
+    private string _textToBeReplaced = string.Empty;
+
+    private async Task AddValueToReplaceAsync()
+    {
+        if (string.IsNullOrEmpty(_textToBeReplaced))
+        {
+            Snackbar.Add("Text cannot be empty", Severity.Error);
+            return;
+        }
+
+        if (Document.DocumentValues.Select(d => d.Key.Text).Contains(_textToBeReplaced))
+        {
+            var text = $"\"{_textToBeReplaced}\"";
+            Snackbar.Add(string.Format(Localizer["valueAlreadyAddedError"], text), Severity.Error);
+            return;
+        }
+
+        DocumentProcessingService.AddValues(Document, _textToBeReplaced);
+        await DocumentChanged.InvokeAsync(Document);
+        StateHasChanged();
+        _textToBeReplaced = string.Empty;
+    }
+
+    private async Task OnEnterPressed(KeyboardEventArgs e)
+    {
+        if (e.Code is not ("Enter" or "NumpadEnter"))
+        {
+            return;
+        }
+        
+        if(!string.IsNullOrEmpty(_textToBeReplaced))
+        {
+            await AddValueToReplaceAsync();
+        }
+    }
+
+}

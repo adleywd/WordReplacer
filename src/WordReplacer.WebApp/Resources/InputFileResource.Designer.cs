@@ -60,6 +60,15 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove all files.
+        /// </summary>
+        internal static string btnRemoveAllFiles {
+            get {
+                return ResourceManager.GetString("btnRemoveAllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Selected Files: .
         /// </summary>
         internal static string selectedManyFileLabel {
@@ -78,7 +87,7 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drop a Word(.docx) file or Browse here.
+        ///   Looks up a localized string similar to Drop Word(.docx) files or click to browse.
         /// </summary>
         internal static string selectFileLabel {
             get {

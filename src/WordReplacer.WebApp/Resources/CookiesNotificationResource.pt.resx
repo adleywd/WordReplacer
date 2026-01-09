@@ -98,9 +98,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="cookiesExplanation" xml:space="preserve">
-    <value>Este aplicativo é executado apenas no seu navegador, não está em nenhum servidor. É por isso que precisamos usar cookies.</value>
+	  <value>Este aplicativo roda apenas no seu navegador, por isso usa cookies.</value>
   </data>
   <data name="cookiesAgreement" xml:space="preserve">
-    <value>Ao usar este aplicativo, você permite o uso de cookies.</value>
+	  <value>Ao continuar, você aceita o uso de cookies.</value>
+  </data>
+  <data name="btnCookieDismiss" xml:space="preserve">
+	  <value>Ok</value>
   </data>
 </root>

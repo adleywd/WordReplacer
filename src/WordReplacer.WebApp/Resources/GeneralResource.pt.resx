@@ -139,13 +139,13 @@
     <value>Novo texto</value>
   </data>
   <data name="btnRemoveAll" xml:space="preserve">
-    <value>Remover tudo</value>
+    <value>Remover todas substituições</value>
   </data>
   <data name="emptyValueListInfo" xml:space="preserve">
     <value>Selecione um arquivo e adicione um texto para iniciar as substituição</value>
   </data>
   <data name="valueAlreadyAddedError" xml:space="preserve">
-    <value>O word/texto {0} já foi adicionado.</value>
+    <value>O texto {0} já foi adicionado.</value>
   </data>
   <data name="valueAlreadyAddedErrorTitle" xml:space="preserve">
     <value>Textos duplicados</value>
@@ -197,5 +197,11 @@
   </data>
   <data name="downloadsHeaderText" xml:space="preserve">
     <value>Downloads</value>
+  </data>
+  <data name="btnRemoveReplacementLine" xml:space="preserve">
+    <value>Remover</value>
+  </data>
+  <data name="btnReplaceTextNoFileChosen" xml:space="preserve">
+    <value>Adicione arquivos para substituir</value>
   </data>
 </root>

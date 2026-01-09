@@ -1,83 +1,119 @@
-﻿@inherits LayoutComponentBase
-@using WordReplacer.WebApp.Components
+@inherits LayoutComponentBase
 @using System.Globalization
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject NavigationManager Navigation
 @inject AppSettings AppSettings
 
-<MatThemeProvider Theme="@_primaryTheme">
-    <MatAnchorUtils></MatAnchorUtils>
-    <MatAppBar Style="z-index: 100;">
-        <MatAppBarRow>
-            <MatAppBarSection>
-                <MatIconButton Icon="menu" OnClick="@((e) => MenuButtonClicked())"></MatIconButton>
-                <MatIcon><img style="width: 100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MatIcon>
-                <MatAppBarTitle Style="margin-left: 0;">Word Replacer</MatAppBarTitle>
-            </MatAppBarSection>
-            <MatAppBarSection Align="@MatAppBarSectionAlign.End">
-                @if (_selectedLanguage != "pt")
-                {
-                    <MatIconButton OnClick="@(() => ChangeUIToLanguage("pt"))">
-                        <img class="text-centered-in-btn" src="img/flag-brazil.svg" />
-                    </MatIconButton>
-                }
-                @if (_selectedLanguage != "en")
-                {
-                    <MatIconButton OnClick="@(() => ChangeUIToLanguage("en"))">
-                        <img class="text-centered-in-btn" src="img/flag-united-states.svg" />
-                    </MatIconButton>
-                }
-                <MatIconButton Link="https://github.com/adleywd" Target="_blank">
-                    <i class="fa fa-github text-centered-in-btn" aria-hidden="true"></i>
-                </MatIconButton>
-            </MatAppBarSection>
-        </MatAppBarRow>
-    </MatAppBar>
+<MudThemeProvider @ref="_mudThemeProvider" Theme="_wordReplacerTheme" @bind-IsDarkMode="_isDarkMode"/>
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-    <MatToastContainer />
+<MudLayout>
+    <MudAppBar>
+        <MudIcon Style="width:64px; height:64px;"><img style="width:100%; height:100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MudIcon>
+        <MudText Typo="Typo.h6" Class="ml-3">Word Replacer</MudText>
+        <MudSpacer />
+        <MudStack Justify="Justify.Center" Class="d-flex align-center justify-center" Row="true">
+            @if (!_isDarkMode)
+            {
+                <MudIconButton OnClick="@(() => ChangeThemeAsync(true))" Title="Dark theme" Edge="Edge.End">
+                    <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.DarkMode"/>
+                </MudIconButton>
+            }
+            else
+            {
+                <MudIconButton OnClick="@(() => ChangeThemeAsync(false))" Title="Light theme" Edge="Edge.End">
+                    <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.LightMode"/>
+                </MudIconButton>
+            }
 
-    <MatDrawerContainer Style="width: 100vw; height: 100vh;" Class="mat">
+            @if (_selectedLanguage != "pt")
+            {
+                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("pt"))" Title="Português" Edge="Edge.End">
+                    <img style="width: 24px; height: 24px;" src="img/flag-brazil.svg" alt="Lingua Portuguesa"/>
+                </MudIconButton>
+            }
+            @if (_selectedLanguage != "en")
+            {
 
-        <MatHidden Breakpoint="@MatBreakpoint.SM"
-                   Direction="@MatHiddenDirection.Up"
-                   HiddenChanged="@ModelDrawerHiddenChanged">
-            <ChildContent>
-                <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Modal" Style="background-color: #fafafa;">
-                    <MatAppBarAdjust></MatAppBarAdjust>
-                    <NavMenuContent />
-                </MatDrawer>
-            </ChildContent>
-            <ElseContent>
-                <MatDrawer @bind-Opened="@_navMenuOpened" Mode="@MatDrawerMode.Dismissible" Style="background-color: #fafafa;">
-                    <MatAppBarAdjust></MatAppBarAdjust>
-                    <NavMenuContent />
-                </MatDrawer>
-            </ElseContent>
-        </MatHidden>
+                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("en"))" Title="English" Edge="Edge.End">
+                    <img style="width: 24px; height: 24px;" src="img/flag-united-states.svg" alt="English language"/>
+                </MudIconButton>
+            }
 
-
-        <MatDrawerContent Class="mdc-theme--background">
-            <MatAppBarAdjust></MatAppBarAdjust>
-            <CookiesNotificationComponent />
-            <ApplicationUpdateComponent />
-
-
-            <div class="body-wrapper ps-3 pe-3 pt-2 pb-2">
-                @Body
+            <MudIconButton Href="https://github.com/adleywd/WordReplacer" Title="GitHub" Edge="Edge.End">
+                <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Custom.Brands.GitHub"/>
+            </MudIconButton>
+        </MudStack>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <div class="mt-2 mb-5 p-2 text-center">
+                <NotifyNewUpdateComponent/>
+                <CookiesNotificationComponent/>
             </div>
-        </MatDrawerContent>
-
-    </MatDrawerContainer>
-</MatThemeProvider>
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
 @code
 {
-    // Navbar should start closed
-    private bool _navMenuOpened = false;
+    private bool _isDarkMode;
+    private MudThemeProvider? _mudThemeProvider;
 
     private string _selectedLanguage = "en";
 
-    private async Task ChangeUIToLanguage(string language)
+    private bool _hasStoredThemePreference = false; // new: indicates whether the user previously saved a theme preference
+    
+    private readonly MudTheme _wordReplacerTheme = new()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = Colors.DeepPurple.Default,
+            Secondary = Colors.Pink.Accent4,
+
+            Background = "#EEEEEE",        // Soft light gray
+            Surface = "#FFFFFF",           // Cards, dialogs
+            DrawerBackground = "#FFFFFF",
+            AppbarBackground = Colors.DeepPurple.Default,
+
+            TextPrimary = "#212121",        // Material dark text
+            TextSecondary = "#5E35B1",      // DeepPurple 600
+            TextDisabled = "#9E9E9E",
+
+            Divider = "#D1C4E9",            // Very light purple divider
+
+            Info = Colors.Blue.Lighten2
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = Colors.DeepPurple.Lighten2,
+            Secondary = Colors.Pink.Accent4,
+
+            Background = "#121212",      // Material standard dark background
+            Surface = "#1E1E1E",         // Cards, dialogs
+            DrawerBackground = "#1B1B1B",
+            AppbarBackground = Colors.DeepPurple.Default,
+
+            Info = Colors.Blue.Lighten2,
+
+            TextPrimary = "#EDE7F6",     // Soft purple-tinted white
+            TextSecondary = "#B39DDB",   // Muted DeepPurple
+            TextDisabled = "#7E7E7E",
+
+            Divider = "#2C2C2C",
+        },
+
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "260px",
+            DrawerWidthRight = "300px"
+        }
+    };
+    
+    private async Task ChangeUIToLanguageAsync(string language)
     {
         _selectedLanguage = language;
         var newCulture = new CultureInfo(language);
@@ -89,26 +125,13 @@
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 
-    private void ModelDrawerHiddenChanged(bool hidden)
+    private async Task ChangeThemeAsync(bool isDark)
     {
-        if (!hidden)
-        {
-            _navMenuOpened = false;
-        }
-    }
-
-    private void MenuButtonClicked()
-    {
-        _navMenuOpened = !_navMenuOpened;
+        _isDarkMode = isDark;
+        _hasStoredThemePreference = true;
+        await LocalStorage.SetItemAsStringAsync(AppSettings.ThemeStoreKey, isDark ? "dark" : "light");
         StateHasChanged();
     }
-
-    private readonly MatTheme _primaryTheme = new()
-        {
-            Primary = MatThemeColors.DeepPurple._700.Value,
-            Secondary = MatThemeColors.DeepPurple._300.Value,
-            Background = MatThemeColors.Grey._200.Value
-        };
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,13 +139,52 @@
 
         if (await LocalStorage.ContainKeyAsync(AppSettings.LanguageStoreKey))
         {
-            _selectedLanguage = await LocalStorage.GetItemAsStringAsync(AppSettings.LanguageStoreKey);
+            _selectedLanguage = await LocalStorage
+                .GetItemAsStringAsync(AppSettings.LanguageStoreKey)
+                .ConfigureAwait(true) ?? "en";
         }
-        else if (_selectedLanguage != "pt" && _selectedLanguage != "en")
+        else if ((_selectedLanguage != "pt" && _selectedLanguage != "en"))
         {
             _selectedLanguage = "en";
         }
 
+        if (await LocalStorage.ContainKeyAsync(AppSettings.ThemeStoreKey))
+        {
+            var stored = await LocalStorage.GetItemAsStringAsync(AppSettings.ThemeStoreKey).ConfigureAwait(true);
+            if (!string.IsNullOrWhiteSpace(stored))
+            {
+                _hasStoredThemePreference = true;
+                _isDarkMode = string.Equals(stored, "dark", StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
         await base.OnInitializedAsync();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ArgumentNullException.ThrowIfNull(_mudThemeProvider);
+            var systemDark = await _mudThemeProvider.GetSystemDarkModeAsync();
+
+            if (!_hasStoredThemePreference)
+            {
+                _isDarkMode = systemDark;
+                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemDarkModeChanged(bool newValue)
+    {
+        if (!_hasStoredThemePreference)
+        {
+            _isDarkMode = newValue;
+            StateHasChanged();
+        }
+        return Task.CompletedTask;
     }
 }
