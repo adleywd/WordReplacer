@@ -12,17 +12,54 @@
     <link rel="apple-touch-icon" sizes="512x512" href="img/icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="img/icon-192.png" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <!-- Important: Increment the version parameter whenever you update MudBlazor to prevent caching issues -->
+    <!-- Reminder: Increment the version parameter whenever you update MudBlazor to prevent caching issues -->
     <link href="_content/MudBlazor/MudBlazor.min.css?v=1" rel="stylesheet" />
     <link rel="stylesheet" href="css/font-awesome/font-awesome.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Inline fallback styles for the loading screen -->
+    <style>
+        :root{--brand:#512da8;--bg:#f3f4f6;--card:#ffffff;--muted:#6b7280}
+        html,body{height:100%;margin:0}
+        #app{font-family:'Roboto',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+        .loading-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:24px}
+        .loader-card{background:var(--card);padding:24px 32px;border-radius:12px;box-shadow:0 12px 30px rgba(16,24,40,0.06);display:flex;gap:18px;align-items:center;max-width:520px;width:100%;transform:translateZ(0);animation:cardPulse 3s ease-in-out infinite}
+        @keyframes cardPulse{0%,100%{transform:translateZ(0) scale(1)}50%{transform:translateZ(0) scale(0.997)}}
+        .brand{display:flex;flex-direction:column}
+        .brand .title{font-size:20px;color:var(--brand);font-weight:600;letter-spacing:0.2px}
+        .brand .subtitle{font-size:14px;color:var(--muted);margin-top:6px}
+
+        /* 3-dot spinner styles */
+        .dot-spinner{width:84px;display:flex;align-items:center;justify-content:space-between;flex:0 0 84px}
+        .dot{width:14px;height:14px;border-radius:50%;background:var(--brand);box-shadow:0 6px 14px rgba(81,45,168,0.12);opacity:0.2;transform:translateY(0);animation:dotBounce 1s infinite ease-in-out}
+        .dot:nth-child(1){animation-delay:0s}
+        .dot:nth-child(2){animation-delay:0.12s}
+        .dot:nth-child(3){animation-delay:0.24s}
+        @keyframes dotBounce{
+            0%{opacity:0.28;transform:translateY(0) scale(0.94)}
+            30%{opacity:1;transform:translateY(-10px) scale(1.05)}
+            60%{opacity:0.6;transform:translateY(-4px) scale(1)}
+            100%{opacity:0.28;transform:translateY(0) scale(0.94)}
+        }
+
+        @media (max-width:520px){.loader-card{padding:18px;border-radius:10px}.brand .title{font-size:18px}}
+    </style>
 </head>
 
 <body>
     <div id="app">
-        <div class="vh-100 d-flex align-items-center justify-content-center gap-3" style="background-color: #eee;">
-            <div class="h5 spinner-border" style="color: #512da8;"></div>
-            <div class="h2" style="color: #512da8;">Loading this amazing app :D</div>
+        <div class="loading-wrap" role="status" aria-live="polite">
+            <div class="loader-card">
+                <div class="dot-spinner" aria-hidden="true">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="brand">
+                    <div class="title">Word Replacer</div>
+                    <div class="subtitle">Preparing your workspace — loading app resources…</div>
+                </div>
+            </div>
         </div>
     </div>
 
