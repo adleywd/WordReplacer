@@ -268,3 +268,13 @@ a, .btn-link {
     align-items: center;
     justify-content: center;
 }
+
+.version-label-main-page {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 1100;
+    pointer-events: none;
+    opacity: 0.85;
+    font-size: 0.9rem;
+}

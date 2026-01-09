@@ -4,8 +4,6 @@
 @inject IStringLocalizer<GeneralResource> Localizer
 @inject IDocumentProcessingService DocumentProcessingService
 
-@* <PresetsComponent @bind-Document="_doc" /> *@
-
 <DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]"
                         ClearDownloadsRequested="ClearDownloads">
         <DownloadDocumentListComponent @bind-DownloadsDict="_downloads"/>
@@ -51,13 +49,17 @@
     </MudContainer>
 </MudPaper>
 
+<VersionLabelComponent Class="version-label-main-page" />
+
 @code {
     private Document _doc = new();
     private Dictionary<string, Download> _downloads = new();
     private DownloadPopoutComponent? _popupRef = new();
 
     private bool DoNotHaveFiles => _doc.Files.Count == 0;
+    
     private bool _isProcessingReplacements = false;
+    
     private double _overallProgress = 0.0;
     private int _totalFiles = 0;
     private int _completedFiles = 0;
