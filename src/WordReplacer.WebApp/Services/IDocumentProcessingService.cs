@@ -1,4 +1,3 @@
-using MatBlazor;
 using WordReplacer.Dto;
 using WordReplacer.Models;
 using WordReplacer.Models.Enums;
@@ -24,7 +23,7 @@ public interface IDocumentProcessingService
     void AddValues(Document doc, string text);
     
     /// <summary>
-    /// Handles the submit async.
+    /// Handles submit async.
     /// </summary>
     /// <param name="doc"></param>
     /// <param name="prepareUIToReplaceAndDownload"></param>

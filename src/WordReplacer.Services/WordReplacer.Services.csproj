@@ -5,7 +5,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MatBlazor" />
       <PackageReference Include="Microsoft.JSInterop" />
     </ItemGroup>
 
