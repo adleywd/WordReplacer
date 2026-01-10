@@ -107,7 +107,7 @@
 	  <value>será substituído por</value>
   </data>
   <data name="delimiterHelperText" xml:space="preserve">
-	  <value>Divida o texto de entrada por um delimitador para gerar um novo arquivo para cada parte resultante.</value>
+	  <value>Use um delimitador para dividir o texto de entrada. Cada parte será salva como um novo arquivo usando a substituição correspondente.</value>
   </data>
   <data name="delimiterLabel" xml:space="preserve">
 	  <value>Delimitador</value>

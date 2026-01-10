@@ -110,7 +110,7 @@
 	  <value>Delimiter</value>
   </data>
   <data name="delimiterHelperText" xml:space="preserve">
-	  <value>Use a delimiter to split the input text. Each resulting section will generate a new file.</value>
+	  <value>Use a delimiter to split the input text. Each section will generate a new file using the corresponding replacement.</value>
   </data>
   <data name="delimiterNone" xml:space="preserve">
 	  <value>No delimiter</value>
