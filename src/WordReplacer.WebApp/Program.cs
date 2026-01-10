@@ -1,11 +1,12 @@
 using System.Globalization;
 using System.Reflection;
 using Blazored.LocalStorage;
-using MatBlazor;
+using MudBlazor.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using WordReplacer.Models;
 using WordReplacer.Services;
+using WordReplacer.WebApp.Services;
 
 namespace WordReplacer.WebApp
 {
@@ -18,27 +19,20 @@ namespace WordReplacer.WebApp
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddMatBlazor();
-            builder.Services.AddMatToaster(config
-                =>
-            {
-                config.Position = MatToastPosition.TopRight;
-                config.PreventDuplicates = true;
-                config.NewestOnTop = false;
-                config.ShowCloseButton = true;
-                config.MaximumOpacity = 100;
-                config.VisibleStateDuration = 5000;
-            });
+            
+            builder.Services.AddMudServices();
 
             builder.Services.AddBlazoredLocalStorage();
             
             builder.Services.AddTransient<IDocumentService, DocumentService>();
+            builder.Services.AddTransient<IDocumentProcessingService, DocumentProcessingService>();
 
             var appSettings = new AppSettings()
             {
                 AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)!,
                 LanguageStoreKey = "choose_language",
-                CookiesStorageKey = "cookies_usage_accept"
+                CookiesStorageKey = "cookies_usage_accept",
+                ThemeStoreKey = "theme_mode"
             };
 
             builder.Services.AddSingleton(appSettings);

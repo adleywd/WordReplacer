@@ -1,0 +1,44 @@
+@using WordReplacer.Services
+@inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
+@inject IDocumentService DocumentService
+
+<MudText>
+        @if (string.IsNullOrEmpty(DocumentValues.Value.Text))
+        {
+            <u>@DocumentValues.Key.Text</u> 
+            <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
+            <span>_</span>
+        }
+        else
+        {
+            var splitValues = DocumentService.SplitTextByDelimiter(DocumentValues.Value.Text, DocumentValues.Value.Delimiter, DocumentValues.Value.CustomDelimiter);
+            
+            if (splitValues.Count == 1)
+            {
+                <u>@DocumentValues.Key.Text</u>
+                <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
+                <u>@splitValues.First()</u>
+            }
+            else
+            {
+                var index = 0;
+                var lastIndex = splitValues.Count - 1;
+                foreach (var text in splitValues)
+                {
+                    <u>@DocumentValues.Key.Text</u>
+                    <span>&nbsp;</span>@ReplacementTextLocalizer["accordionTitleReplaceText"]<span>&nbsp;</span>
+                    <u>@text</u>
+                    @if (index != lastIndex)
+                    {
+                        <br/>
+                    }
+
+                    index++;
+                }
+            }
+        }
+</MudText>
+
+@code {
+    [Parameter] public KeyValuePair<DocumentValue, DocumentValue> DocumentValues { get; set; }
+}

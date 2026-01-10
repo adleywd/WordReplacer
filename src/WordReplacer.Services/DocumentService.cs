@@ -1,10 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Packaging;
-using MatBlazor;
 using Microsoft.JSInterop;
 using WordReplacer.Common;
+using WordReplacer.Dto;
 using WordReplacer.Models;
 
 namespace WordReplacer.Services
@@ -29,12 +26,11 @@ namespace WordReplacer.Services
         /// <inheritdoc />
         public List<Dictionary<string, string>> GetAllCombinations(List<KeyValuePair<DocumentValue, DocumentValue>> values)
         {
-            var nodeList = values.Select(inputTxt => 
-                                new KeyValuePair<string, List<string>> (inputTxt.Key.Text!, 
-                                inputTxt.Value.Text!.Split("\n")
-                                    .Where(s => !string.IsNullOrWhiteSpace(s))
-                                    .ToList())
-                                ).ToList();
+            var nodeList = values.Select(inputTxt =>
+            {
+                var splitValues = SplitTextByDelimiter(inputTxt.Value.Text, inputTxt.Value.Delimiter, inputTxt.Value.CustomDelimiter);
+                return new KeyValuePair<string, List<string>>(inputTxt.Key.Text!, splitValues);
+            }).ToList();
 
             var combinationsResult = new List<Dictionary<string, string>>();
             combinationsResult.GetCombinations(nodeList, 0, new Dictionary<string, string>());
@@ -42,16 +38,32 @@ namespace WordReplacer.Services
         }
 
         /// <inheritdoc />
-        public async Task<MemoryStream> GetMemoryStream(IMatFileUploadEntry? file)
+        public List<string> SplitTextByDelimiter(string? text, DelimiterType delimiter, string? customDelimiter = null)
         {
-            if (file is null)
+            var delimiterString = delimiter.GetDelimiterString(customDelimiter);
+            List<string> splitValues;
+            
+            if (delimiter == DelimiterType.None || string.IsNullOrEmpty(delimiterString))
             {
-                throw new ArgumentException("Cannot get a memory stream from a null/empty file");
+                splitValues = new List<string> { text ?? string.Empty };
+            }
+            else
+            {
+                splitValues = (text ?? string.Empty).Split(delimiterString, StringSplitOptions.RemoveEmptyEntries).ToList();
+            }
+            
+            return splitValues.Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+        }
+
+        /// <inheritdoc />
+        public async Task<MemoryStream> GetMemoryStream(FileUploadDto file)
+        {
+            if (file?.Content == null)
+            {
+                throw new ArgumentException("Invalid file content");
             }
 
-            var stream = new MemoryStream();
-            await file.WriteToStreamAsync(stream).ConfigureAwait(false);
-            return stream;
+            return await Task.FromResult(new MemoryStream(file.Content)).ConfigureAwait(false);
         }
 
         /// <inheritdoc />

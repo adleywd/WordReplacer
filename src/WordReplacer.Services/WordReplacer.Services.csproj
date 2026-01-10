@@ -5,12 +5,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MatBlazor" />
       <PackageReference Include="Microsoft.JSInterop" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\WordReplacer.Common\WordReplacer.Common.csproj" />
+      <ProjectReference Include="..\WordReplacer.Dto\WordReplacer.Dto.csproj" />
       <ProjectReference Include="..\WordReplacer.Models\WordReplacer.Models.csproj" />
     </ItemGroup>
 

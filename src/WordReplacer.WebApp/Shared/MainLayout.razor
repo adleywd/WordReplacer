@@ -1,0 +1,190 @@
+@inherits LayoutComponentBase
+@using System.Globalization
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject NavigationManager Navigation
+@inject AppSettings AppSettings
+
+<MudThemeProvider @ref="_mudThemeProvider" Theme="_wordReplacerTheme" @bind-IsDarkMode="_isDarkMode"/>
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudIcon Style="width:64px; height:64px;"><img style="width:100%; height:100%;" src="img/wr-logo-white-nobg-64x64.png" alt="Word Replacer Logo" /></MudIcon>
+        <MudText Typo="Typo.h6" Class="ml-3">Word Replacer</MudText>
+        <MudSpacer />
+        <MudStack Justify="Justify.Center" Class="d-flex align-center justify-center" Row="true">
+            @if (!_isDarkMode)
+            {
+                <MudIconButton OnClick="@(() => ChangeThemeAsync(true))" Title="Dark theme" Edge="Edge.End">
+                    <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.DarkMode"/>
+                </MudIconButton>
+            }
+            else
+            {
+                <MudIconButton OnClick="@(() => ChangeThemeAsync(false))" Title="Light theme" Edge="Edge.End">
+                    <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Material.Outlined.LightMode"/>
+                </MudIconButton>
+            }
+
+            @if (_selectedLanguage != "pt")
+            {
+                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("pt"))" Title="Português" Edge="Edge.End">
+                    <img style="width: 24px; height: 24px;" src="img/flag-brazil.svg" alt="Lingua Portuguesa"/>
+                </MudIconButton>
+            }
+            @if (_selectedLanguage != "en")
+            {
+
+                <MudIconButton OnClick="@(() => ChangeUIToLanguageAsync("en"))" Title="English" Edge="Edge.End">
+                    <img style="width: 24px; height: 24px;" src="img/flag-united-states.svg" alt="English language"/>
+                </MudIconButton>
+            }
+
+            <MudIconButton Href="https://github.com/adleywd/WordReplacer" Title="GitHub" Edge="Edge.End">
+                <MudIcon Style="width: 24px; height: 24px;" Icon="@Icons.Custom.Brands.GitHub"/>
+            </MudIconButton>
+        </MudStack>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <div class="mt-2 mb-5 p-2 text-center">
+                <NotifyNewUpdateComponent/>
+                <CookiesNotificationComponent/>
+            </div>
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code
+{
+    private bool _isDarkMode;
+    private MudThemeProvider? _mudThemeProvider;
+
+    private string _selectedLanguage = "en";
+
+    private bool _hasStoredThemePreference = false; // new: indicates whether the user previously saved a theme preference
+    
+    private readonly MudTheme _wordReplacerTheme = new()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = Colors.DeepPurple.Default,
+            Secondary = Colors.Pink.Accent4,
+
+            Background = "#EEEEEE",        // Soft light gray
+            Surface = "#FFFFFF",           // Cards, dialogs
+            DrawerBackground = "#FFFFFF",
+            AppbarBackground = Colors.DeepPurple.Default,
+
+            TextPrimary = "#212121",        // Material dark text
+            TextSecondary = "#5E35B1",      // DeepPurple 600
+            TextDisabled = "#9E9E9E",
+
+            Divider = "#D1C4E9",            // Very light purple divider
+
+            Info = Colors.Blue.Lighten2
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = Colors.DeepPurple.Lighten2,
+            Secondary = Colors.Pink.Accent4,
+
+            Background = "#121212",      // Material standard dark background
+            Surface = "#1E1E1E",         // Cards, dialogs
+            DrawerBackground = "#1B1B1B",
+            AppbarBackground = Colors.DeepPurple.Default,
+
+            Info = Colors.Blue.Lighten2,
+
+            TextPrimary = "#EDE7F6",     // Soft purple-tinted white
+            TextSecondary = "#B39DDB",   // Muted DeepPurple
+            TextDisabled = "#7E7E7E",
+
+            Divider = "#2C2C2C",
+        },
+
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "260px",
+            DrawerWidthRight = "300px"
+        }
+    };
+    
+    private async Task ChangeUIToLanguageAsync(string language)
+    {
+        _selectedLanguage = language;
+        var newCulture = new CultureInfo(language);
+        Thread.CurrentThread.CurrentCulture = newCulture;
+        Thread.CurrentThread.CurrentUICulture = newCulture;
+        CultureInfo.DefaultThreadCurrentCulture = newCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = newCulture;
+        await LocalStorage.SetItemAsStringAsync(AppSettings.LanguageStoreKey, language);
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+
+    private async Task ChangeThemeAsync(bool isDark)
+    {
+        _isDarkMode = isDark;
+        _hasStoredThemePreference = true;
+        await LocalStorage.SetItemAsStringAsync(AppSettings.ThemeStoreKey, isDark ? "dark" : "light");
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _selectedLanguage = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+        if (await LocalStorage.ContainKeyAsync(AppSettings.LanguageStoreKey))
+        {
+            _selectedLanguage = await LocalStorage
+                .GetItemAsStringAsync(AppSettings.LanguageStoreKey)
+                .ConfigureAwait(true) ?? "en";
+        }
+        else if ((_selectedLanguage != "pt" && _selectedLanguage != "en"))
+        {
+            _selectedLanguage = "en";
+        }
+
+        if (await LocalStorage.ContainKeyAsync(AppSettings.ThemeStoreKey))
+        {
+            var stored = await LocalStorage.GetItemAsStringAsync(AppSettings.ThemeStoreKey).ConfigureAwait(true);
+            if (!string.IsNullOrWhiteSpace(stored))
+            {
+                _hasStoredThemePreference = true;
+                _isDarkMode = string.Equals(stored, "dark", StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        await base.OnInitializedAsync();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ArgumentNullException.ThrowIfNull(_mudThemeProvider);
+            var systemDark = await _mudThemeProvider.GetSystemDarkModeAsync();
+
+            if (!_hasStoredThemePreference)
+            {
+                _isDarkMode = systemDark;
+                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemDarkModeChanged(bool newValue)
+    {
+        if (!_hasStoredThemePreference)
+        {
+            _isDarkMode = newValue;
+            StateHasChanged();
+        }
+        return Task.CompletedTask;
+    }
+}
