@@ -4,8 +4,9 @@
 @inject IStringLocalizer<GeneralResource> Localizer
 @inject IDocumentProcessingService DocumentProcessingService
 
-<DownloadPopoutComponent @ref="_popupRef" HeaderText="@Localizer["downloadsHeaderText"]"
-                        ClearDownloadsRequested="ClearDownloads">
+<DownloadPopoutComponent @ref="_popupRef" 
+                         HeaderText="@Localizer["downloadsHeaderText"]" 
+                         ClearDownloadsRequested="ClearDownloads">
         <DownloadDocumentListComponent @bind-DownloadsDict="_downloads"/>
 </DownloadPopoutComponent>
 
@@ -19,7 +20,6 @@
 <MudDivider DividerType="DividerType.FullWidth" Class="mt-3 mb-3"/>
 <MudPaper Width="100%" Class="mt-5 mb-5 pb-5 pt-5" Elevation="5">
     <MudContainer>
-        <ReplacementTextComponent @bind-Document="_doc"/>
         @if (_isProcessingReplacements)
         {
             <MudStack Class="mt-3 mb-3">
@@ -29,23 +29,26 @@
         }
         @if (ShouldDisplayReplacementButtons)
         {
-            <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.FlexEnd" Class="mt-5">
-                <MudSwitch @bind-Value="_shouldAddPrefixToFileName" 
-                             Dense="false" 
-                             Color="Color.Primary" 
-                             Label="Add original filename as prefix"/>
-                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="RemoveReplacements">
-                    @Localizer["btnRemoveAll"]
-                </MudButton>
-                <MudButton
-                    Variant="Variant.Filled"
-                    Color="Color.Primary"
-                    Disabled="@(DoNotHaveFiles || _isProcessingReplacements)"
-                    OnClick="@HandleWordReplacementAsync">
-                    @ReplaceBtnText()
-                </MudButton>
+            <MudStack Row="true" Class="mt-3 mb-5" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Spacing="2">
+                <MudStack Row="true" Wrap="Wrap.Wrap " Justify="Justify.FlexEnd" Spacing="2">
+                    <MudSwitch @bind-Value="_shouldAddPrefixToFileName"
+                               Dense="false"
+                               Color="Color.Primary"
+                               Label="@Localizer["filePrefixSwitchLabel"]"/>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="RemoveReplacements">
+                        @Localizer["btnRemoveAll"]
+                    </MudButton>
+                    <MudButton
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        Disabled="@(DoNotHaveFiles || _isProcessingReplacements)"
+                        OnClick="@HandleWordReplacementAsync">
+                        @ReplaceBtnText()
+                    </MudButton>
+                </MudStack>
             </MudStack>
         }
+        <ReplacementTextComponent @bind-Document="_doc"/>
     </MudContainer>
 </MudPaper>
 

@@ -141,6 +141,15 @@ namespace WordReplacer.WebApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prefix downloads with original filename.
+        /// </summary>
+        public static string filePrefixSwitchLabel {
+            get {
+                return ResourceManager.GetString("filePrefixSwitchLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Newer text.
         /// </summary>
         public static string headerNewValues {

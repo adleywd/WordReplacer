@@ -204,4 +204,7 @@
   <data name="btnReplaceTextNoFileChosen" xml:space="preserve">
     <value>Add files to begin replacing</value>
   </data>
+  <data name="filePrefixSwitchLabel" xml:space="preserve">
+    <value>Prefix downloads with original filename</value>
+  </data>
 </root>

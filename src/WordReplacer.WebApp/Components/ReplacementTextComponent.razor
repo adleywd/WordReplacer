@@ -3,55 +3,58 @@
 @inject IStringLocalizer<GeneralResource> GeneralLocalizer
 @inject IStringLocalizer<ReplacementTextResource> ReplacementTextLocalizer
 
-
 <MudPaper Class="p-4">
-    @if (Document.DocumentValues.Count > 0)
+    @if (Document?.DocumentValues?.Count > 0)
     {
         <MudExpansionPanels MultiExpansion="true" Elevation="10">
             @for (int i = Document.DocumentValues.Count - 1; i >= 0; i--)
             {
                 var doc = Document.DocumentValues[i];
+                var idx = i; // capture index for lambda
+
                 <MudExpansionPanel @bind-Expanded="doc.Key.IsAccordionOpen">
                     <TitleContent>
                         <div class="d-flex align-content-center justify-content-center">
-                            <MudIcon Icon="@Icons.Material.Filled.FindReplace" class="mr-3"></MudIcon>
+                            <MudIcon Icon="@Icons.Material.Filled.FindReplace" class="mr-3" />
                             <MudText>
-                                <ReplacementTextHeaderComponent DocumentValues="doc"/>
+                                <ReplacementTextHeaderComponent DocumentValues="doc" />
                             </MudText>
                         </div>
                     </TitleContent>
+
                     <ChildContent>
                         <MudGrid Row="true" Justify="Justify.Center" Spacing="5" Class="m-4">
-                            <MudItem xs="12">
-                                <div class="d-flex align-center p-1">
-                                    <!-- Text to Replace (readonly) -->
-                                    <MudTextField
-                                        T="string"
-                                        Label="@string.Format(GeneralLocalizer["headerOriginalValues"])"
-                                        Text="@doc.Key.Text"
-                                        HelperText="@doc.Key.HelperText"
-                                        HelperTextOnFocus="true"
-                                        Disabled="true"
-                                        Variant="Variant.Text"/>
 
-                                    <!-- New Replacement Input -->
-                                    <MudTextField
-                                        T="string"
-                                        Label="@string.Format(GeneralLocalizer["newDocumentLabel"], doc.Key.Text)"
-                                        Placeholder="@doc.Value.HelperText"
-                                        @bind-Value="doc.Value.Text"
-                                        HelperText="@doc.Value.HelperText"
-                                        Variant="Variant.Text"
-                                        Lines="1"
-                                        Immediate="true"
-                                        AutoGrow="true"
-                                        Class="ml-4"/>
+                            <!-- Original value (small column) -->
+                            <MudItem xs="12" sm="2" md="2">
+                                <MudTextField T="string"
+                                              Label=@(string.Format(GeneralLocalizer["headerOriginalValues"]))
+                                              Text="@doc.Key.Text"
+                                              Disabled="true"
+                                              Variant="Variant.Text"
+                                              Class="w-100" />
+                            </MudItem>
 
-                                    <!-- Delimiter -->
-                                    <MudSelect @bind-Value="@doc.Value.Delimiter" T="DelimiterType"
-                                               Label="@ReplacementTextLocalizer["delimiterLabel"]"
-                                               HelperText="@ReplacementTextLocalizer["delimiterHelperText"]"
-                                               Class="ml-4">
+                            <!-- Replacement value (majority of space) -->
+                            <MudItem xs="12" sm="7" md="7">
+                                <MudTextField T="string"
+                                              Label=@(string.Format(GeneralLocalizer["newDocumentLabel"], doc.Key.Text))
+                                              Placeholder="@doc.Value.HelperText"
+                                              @bind-Value="doc.Value.Text"
+                                              Variant="Variant.Text"
+                                              Lines="1"
+                                              Immediate="true"
+                                              AutoGrow="true"
+                                              Class="w-100" />
+                            </MudItem>
+
+                            <MudItem xs="12" sm="3" md="3">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Justify="Justify.Center" StretchItems="StretchItems.Start">
+                                    <MudSelect Label=@(ReplacementTextLocalizer["delimiterLabel"])
+                                               @bind-Value="@doc.Value.Delimiter"
+                                               T="DelimiterType"
+                                               Dense="true"
+                                               Class="w-100">
                                         <MudSelectItem Value="@DelimiterType.None">@ReplacementTextLocalizer["delimiterNone"]</MudSelectItem>
                                         <MudSelectItem Value="@DelimiterType.NewLine">@ReplacementTextLocalizer["delimiterNewLine"]</MudSelectItem>
                                         <MudSelectItem Value="@DelimiterType.Semicolon">@ReplacementTextLocalizer["delimiterSemicolon"]</MudSelectItem>
@@ -62,29 +65,31 @@
                                         <MudSelectItem Value="@DelimiterType.Tab">@ReplacementTextLocalizer["delimiterTab"]</MudSelectItem>
                                         <MudSelectItem Value="@DelimiterType.Custom">@ReplacementTextLocalizer["delimiterCustom"]</MudSelectItem>
                                     </MudSelect>
+                                    
+                                    <MudTooltip ShowOnClick="true" Text=@(ReplacementTextLocalizer["delimiterHelperText"]) Placement="Placement.Top" ShowOnHover="true">
+                                        <MudIconButton  Icon="@Icons.Material.Filled.Info" Color="Color.Primary" AriaLabel="delimiter-info" />
+                                    </MudTooltip>
+                                </MudStack>
+                                
+                                @if (doc.Value.Delimiter == DelimiterType.Custom)
+                                {
+                                    <MudTextField T="string"
+                                                  @bind-Value="doc.Value.CustomDelimiter"
+                                                  Variant="Variant.Text"
+                                                  Placeholder="# or & or % etc"
+                                                  Lines="1"
+                                                  Immediate="true"
+                                                  AutoGrow="true"
+                                                  Class="w-100"/>
+                                }
 
-                                    @if (doc.Value.Delimiter == DelimiterType.Custom)
-                                    {
-                                        <MudTextField
-                                            T="string"
-                                            Label="@ReplacementTextLocalizer["delimiterCustomLabel"]"
-                                            @bind-Value="doc.Value.CustomDelimiter"
-                                            HelperText="@ReplacementTextLocalizer["delimiterCustomHelperText"]"
-                                            Variant="Variant.Text"
-                                            Placeholder="# or & or % etc"
-                                            Lines="1"
-                                            Immediate="true"
-                                            AutoGrow="true"
-                                            Class="ml-4"/>
-                                    }
-
-                                    <!-- Remove value Button -->
+                                <div class="d-flex justify-end mt-2">
                                     <MudButton Variant="Variant.Outlined"
                                                StartIcon="@Icons.Material.Filled.Delete"
                                                ButtonType="ButtonType.Button"
                                                Color="Color.Error"
-                                               Class="ml-4"
-                                               OnClick="() => RemoveItemsFromDictAsync(doc)">
+                                               Size="Size.Small"
+                                               OnClick="() => RemoveItemsFromDictAsync(idx)">
                                         @GeneralLocalizer["btnRemoveReplacementLine"]
                                     </MudButton>
                                 </div>
@@ -107,9 +112,12 @@
     [Parameter] public required Document Document { get; set; }
     [Parameter] public EventCallback<Document> DocumentChanged { get; set; }
 
-    private async Task RemoveItemsFromDictAsync(KeyValuePair<DocumentValue, DocumentValue> doc)
+    private async Task RemoveItemsFromDictAsync(int index)
     {
-        Document.DocumentValues.Remove(doc);
-        await DocumentChanged.InvokeAsync(Document);
+        if (index >= 0 && index < Document.DocumentValues.Count)
+        {
+            Document.DocumentValues.RemoveAt(index);
+            await DocumentChanged.InvokeAsync(Document);
+        }
     }
 }
