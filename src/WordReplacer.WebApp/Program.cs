@@ -25,6 +25,7 @@ namespace WordReplacer.WebApp
             builder.Services.AddBlazoredLocalStorage();
             
             builder.Services.AddTransient<IDocumentService, DocumentService>();
+            builder.Services.AddTransient<WorkerDocumentService>();
             builder.Services.AddTransient<IDocumentProcessingService, DocumentProcessingService>();
 
             var appSettings = new AppSettings()

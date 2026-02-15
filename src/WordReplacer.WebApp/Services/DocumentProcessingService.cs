@@ -15,6 +15,7 @@ namespace WordReplacer.WebApp.Services;
 public class DocumentProcessingService : IDocumentProcessingService
 {
     private readonly IDocumentService _documentService;
+    private readonly WorkerDocumentService _workerDocumentService;
     private readonly IStringLocalizer<GeneralResource> _generalLocalizer;
     private const bool IsMultipleWordsAtOnce = true;
 
@@ -22,13 +23,16 @@ public class DocumentProcessingService : IDocumentProcessingService
     /// Initializes a new instance of <see cref="DocumentProcessingService"/>.
     /// </summary>
     /// <param name="documentService">The document service.</param>
+    /// <param name="workerDocumentService">The worker document service for background processing.</param>
     /// <param name="generalLocalizer">The localizer.</param>
     /// <exception cref="ArgumentNullException">documentService</exception>
-    public DocumentProcessingService(IDocumentService documentService, IStringLocalizer<GeneralResource> generalLocalizer)
+    public DocumentProcessingService(IDocumentService documentService, WorkerDocumentService workerDocumentService, IStringLocalizer<GeneralResource> generalLocalizer)
     {
         ArgumentNullException.ThrowIfNull(documentService);
+        ArgumentNullException.ThrowIfNull(workerDocumentService);
         ArgumentNullException.ThrowIfNull(generalLocalizer);
         _documentService = documentService;
+        _workerDocumentService = workerDocumentService;
         _generalLocalizer = generalLocalizer;
     }
 
@@ -175,13 +179,15 @@ public class DocumentProcessingService : IDocumentProcessingService
                         file.Name);
                     try
                     {
-                        Stream docReplaced = _documentService.Replace(combination, originalFileInMemoryStream, IsMultipleWordsAtOnce);
+                        originalFileInMemoryStream.Position = 0;
+                        var fileBytes = originalFileInMemoryStream.ToArray();
+                        var resultBytes = await _workerDocumentService.ReplaceAsync(fileBytes, combination).ConfigureAwait(false);
+                        using var docReplaced = new MemoryStream(resultBytes);
                         await _documentService.DownloadFile(
                                 fileName,
                                 docReplaced,
                                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                             .ConfigureAwait(false);
-                        await docReplaced.DisposeAsync().ConfigureAwait(false);
                         onDownloadSuccess(fileName);
                     }
                     catch (Exception ex)
@@ -300,13 +306,20 @@ public class DocumentProcessingService : IDocumentProcessingService
 
     private async Task ReplaceAndDownloadFileAsync(Dictionary<string, string> combination, MemoryStream originalFileInMemoryStream, string fileName)
     {
-        using var docReplaced = _documentService.Replace(combination, originalFileInMemoryStream, IsMultipleWordsAtOnce);
-        
+        System.Diagnostics.Debug.WriteLine($"[DocumentProcessingService] ReplaceAndDownloadFileAsync: {fileName}");
+        originalFileInMemoryStream.Position = 0;
+        var fileBytes = originalFileInMemoryStream.ToArray();
+        System.Diagnostics.Debug.WriteLine($"[DocumentProcessingService] File bytes: {fileBytes.Length}. Calling worker...");
+        var resultBytes = await _workerDocumentService.ReplaceAsync(fileBytes, combination).ConfigureAwait(false);
+        System.Diagnostics.Debug.WriteLine($"[DocumentProcessingService] Worker returned {resultBytes.Length} bytes. Downloading...");
+        using var docReplaced = new MemoryStream(resultBytes);
+
         await _documentService.DownloadFile(
             fileName,
             docReplaced,
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             .ConfigureAwait(false);
+        System.Diagnostics.Debug.WriteLine($"[DocumentProcessingService] Download complete: {fileName}");
     }
 
     private async Task UpdateProgressAsync(double progressSizePerFile)
