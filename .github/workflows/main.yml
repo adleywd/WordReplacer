@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     # uses GitHub's checkout action to checkout code form the master branch
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     
     - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     # Clean previous dotnet content
     - name: Clean
@@ -71,7 +71,7 @@ jobs:
       run: touch release/wwwroot/.nojekyll
       
     - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@v4.4.1
+      uses: JamesIves/github-pages-deploy-action@v4.7.2
       with:
         folder: release/wwwroot
         branch: deploy

@@ -1,4 +1,4 @@
-﻿window.updateAvailable = new Promise((resolve, reject) => {
+window.updateAvailable = new Promise((resolve, reject) => {
     if (!('serviceWorker' in navigator)) {
         const errorMessage = `This browser doesn't support service workers`;
         console.error(errorMessage);
@@ -25,6 +25,15 @@
             console.error('Service worker registration failed with error:', error);
             reject(error);
         });
+
+    // Handle the case where skipWaiting() causes a new SW to take control
+    // while the page is already open. This fires after the promise above
+    // may have already resolved, so it acts as a fallback notification.
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (hadControllerBeforeRegister) {
+            resolve(true);
+        }
+    });
 });
 
 window.registerForUpdateAvailableNotification = (applicationUpdateObjRef, methodName) => {
